@@ -1,0 +1,56 @@
+[{
+        "_id": {
+            "$oid": "5785f724ecbafd5014e6dfd8"
+        },
+        "Common": {
+            "ref data": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "refId": {
+                        "$oid": "57a94a160a279ec293f61665"
+                    },
+                    "path": "testId"
+                }
+            },
+            "ref data gen": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "refId": {
+                        "$oid": "57a94a160a279ec293f61665"
+                    },
+                    "path": "Common.gen gen.gendata"
+                }
+            },
+            "ref cyclic refid": {
+                "value": {
+                    "path": "Common.failCyclicReferenceDifferentCollectionWithRefId",
+                    "collection": "DataBlocks",
+                    "refId": {
+                        "$oid": "57a94a160a279ec293f61665"
+                    }
+                }
+            },
+            "gendata": "generate:Numeric:16",
+            "gen gen": {
+                "gendata": {
+                    "value": {
+                        "collection": "DataBlocks",
+                        "path": "Common.gen gen.gendata"
+                    }
+                }
+            }
+        },
+        "id": 123123,
+        "client": 123123123,
+        "dataBlocks": {
+            "Common": {
+                "login": {
+                    "value": "2login",
+                    "comment": "Ну еще один паоль"
+                },
+                "password": 123
+            }
+        },
+        "comment": "Some comment"
+    }]
+

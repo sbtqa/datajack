@@ -1,0 +1,137 @@
+[{
+        "_id": {
+            "$oid": "57a94a160a279ec293f61665"
+        },
+        "testId": "@234234",
+        "Common": {
+            "price": 20.91,
+            "gendata": "generate:Numeric:16",
+            "gen gen": {
+                "gendata": "generate:Numeric:16"
+            },
+            "gendata reference": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "path": "Common.gen gen.gendata"
+                },
+                "comment": "Ссылается на генерированные данные"
+            },
+            "failCyclicReferenceDifferentCollectionWithRefId": {
+                "value": {
+                    "collection": "Tests",
+                    "path": "Common.ref cyclic refid",
+                    "refId": {
+                        "$oid": "5785f724ecbafd5014e6dfd8"
+                    }
+                },
+                "comment": "Ссылается на генерированные данные"
+            },
+            "login": {
+                "value": "user",
+                "comment": "Логин пользователя"
+            },
+            "password": {
+                "value": "123qwe",
+                "comment": "Пароль пользователя"
+            },
+            "password2": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "path": "Params Group 1.password"
+                },
+                "comment": "Пароль пользователя"
+            },
+            "cyclic": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "path": "Common.cyclic"
+                },
+                "comment": "Cyclic"
+            }
+        },
+        "Params Group 1": {
+            "login": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "path": "Common.password"
+                },
+                "comment": "Логин пользователя"
+            },
+            "password": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "path": "Common.password"
+                },
+                "comment": "Another cool password"
+            }
+        }
+    }
+    ,
+    {
+        "_id": {
+            "$oid": "57ac455d0a279ec293f61668"
+        },
+        "testId": "@234234",
+        "Common": {
+            "price": 20.91,
+            "gendata": "generate:Numeric:16",
+            "gen gen": {
+                "gendata": "generate:Numeric:16"
+            },
+            "gendata reference": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "path": "Common.gen gen.gendata"
+                },
+                "comment": "Ссылается на генерированные данные"
+            },
+            "failCyclicReferenceDifferentCollectionWithRefId": {
+                "value": {
+                    "collection": "Tests",
+                    "path": "Common.ref cyclic refid",
+                    "refId": {
+                        "$oid": "5785f724ecbafd5014e6dfd8"
+                    }
+                },
+                "comment": "Ссылается на генерированные данные"
+            },
+            "login": {
+                "value": "user",
+                "comment": "Логин пользователя"
+            },
+            "password": {
+                "value": "123qwe",
+                "comment": "Пароль пользователя"
+            },
+            "password2": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "path": "Params Group 1.password"
+                },
+                "comment": "Пароль пользователя"
+            },
+            "cyclic": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "path": "Common.cyclic"
+                },
+                "comment": "Cyclic"
+            }
+        },
+        "Params Group 1": {
+            "login": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "path": "Common.password"
+                },
+                "comment": "Логин пользователя"
+            },
+            "password": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "path": "Common.password"
+                },
+                "comment": "Another cool password"
+            }
+        }
+    }]

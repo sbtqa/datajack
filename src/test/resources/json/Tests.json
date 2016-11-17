@@ -1,0 +1,31 @@
+{
+    "Common": {
+        "gendata": "generate:Numeric:16",
+        "gen gen": {
+            "gendata": {
+                "value": {
+                    "collection": "DataBlocks",
+                    "path": "Common.gen gen.gendata"
+                }
+            }
+        },
+        "ref object data": {
+            "value": {
+                "collection": "DataBlocks",
+                "path": "Common"
+            }
+        }
+    },
+    "id": 123123,
+    "client": 123123123,
+    "dataBlocks": {
+        "Common": {
+            "login": {
+                "value": "2login",
+                "comment": "Ну еще один паоль"
+            },
+            "password": 123
+        }
+    },
+    "comment": "Some comment"
+}

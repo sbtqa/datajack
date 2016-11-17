@@ -1,21 +1,29 @@
 package ru.sbtqa.tag.datajack.testdata;
 
-import static org.junit.Assert.assertFalse;
+import com.mongodb.BasicDBObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static org.junit.rules.ExpectedException.none;
-import static ru.sbtqa.tag.datajack.callback.SampleDataCache.getCache;
 import ru.sbtqa.tag.datajack.callback.SampleDataGensCallback;
 import ru.sbtqa.tag.datajack.TestDataObject;
 import ru.sbtqa.tag.datajack.adaptors.JsonDataObjectAdaptor;
 import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesExeption;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;
-import static java.lang.String.format;
-import static org.junit.Assert.assertEquals;
 import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
+import static ru.sbtqa.tag.datajack.callback.SampleDataCache.getCache;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import static org.junit.rules.ExpectedException.none;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static java.lang.String.format;
 
 public class JsonDataTest {
 
@@ -161,5 +169,59 @@ public class JsonDataTest {
         expectDataExceptions.expectMessage(String.format("There is no reference in \"%s.%s\". Collection \"%s\"",
                 collection, path, collection));
         tdo.get(path).getReference();
+    }
+
+    @Test
+    public void toMapTest() throws DataException {
+        TestDataObject tdo = new JsonDataObjectAdaptor(this.jsonDataPath, "DataBlocks");
+        Object supposedToBeMap = tdo.toMap();
+
+        assertTrue("Type of return value toMap() is not Map", supposedToBeMap instanceof Map);
+        assertNotNull("Map object is null", supposedToBeMap != null);
+        assertFalse("Map is empty", ((Map) supposedToBeMap).isEmpty());
+}
+
+    @Test
+    public void getKeySetTest() throws DataException {
+        TestDataObject tdo = new JsonDataObjectAdaptor(this.jsonDataPath, "DataBlocks");
+        Object supposedToBeSet = tdo.getKeySet();
+
+        assertTrue("Type of return value getKeySet() is not Set", supposedToBeSet instanceof Set);
+        assertNotNull("Set object is null", supposedToBeSet != null);
+        assertFalse("", ((Set) supposedToBeSet).isEmpty());
+    }
+
+    @Test
+    public void getValuesTest() throws DataException {
+        TestDataObject tdo = new JsonDataObjectAdaptor(this.jsonDataPath, "DataBlocks");
+        Object rawValues = tdo.getValues();
+
+        assertTrue("Type of return value getValues() is not Collection", rawValues instanceof Collection);
+        assertNotNull("Return value is null", rawValues != null);
+        assertFalse("Collection of values is empty", ((Collection) rawValues).isEmpty());
+    }
+
+    @Test
+    public void getStringValuesTest() throws DataException {
+        TestDataObject tdo = new JsonDataObjectAdaptor(this.jsonDataPath, "DataBlocks").get("MapTests");
+        Object stringValues = tdo.getStringValues();
+
+        assertTrue("Type of return value getStringValues() is not List", stringValues instanceof List);
+        assertNotNull("Return value is null", stringValues != null);
+        assertFalse("Collection of values is empty", ((Collection) stringValues).isEmpty());
+
+        int resultCollectionSize = ((Collection) stringValues).size();
+        int originalMapSize = tdo.toMap().size();
+        assertEquals(format("getStringValuesTest method has returned incorrect number of elements. Expected {0}, but was {1}", originalMapSize, resultCollectionSize), resultCollectionSize, originalMapSize);
+
+        Iterator resultIterator = ((Collection) stringValues).iterator();
+        Iterator originalIterator = tdo.toMap().values().iterator();
+        while (resultIterator.hasNext()) {
+            Object currentResValue = resultIterator.next();
+            Object currentOrigValue = originalIterator.next();
+            if (!(currentOrigValue instanceof BasicDBObject)) {
+                assertEquals("Unexpected value transformation", currentOrigValue.toString(), currentResValue.toString());
+            }
+        }
     }
 }

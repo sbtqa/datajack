@@ -22,15 +22,10 @@ import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
  *
  * @author Viktor Sidochenko <viktor.sidochenko@gmail.com>
  */
-public class JsonDataObjectAdaptor implements TestDataObject {
+public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements TestDataObject {
 
     private final String collectionName;
-    private final BasicDBObject basicObj;
     private final String testDataFolder;
-    private String way;
-    private String path;
-    private BasicDBObject rootObj;
-    private Class<? extends GeneratorCallback> callback;
 
     /**
      * Create JsonDataObjectAdaptor instance

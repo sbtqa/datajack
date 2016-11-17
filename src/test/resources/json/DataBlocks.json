@@ -52,5 +52,16 @@
             },
             "comment": "Another cool password"
         }
+    },
+    "MapTests": {
+        "stringValue": "this is string",
+        "singleCharValue": "c",
+        "booleanValue": true,
+        "integerValue": 42,
+        "floatValue": 42.1,
+        "doubleValue": 42.01,
+        "nestedObjectValue": {
+            "innerValue": "Tis is string from nested object"
+        }
     }
 }

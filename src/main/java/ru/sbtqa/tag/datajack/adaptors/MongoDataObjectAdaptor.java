@@ -25,15 +25,10 @@ import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
  *
  * @author Viktor Sidochenko <viktor.sidochenko@gmail.com>
  */
-public class MongoDataObjectAdaptor implements TestDataObject {
+public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements TestDataObject {
 
     private final DB db;
     private DBCollection coll;
-    private BasicDBObject basicObj;
-    private String way;
-    private BasicDBObject rootObj;
-    private String path;
-    private Class<? extends GeneratorCallback> callback;
 
     /**
      * Initialize new data object

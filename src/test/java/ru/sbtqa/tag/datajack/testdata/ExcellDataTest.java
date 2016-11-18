@@ -1,5 +1,6 @@
 package ru.sbtqa.tag.datajack.testdata;
 
+import com.mongodb.BasicDBObject;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,13 +12,18 @@ import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesExeption;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
-
 import java.io.IOException;
-
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import static java.lang.String.format;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.rules.ExpectedException.none;
 
 /**
@@ -155,5 +161,59 @@ public class ExcellDataTest {
         tdo.applyGenerator(SampleDataGensCallback.class);
         tdoNew.applyGenerator(SampleDataGensCallback.class);
         assertNotEquals(tdo.get("Common.gendata").getValue(), tdoNew.get("Common.gendata").getValue());
+    }
+
+    @Test
+    public void toMapTest() throws DataException {
+        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        Object supposedToBeMap = tdo.toMap();
+
+        assertTrue("Type of return value toMap() is not Map", supposedToBeMap instanceof Map);
+        assertNotNull("Map object is null", supposedToBeMap != null);
+        assertFalse("Map is empty", ((Map) supposedToBeMap).isEmpty());
+}
+
+    @Test
+    public void getKeySetTest() throws DataException {
+        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        Object supposedToBeSet = tdo.getKeySet();
+
+        assertTrue("Type of return value getKeySet() is not Set", supposedToBeSet instanceof Set);
+        assertNotNull("Set object is null", supposedToBeSet != null);
+        assertFalse("", ((Set) supposedToBeSet).isEmpty());
+    }
+
+    @Test
+    public void getValuesTest() throws DataException {
+        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        Object rawValues = tdo.getValues();
+
+        assertTrue("Type of return value getValues() is not Collection", rawValues instanceof Collection);
+        assertNotNull("Return value is null", rawValues != null);
+        assertFalse("Collection of values is empty", ((Collection) rawValues).isEmpty());
+    }
+
+    @Test
+    public void getStringValuesTest() throws DataException {
+        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName).get("MapTests");
+        Object stringValues = tdo.getStringValues();
+
+        assertTrue("Type of return value getStringValues() is not List", stringValues instanceof List);
+        assertNotNull("Return value is null", stringValues != null);
+        assertFalse("Collection of values is empty", ((Collection) stringValues).isEmpty());
+
+        int resultCollectionSize = ((Collection) stringValues).size();
+        int originalMapSize = tdo.toMap().size();
+        assertEquals(format("getStringValuesTest method has returned incorrect number of elements. Expected {0}, but was {1}", originalMapSize, resultCollectionSize), resultCollectionSize, originalMapSize);
+
+        Iterator resultIterator = ((Collection) stringValues).iterator();
+        Iterator originalIterator = tdo.toMap().values().iterator();
+        while (resultIterator.hasNext()) {
+            Object currentResValue = resultIterator.next();
+            Object currentOrigValue = originalIterator.next();
+            if (!(currentOrigValue instanceof BasicDBObject)) {
+                assertEquals("Unexpected value transformation", currentOrigValue.toString(), currentResValue.toString());
+            }
+        }
     }
 }

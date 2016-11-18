@@ -31,16 +31,11 @@ import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
  *
  * @author Alexandr Anikeev <iamanikeev@gmail.com>
  */
-public class ExcelDataObjectAdaptor implements TestDataObject {
+public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements TestDataObject {
 
     private final XSSFWorkbook workBook;
     private final String sheetName;
-    private final BasicDBObject basicObj;
     private final String dataFileName;
-    private String way;
-    private BasicDBObject rootObj;
-    private String path;
-    private Class<? extends GeneratorCallback> callback;
     private XSSFFormulaEvaluator evaluator;
 
     /**

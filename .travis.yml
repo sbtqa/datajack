@@ -15,17 +15,23 @@ deploy:
     script: ".travis/deploy.sh"
     skip_cleanup: true
     on:
-      repo: sbtqa/qa-utils
+      repo: sbtqa/datajack
       branch: master
       jdk: oraclejdk8
   - provider: script
     script: ".travis/deploy.sh"
     skip_cleanup: true
     on:
-      repo: sbtqa/qa-utils
+      repo: sbtqa/datajack
       tags: true
       jdk: oraclejdk8
 notifications:
   email: false
   slack:
-    secure: h6cVx4PLjry7mrTyb1dBdr+fL3qeGliEB8R+ykj4+SJBRJB18Cuxd/S4fgz3GhcmgtHgvfxIrYNc07ovxsS6usHKF+skPqAGbSqQOAGgXxfY0ZkiUjU0SYs8xeMayIQmtFbPMsY3UTOA9cpaLpwoX1MD7LKAmcw+E4NQhbMaMCgfrysXcRwn0jfUvf5FdKK4+c9f9fQH5Bn2iP4g/H4P+cnPuFBGVlrYbkiLUfi9q4Ow4TpmFCV8DsIHlgTrexA9qdiBT8BMkCP9itA7tEjp9X6wWpOA3SHnATeXLRylpd1LJig6g03Skw+WWnRx3BEAGOlA1sz/7Zq0Dtsk9Munfr1KXre4icgSHOlLeuvzyD0UstBX9J6lObrf8sytfscsCiRNmVPBZHdiOugTad0eyLp1EpIf7ft4lpbLoHu4uIKJEl00/muH/62vKA+44TIgzntq8yw/xJ/dhJ29+FeXDwQUPupqhYAXu+lcNI5Y1FZBRVoxc+rsG12gaCKKMAr/Wn5LzZhw/6vvVpTa7k5cPCGOkXMj5+MmO/ejQU/jG4/4CtQujsAIw76nYiQnWIltKXtDD26faIMJwBpikhsNzmsA/WbjTYOxSAl7nXadiXxeeg+BX+C2c6yo0tl6voiXjtuqPihDbukvqeisLhy0JfsaWU9BhlE/oLguTeSRZLU=
+    rooms:
+      - secure: JtcfWEIa3NVm4MQPqlxIRXs8SozjsHK5RKA8e94ozTZr3Ec/mjcmKYjkQ1jdiqxisj+r7/mvPbOWLnBTKibIMO1zvszqJppc+OvfnCuC9ZXYua16Cci0nBSXccis0LsLGewXUv9w9sHBjrHtaspF27USPSIT0wPROtX5IUDoIcdwB75nnQWg2F8Q3QD4KYe2pkYX5NgbrB5R18PmZTjE8SSZBh7dl6hYekjarg6jZrbif2gVquR3OoZkgqm6HZEW1Lt63UkHAjsiWhH7ZnUpImV703RreeQ/ANqtzsbUWDf/JTU+l+lxcaTpRngDUirvlg8UEVOJ72ynlQDpwekDmUkWFN0vbalPEeo6mGTVrvI4LvrI7JLipQVar1awwQZ74tMNioq5rE7oEu9hApBgRwCOoB1eWL/KaNh1iusnhhhpa14hoqZeHJz6pf67vEjc9tSXsn18d8bH0o74Qw/HToaJar2n7FaJTst7aTMttXaeMsIFjcQ64TO3x6fBmKU5qS3wRu1jGJ9B4aO6NNm6AcO+rv38mE58c4/DOOB3TmQe0IUt6x5bnBa5EjafNLkD8dxnOJ4xTBqgBPS12DB+zWjW60iZ10QdYHHiXn8vl0aB2GwpiKeBfyMmwNSOYLbVLeDPMEvlLL5s2lN8f6nEUlZ/h0Nwux1gQ3g6rSSdxKo=
+    template:
+      - "Build status: %{message}"
+      - "%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{commit_message}"
+      - "Change view : %{compare_url}"
+      - "Build details : %{build_url}"

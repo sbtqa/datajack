@@ -21,10 +21,6 @@ import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.GeneratorException;
 import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
 
-/**
- *
- * @author Viktor Sidochenko <viktor.sidochenko@gmail.com>
- */
 public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements TestDataObject {
 
     private final DB db;
@@ -35,7 +31,7 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
      *
      * @param db Database object
      * @param coll Collection
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException
+     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
      */
     public MongoDataObjectAdaptor(DB db, String coll) throws DataException {
         this.db = db;
@@ -63,10 +59,10 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
 
     /**
      *
-     * @param collectionName
-     * @param refId
-     * @return
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException
+     * @param collectionName TODO
+     * @param refId TODO
+     * @return TODO
+     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
      */
     public MongoDataObjectAdaptor fromCollection(String collectionName, String refId) throws DataException {
         this.coll = db.getCollection(collectionName);

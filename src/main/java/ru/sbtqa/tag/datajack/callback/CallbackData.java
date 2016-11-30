@@ -1,9 +1,5 @@
 package ru.sbtqa.tag.datajack.callback;
 
-/**
- *
- * @author Viktor Sidochenko <viktor.sidochenko@gmail.com>
- */
 public class CallbackData {
 
     private final String result;

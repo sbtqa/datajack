@@ -1,9 +1,12 @@
 package ru.sbtqa.tag.datajack.adaptors;
 
 import com.mongodb.BasicDBObject;
+import static com.mongodb.BasicDBObject.parse;
 import java.io.File;
 import static java.io.File.separator;
 import java.io.IOException;
+import static java.lang.String.format;
+import static org.apache.commons.io.FileUtils.readFileToString;
 import org.bson.BasicBSONObject;
 import ru.sbtqa.tag.datajack.TestDataObject;
 import ru.sbtqa.tag.datajack.callback.CallbackData;
@@ -11,17 +14,10 @@ import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
 import ru.sbtqa.tag.datajack.exceptions.CollectionNotfoundException;
 import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesExeption;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
-import ru.sbtqa.tag.datajack.exceptions.GeneratorException;
 import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;
-import static com.mongodb.BasicDBObject.parse;
-import static java.lang.String.format;
-import static org.apache.commons.io.FileUtils.readFileToString;
+import ru.sbtqa.tag.datajack.exceptions.GeneratorException;
 import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
 
-/**
- *
- * @author Viktor Sidochenko <viktor.sidochenko@gmail.com>
- */
 public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements TestDataObject {
 
     private final String collectionName;
@@ -31,8 +27,8 @@ public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements 
      * Create JsonDataObjectAdaptor instance
      *
      * @param testDataFolder path to data folder
-     * @param collectionName
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException
+     * @param collectionName TODO
+     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
      */
     public JsonDataObjectAdaptor(String testDataFolder, String collectionName) throws DataException {
         String json;

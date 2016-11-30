@@ -1,9 +1,5 @@
 package ru.sbtqa.tag.datajack.exceptions;
 
-/**
- *
- * @author Viktor Sidochenko <viktor.sidochenko@gmail.com>
- */
 public class GeneratorException extends DataException {
 
     public GeneratorException(String message) {

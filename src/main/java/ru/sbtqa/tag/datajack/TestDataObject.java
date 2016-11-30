@@ -7,10 +7,6 @@ import java.util.Set;
 import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 
-/**
- *
- * @author Viktor Sidochenko <viktor.sidochenko@gmail.com>
- */
 public interface TestDataObject {
 
     /**
@@ -18,7 +14,7 @@ public interface TestDataObject {
      *
      * @param collectionName name of data collection
      * @return test data object instance
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException
+     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
      */
     TestDataObject fromCollection(String collectionName) throws DataException;
 
@@ -27,15 +23,15 @@ public interface TestDataObject {
      *
      * @param key key to get
      * @return test data object instance
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException
+     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
      */
     TestDataObject get(String key) throws DataException;
 
     /**
      * Get value of current test data object
      *
-     * @return
-     * @throws DataException
+     * @return TODO
+     * @throws DataException TODO
      */
     String getValue() throws DataException;
 
@@ -43,7 +39,7 @@ public interface TestDataObject {
      * Get reference from value
      *
      * @return Referenced object
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException
+     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
      */
     public TestDataObject getReference() throws DataException;
 
@@ -58,7 +54,7 @@ public interface TestDataObject {
      * Get map representation of TestDataObject
      *
      * @return map of objects
-     * @throws DataException
+     * @throws DataException TODO
      */
     public Map<String, Object> toMap() throws DataException;
 
@@ -66,7 +62,7 @@ public interface TestDataObject {
      * Get set of keys from TestDataObject
      *
      * @return set of keys
-     * @throws DataException
+     * @throws DataException TODO
      */
     public Set<String> getKeySet() throws DataException;
 
@@ -74,7 +70,7 @@ public interface TestDataObject {
      * Get list of values as Objects from TestDataObject
      *
      * @return collection of Object values
-     * @throws DataException
+     * @throws DataException TODO
      */
     public Collection<Object> getValues() throws DataException;
 
@@ -82,13 +78,13 @@ public interface TestDataObject {
      * Get list of String representations of all primitive values from TestDataObject
      *
      * @return list of String values
-     * @throws DataException
+     * @throws DataException TODO
      */
     public List<String> getStringValues() throws DataException;
 
     /**
      *
-     * @return
+     * @return TODO
      */
     @Override
     String toString();

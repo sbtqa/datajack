@@ -27,10 +27,6 @@ import ru.sbtqa.tag.datajack.exceptions.FileNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.GeneratorException;
 import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
 
-/**
- *
- * @author Alexandr Anikeev <iamanikeev@gmail.com>
- */
 public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements TestDataObject {
 
     private final XSSFWorkbook workBook;
@@ -44,7 +40,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
      *
      * @param dataFilePath path to an Excel file
      * @param sheetName sheet name
-     * @throws ru.sbt.qa.datajack.exceptions.DataException
+     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
      */
     public ExcelDataObjectAdaptor(String dataFilePath, String sheetName) throws DataException {
         File file = FileUtils.getFile(dataFilePath + ".xlsx");
@@ -331,7 +327,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
      * case if there is a comment present, append it to the object
      *
      * @param declaringRow row that declares an object
-     * @return
+     * @return TODO
      */
     private BasicDBObject getObjectDeclaration(XSSFRow declaringRow) {
         BasicDBObject obj = new BasicDBObject();

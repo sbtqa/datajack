@@ -198,7 +198,7 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
     @Override
     public TestDataObject getReference() throws DataException {
         if (null != this.basicObj.get(VALUE_TPL) && !(this.basicObj.get(VALUE_TPL) instanceof String)
-                && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField("collection")
+                && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField(COLLECTION_TPL)
                 && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField("path")) {
             if (this.rootObj == null) {
                 this.rootObj = this.basicObj;
@@ -209,7 +209,7 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
                     throw new CyclicReferencesExeption("Cyclic references in database:\n" + rootJson);
                 }
             }
-            String referencedCollection = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("collection");
+            String referencedCollection = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString(COLLECTION_TPL);
             this.path = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("path");
             MongoDataObjectAdaptor reference;
             if (((BSONObject) this.basicObj.get(VALUE_TPL)).containsField(REF_ID_TPL)) {

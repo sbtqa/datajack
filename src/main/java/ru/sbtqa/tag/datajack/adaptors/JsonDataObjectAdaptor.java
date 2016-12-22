@@ -36,12 +36,12 @@ public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements 
     public JsonDataObjectAdaptor(String testDataFolder, String collectionName) throws DataException {
         String json;
         try {
-            json = readFileToString(new File(testDataFolder + separator + collectionName + ".json"));
+            json = readFileToString(new File(testDataFolder + separator + collectionName + ".json"), "UTF-8");
         } catch (IOException ex) {
             throw new CollectionNotfoundException(String.format("File %s.json not found in %s",
                     collectionName, testDataFolder), ex);
         }
-        BasicDBObject parsed = (BasicDBObject) parse(json);
+        BasicDBObject parsed = parse(json);
         this.testDataFolder = testDataFolder;
         this.basicObj = parsed;
         this.collectionName = collectionName;
@@ -63,8 +63,8 @@ public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements 
     @Override
     public JsonDataObjectAdaptor fromCollection(String collName) throws DataException {
         try {
-            String json = readFileToString(new File(this.testDataFolder + separator + collName + ".json"));
-            BasicDBObject parsed = (BasicDBObject) parse(json);
+            String json = readFileToString(new File(this.testDataFolder + separator + collName + ".json"), "UTF-8");
+            BasicDBObject parsed = parse(json);
             JsonDataObjectAdaptor newObj = new JsonDataObjectAdaptor(this.testDataFolder, parsed, collName);
             newObj.applyGenerator(this.callback);
             return newObj;
@@ -169,7 +169,7 @@ public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements 
     @Override
     public TestDataObject getReference() throws DataException {
         if (null != this.basicObj.get(VALUE_TPL) && !(this.basicObj.get(VALUE_TPL) instanceof String)
-                && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField("collection")
+                && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField(COLLECTION_TPL)
                 && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField("path")) {
             if (this.rootObj == null) {
                 this.rootObj = this.basicObj;
@@ -180,9 +180,9 @@ public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements 
                     throw new CyclicReferencesExeption("Cyclic references in database:\n" + rootJson);
                 }
             }
-            String referencedCollection = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("collection");
+            String referencedCollection = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString(COLLECTION_TPL);
             this.path = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("path");
-            JsonDataObjectAdaptor reference = this.fromCollection(((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("collection"));
+            JsonDataObjectAdaptor reference = this.fromCollection(((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString(COLLECTION_TPL));
             reference.setRootObj(this.rootObj, referencedCollection + "." + this.path);
             return reference.get(this.path);
         } else {

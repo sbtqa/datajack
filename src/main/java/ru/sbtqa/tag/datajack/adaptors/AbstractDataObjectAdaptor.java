@@ -17,6 +17,7 @@ public abstract class AbstractDataObjectAdaptor {
     protected BasicDBObject rootObj;
     protected Class<? extends GeneratorCallback> callback;
     protected static final String VALUE_TPL = "value";
+    protected static final String COLLECTION_TPL = "collection";
     private static final String NOT_INITIALIZED_EXCEPTION = "BasicDBObject is not initialized yet";
 
     public Map<String, Object> toMap() throws DataException {

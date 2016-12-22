@@ -11,6 +11,8 @@ import static java.lang.String.format;
 import org.bson.BSONObject;
 import org.bson.BasicBSONObject;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.datajack.TestDataObject;
 import ru.sbtqa.tag.datajack.callback.CallbackData;
 import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
@@ -23,6 +25,7 @@ import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
 
 public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements TestDataObject {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MongoDataObjectAdaptor.class);
     private final DB db;
     private DBCollection coll;
 
@@ -103,9 +106,8 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
             }
 
             tdo = new MongoDataObjectAdaptor(this.db, basicO, this.way);
-            if (this.path == null) {
-                this.path = documentId + "." + this.coll.getName();
-            } else if (this.coll != null && this.path.equals(this.coll.getName())) {
+
+            if (this.path == null || (this.coll != null && this.path.equals(this.coll.getName()))) {
                 this.path = documentId + "." + this.coll.getName();
             } else if (this.coll == null) {
                 this.path = documentId + "." + this.path;
@@ -126,14 +128,15 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
 
         tdo = new MongoDataObjectAdaptor(this.db, (BasicDBObject) result, this.way);
 
+        String rootObjValue;
         if (this.path != null) {
-            key = this.path + "." + key;
+            rootObjValue = this.path + "." + key;
         } else {
-            key = this.coll.getName() + "." + key;
+            rootObjValue = this.coll.getName() + "." + key;
         }
         tdo.applyGenerator(this.callback);
         tdo.coll = coll;
-        tdo.setRootObj(this.rootObj, key);
+        tdo.setRootObj(this.rootObj, rootObjValue);
         return tdo;
     }
 
@@ -164,6 +167,7 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
         try {
             return this.getReference().getValue();
         } catch (ReferenceException e) {
+            LOG.debug("Reference not found", e);
             String result = this.basicObj.getString("value");
             if (result == null) {
                 if (this.way.contains(".")) {

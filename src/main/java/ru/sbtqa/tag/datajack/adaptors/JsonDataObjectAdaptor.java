@@ -8,6 +8,8 @@ import java.io.IOException;
 import static java.lang.String.format;
 import static org.apache.commons.io.FileUtils.readFileToString;
 import org.bson.BasicBSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.datajack.TestDataObject;
 import ru.sbtqa.tag.datajack.callback.CallbackData;
 import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
@@ -20,6 +22,7 @@ import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
 
 public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements TestDataObject {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ExcelDataObjectAdaptor.class);
     private final String collectionName;
     private final String testDataFolder;
 
@@ -78,19 +81,19 @@ public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements 
 
         if (key.contains(".")) {
             String[] keys = key.split("[.]");
-            String partialBuilt = "";
+            StringBuilder partialBuilt = new StringBuilder();
             BasicDBObject basicO = this.basicObj;
             for (String partialKey : keys) {
-                partialBuilt += partialKey;
+                partialBuilt.append(partialKey);
                 if (!(basicO.get(partialKey) instanceof BasicDBObject)) {
                     if (null == basicO.get(partialKey)) {
                         throw new FieldNotFoundException(format("Collection \"%s\" doesn't contain \"%s\" field on path \"%s\"",
-                                this.collectionName, partialKey, partialBuilt));
+                                this.collectionName, partialKey, partialBuilt.toString()));
                     }
                     break;
                 }
                 basicO = (BasicDBObject) basicO.get(partialKey);
-                partialBuilt += ".";
+                partialBuilt.append(".");
             }
 
             tdo = new JsonDataObjectAdaptor(this.testDataFolder, basicO, this.collectionName, this.way);
@@ -108,12 +111,14 @@ public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements 
         }
         tdo = new JsonDataObjectAdaptor(this.testDataFolder, (BasicDBObject) result, this.collectionName, this.way);
         tdo.applyGenerator(this.callback);
+
+        String rootObjValue;
         if (this.path != null) {
-            key = this.path + "." + key;
+            rootObjValue = this.path + "." + key;
         } else {
-            key = this.collectionName + "." + key;
+            rootObjValue = this.collectionName + "." + key;
         }
-        tdo.setRootObj(this.rootObj, key);
+        tdo.setRootObj(this.rootObj, rootObjValue);
         return tdo;
     }
 
@@ -135,6 +140,7 @@ public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements 
         try {
             return this.getReference().getValue();
         } catch (ReferenceException e) {
+            LOG.debug("Reference not found", e);
             String result = this.basicObj.getString("value");
             if (result == null) {
                 if (this.way.contains(".")) {

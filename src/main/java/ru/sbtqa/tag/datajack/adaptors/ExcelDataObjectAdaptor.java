@@ -79,8 +79,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
 
     @Override
     public TestDataObject get(String key) throws DataException {
-        this.way = key;
-        String rootObjValue = key;
+        this.way = key;        
         ExcelDataObjectAdaptor tdo;
 
         if (key.contains(".")) {
@@ -120,6 +119,8 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
         }
         tdo = new ExcelDataObjectAdaptor(this.dataFileName, this.workBook, (BasicDBObject) result, this.sheetName, this.way);
         tdo.applyGenerator(this.callback);
+        
+        String rootObjValue;
         if (this.path != null) {
             rootObjValue = this.path + "." + key;
         } else {
@@ -375,7 +376,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
      */
     private String getCellValue(Cell cell) {
         if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
-            String value = null;
+            String value = "";
             try {
                 value = cell.getRichStringCellValue().getString();
             } catch (Exception e) {

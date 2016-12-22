@@ -38,7 +38,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
     private XSSFFormulaEvaluator evaluator;
 
     /**
-     * Constructs ExcellDataObjectAdaptor object Collection = an Excell work
+     * Constructs ExcellDataObjectAdaptor object Collection = an Excel work
      * book sheet
      *
      * @param dataFilePath path to an Excel file

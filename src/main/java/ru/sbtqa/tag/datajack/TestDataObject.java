@@ -14,7 +14,7 @@ public interface TestDataObject {
      *
      * @param collectionName name of data collection
      * @return test data object instance
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
+     * @throws DataException If no collection found
      */
     TestDataObject fromCollection(String collectionName) throws DataException;
 
@@ -23,15 +23,15 @@ public interface TestDataObject {
      *
      * @param key key to get
      * @return test data object instance
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
+     * @throws DataException f no value
      */
     TestDataObject get(String key) throws DataException;
 
     /**
      * Get value of current test data object
      *
-     * @return TODO
-     * @throws DataException TODO
+     * @return String parsed from value
+     * @throws DataException if no value
      */
     String getValue() throws DataException;
 
@@ -39,7 +39,7 @@ public interface TestDataObject {
      * Get reference from value
      *
      * @return Referenced object
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
+     * @throws DataException if no reference
      */
     public TestDataObject getReference() throws DataException;
 
@@ -49,12 +49,12 @@ public interface TestDataObject {
      * @param callback Generator callback class
      */
     void applyGenerator(Class<? extends GeneratorCallback> callback);
-    
+
     /**
      * Get map representation of TestDataObject
      *
      * @return map of objects
-     * @throws DataException TODO
+     * @throws DataException if not initialized yet
      */
     public Map<String, Object> toMap() throws DataException;
 
@@ -62,7 +62,7 @@ public interface TestDataObject {
      * Get set of keys from TestDataObject
      *
      * @return set of keys
-     * @throws DataException TODO
+     * @throws DataException if not initialized yet
      */
     public Set<String> getKeySet() throws DataException;
 
@@ -70,21 +70,22 @@ public interface TestDataObject {
      * Get list of values as Objects from TestDataObject
      *
      * @return collection of Object values
-     * @throws DataException TODO
+     * @throws DataException if not initialized yet
      */
     public Collection<Object> getValues() throws DataException;
 
     /**
-     * Get list of String representations of all primitive values from TestDataObject
+     * Get list of String representations of all primitive values from
+     * TestDataObject
      *
      * @return list of String values
-     * @throws DataException TODO
+     * @throws DataException if not initialized yet
      */
     public List<String> getStringValues() throws DataException;
 
     /**
      *
-     * @return TODO
+     * @return List of parsed string values
      */
     @Override
     String toString();

@@ -43,7 +43,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
      *
      * @param dataFilePath path to an Excel file
      * @param sheetName sheet name
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
+     * @throws DataException if file not found
      */
     public ExcelDataObjectAdaptor(String dataFilePath, String sheetName) throws DataException {
         File file = FileUtils.getFile(dataFilePath + ".xlsx");
@@ -333,7 +333,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
      * case if there is a comment present, append it to the object
      *
      * @param declaringRow row that declares an object
-     * @return TODO
+     * @return {@link BasicDBObject}
      */
     private BasicDBObject getObjectDeclaration(XSSFRow declaringRow) {
         BasicDBObject obj = new BasicDBObject();
@@ -372,7 +372,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
      * function;
      *
      * @param cell data cell
-     * @return value of cell {java.lang.String}
+     * @return value of cell
      */
     private String getCellValue(Cell cell) {
         if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {

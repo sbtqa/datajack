@@ -34,7 +34,7 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
      *
      * @param db Database object
      * @param coll Collection
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
+     * @throws DataException if no collection or its empty
      */
     public MongoDataObjectAdaptor(DB db, String coll) throws DataException {
         this.db = db;
@@ -46,7 +46,7 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
 
     }
 
-    private MongoDataObjectAdaptor(DB db, BasicDBObject obj, String way) throws DataException {
+    private MongoDataObjectAdaptor(DB db, BasicDBObject obj, String way) {
         this.db = db;
         this.basicObj = obj;
         this.way = way;
@@ -62,10 +62,10 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
 
     /**
      *
-     * @param collectionName TODO
-     * @param refId TODO
-     * @return TODO
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
+     * @param collectionName mongodb collection
+     * @param refId document id to reference to
+     * @return test data object
+     * @throws DataException if no collection or its empty
      */
     public MongoDataObjectAdaptor fromCollection(String collectionName, String refId) throws DataException {
         this.coll = db.getCollection(collectionName);

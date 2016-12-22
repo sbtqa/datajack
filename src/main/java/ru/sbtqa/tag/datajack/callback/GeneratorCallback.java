@@ -1,7 +1,5 @@
 package ru.sbtqa.tag.datajack.callback;
 
-import javafx.util.Callback;
-
 public interface GeneratorCallback extends Callback<CallbackData, Object> {
 
     /**
@@ -9,7 +7,7 @@ public interface GeneratorCallback extends Callback<CallbackData, Object> {
      * value
      *
      * @param callbackData callback data
-     * @return TODO
+     * @return Callback instance
      */
     @Override
     public Object call(CallbackData callbackData);

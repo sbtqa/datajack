@@ -30,8 +30,8 @@ public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements 
      * Create JsonDataObjectAdaptor instance
      *
      * @param testDataFolder path to data folder
-     * @param collectionName TODO
-     * @throws ru.sbtqa.tag.datajack.exceptions.DataException TODO
+     * @param collectionName json file name
+     * @throws DataException if file not found in testDataFolder
      */
     public JsonDataObjectAdaptor(String testDataFolder, String collectionName) throws DataException {
         String json;

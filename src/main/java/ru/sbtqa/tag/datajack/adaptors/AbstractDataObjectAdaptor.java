@@ -10,36 +10,39 @@ import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 
 public abstract class AbstractDataObjectAdaptor {
+
     protected BasicDBObject basicObj;
     protected String way;
     protected String path;
     protected BasicDBObject rootObj;
     protected Class<? extends GeneratorCallback> callback;
+    protected static final String VALUE_TPL = "value";
+    private static final String NOT_INITIALIZED_EXCEPTION = "BasicDBObject is not initialized yet";
 
     public Map<String, Object> toMap() throws DataException {
         if (basicObj == null) {
-            throw new DataException("BasicDBObject is not initialized yet");
+            throw new DataException(NOT_INITIALIZED_EXCEPTION);
         }
         return basicObj.toMap();
     }
 
     public Set<String> getKeySet() throws DataException {
         if (basicObj == null) {
-            throw new DataException("BasicDBObject is not initialized yet");
+            throw new DataException(NOT_INITIALIZED_EXCEPTION);
         }
         return basicObj.keySet();
     }
 
     public Collection<Object> getValues() throws DataException {
         if (basicObj == null) {
-            throw new DataException("BasicDBObject is not initialized yet");
+            throw new DataException(NOT_INITIALIZED_EXCEPTION);
         }
         return basicObj.values();
     }
 
     public List<String> getStringValues() throws DataException {
         if (basicObj == null) {
-            throw new DataException("BasicDBObject is not initialized yet");
+            throw new DataException(NOT_INITIALIZED_EXCEPTION);
         }
         Collection<Object> values = basicObj.values();
         List<String> strings = new ArrayList<>();

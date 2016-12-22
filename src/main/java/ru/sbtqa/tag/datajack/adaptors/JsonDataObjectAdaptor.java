@@ -141,7 +141,7 @@ public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements 
             return this.getReference().getValue();
         } catch (ReferenceException e) {
             LOG.debug("Reference not found", e);
-            String result = this.basicObj.getString("value");
+            String result = this.basicObj.getString(VALUE_TPL);
             if (result == null) {
                 if (this.way.contains(".")) {
                     this.way = this.way.split("[.]")[this.way.split("[.]").length - 1];
@@ -168,9 +168,9 @@ public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements 
 
     @Override
     public TestDataObject getReference() throws DataException {
-        if (null != this.basicObj.get("value") && !(this.basicObj.get("value") instanceof String)
-                && ((BasicDBObject) this.basicObj.get("value")).containsField("collection")
-                && ((BasicDBObject) this.basicObj.get("value")).containsField("path")) {
+        if (null != this.basicObj.get(VALUE_TPL) && !(this.basicObj.get(VALUE_TPL) instanceof String)
+                && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField("collection")
+                && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField("path")) {
             if (this.rootObj == null) {
                 this.rootObj = this.basicObj;
             } else {
@@ -180,9 +180,9 @@ public class JsonDataObjectAdaptor extends AbstractDataObjectAdaptor implements 
                     throw new CyclicReferencesExeption("Cyclic references in database:\n" + rootJson);
                 }
             }
-            String referencedCollection = ((BasicBSONObject) this.basicObj.get("value")).getString("collection");
-            this.path = ((BasicBSONObject) this.basicObj.get("value")).getString("path");
-            JsonDataObjectAdaptor reference = this.fromCollection(((BasicBSONObject) this.basicObj.get("value")).getString("collection"));
+            String referencedCollection = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("collection");
+            this.path = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("path");
+            JsonDataObjectAdaptor reference = this.fromCollection(((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("collection"));
             reference.setRootObj(this.rootObj, referencedCollection + "." + this.path);
             return reference.get(this.path);
         } else {

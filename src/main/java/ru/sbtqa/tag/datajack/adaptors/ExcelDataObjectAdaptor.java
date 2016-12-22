@@ -32,14 +32,15 @@ import org.slf4j.LoggerFactory;
 public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements TestDataObject {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExcelDataObjectAdaptor.class);
+    private static final String SHEET_NAME_TPL = "sheetName";
     private final XSSFWorkbook workBook;
     private final String sheetName;
     private final String dataFileName;
     private XSSFFormulaEvaluator evaluator;
 
     /**
-     * Constructs ExcellDataObjectAdaptor object Collection = an Excel work
-     * book sheet
+     * Constructs ExcellDataObjectAdaptor object Collection = an Excel work book
+     * sheet
      *
      * @param dataFilePath path to an Excel file
      * @param sheetName sheet name
@@ -79,7 +80,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
 
     @Override
     public TestDataObject get(String key) throws DataException {
-        this.way = key;        
+        this.way = key;
         ExcelDataObjectAdaptor tdo;
 
         if (key.contains(".")) {
@@ -119,7 +120,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
         }
         tdo = new ExcelDataObjectAdaptor(this.dataFileName, this.workBook, (BasicDBObject) result, this.sheetName, this.way);
         tdo.applyGenerator(this.callback);
-        
+
         String rootObjValue;
         if (this.path != null) {
             rootObjValue = this.path + "." + key;
@@ -143,7 +144,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
             return this.getReference().getValue();
         } catch (ReferenceException e) {
             LOG.debug("Reference not found", e);
-            String result = this.basicObj.getString("value");
+            String result = this.basicObj.getString(VALUE_TPL);
             if (result == null) {
                 if (this.way.contains(".")) {
                     this.way = this.way.split("[.]")[this.way.split("[.]").length - 1];
@@ -171,9 +172,9 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
 
     @Override
     public TestDataObject getReference() throws DataException {
-        if (null != this.basicObj.get("value") && !(this.basicObj.get("value") instanceof String)
-                && ((BasicDBObject) this.basicObj.get("value")).containsField("sheetName")
-                && ((BasicDBObject) this.basicObj.get("value")).containsField("path")) {
+        if (null != this.basicObj.get(VALUE_TPL) && !(this.basicObj.get(VALUE_TPL) instanceof String)
+                && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField(SHEET_NAME_TPL)
+                && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField("path")) {
             if (this.rootObj == null) {
                 this.rootObj = this.basicObj;
             } else {
@@ -183,8 +184,8 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
                     throw new CyclicReferencesExeption("Cyclic references in database:\n" + rootJson);
                 }
             }
-            String referencedCollection = ((BasicBSONObject) this.basicObj.get("value")).getString("sheetName");
-            this.path = ((BasicBSONObject) this.basicObj.get("value")).getString("path");
+            String referencedCollection = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString(SHEET_NAME_TPL);
+            this.path = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("path");
             ExcelDataObjectAdaptor reference = this.fromCollection(referencedCollection);
             reference.setRootObj(this.rootObj, referencedCollection + "." + this.path);
             return reference.get(this.path);
@@ -275,9 +276,9 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
      * @return boolean result
      */
     private boolean isObjectDeclarator(XSSFRow row) {
-        return (null != row.getCell(0, Row.RETURN_BLANK_AS_NULL)
+        return null != row.getCell(0, Row.RETURN_BLANK_AS_NULL)
                 && null == row.getCell(1, Row.RETURN_BLANK_AS_NULL)
-                && null == row.getCell(2, Row.RETURN_BLANK_AS_NULL));
+                && null == row.getCell(2, Row.RETURN_BLANK_AS_NULL);
     }
 
     /**
@@ -287,13 +288,13 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
      * @return boolean result
      */
     private boolean isDelimiter(XSSFRow row) {
-        return (null == row.getCell(0, Row.RETURN_BLANK_AS_NULL)
+        return null == row.getCell(0, Row.RETURN_BLANK_AS_NULL)
                 && null == row.getCell(1, Row.RETURN_BLANK_AS_NULL)
-                && null == row.getCell(2, Row.RETURN_BLANK_AS_NULL));
+                && null == row.getCell(2, Row.RETURN_BLANK_AS_NULL);
     }
 
     private boolean isSimpleKeyValueMap(XSSFRow row) {
-        return (!hasComment(row) && !isLink(row));
+        return !hasComment(row) && !isLink(row);
     }
 
     private Map<String, String> getSimpleKeyValueMap(XSSFRow row) {
@@ -303,7 +304,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
     }
 
     private boolean hasComment(XSSFRow row) {
-        return (null != row.getCell(3) && !row.getCell(3).toString().isEmpty());
+        return null != row.getCell(3) && !row.getCell(3).toString().isEmpty();
     }
 
     private String getComment(XSSFRow row) {
@@ -323,7 +324,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
         BasicDBObject link = new BasicDBObject();
         String[] fullPathDelimited = linkPath.split("[.]", 2);
         // Link to another sheetName (sheet)
-        link.append("sheetName", fullPathDelimited[0]);
+        link.append(SHEET_NAME_TPL, fullPathDelimited[0]);
         link.append("path", fullPathDelimited[1]);
         return link;
     }
@@ -358,7 +359,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
             pureObject.append("comment", getComment(row));
         }
         if (isLink(row)) {
-            pureObject.append("value", getLink(row));
+            pureObject.append(VALUE_TPL, getLink(row));
         } else {
             Map<String, String> map = getSimpleKeyValueMap(row);
             pureObject.append(map.keySet().iterator().next(), map.get(map.keySet().iterator().next()));
@@ -392,13 +393,14 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
                             value = String.valueOf(cell.getNumericCellValue());
                         }
                         break;
+                    case Cell.CELL_TYPE_ERROR:
+                        value = String.valueOf(cell.getErrorCellValue());
+                        break;
                     case Cell.CELL_TYPE_STRING:
                         value = cell.getStringCellValue();
                         break;
                     case Cell.CELL_TYPE_BLANK:
-                        break;
-                    case Cell.CELL_TYPE_ERROR:
-                        value = String.valueOf(cell.getErrorCellValue());
+                    default:
                         break;
                 }
             }

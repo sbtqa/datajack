@@ -26,6 +26,7 @@ import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
 public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements TestDataObject {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDataObjectAdaptor.class);
+    private static final String REF_ID_TPL = "refId";
     private final DB db;
     private DBCollection coll;
 
@@ -149,13 +150,13 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
     }
 
     private void setRootObj(BasicDBObject obj, String path) {
-        if (obj != null && obj.containsField("value")
-                && ((BasicDBObject) obj.get("value")).containsField("refId")) {
+        if (obj != null && obj.containsField(VALUE_TPL)
+                && ((BasicDBObject) obj.get(VALUE_TPL)).containsField(REF_ID_TPL)) {
             String colName = "";
             if (this.coll != null) {
                 colName = "." + this.coll.getName();
             }
-            this.path = ((BasicBSONObject) obj.get("value")).getString("refId") + colName + "." + this.way;
+            this.path = ((BasicBSONObject) obj.get(VALUE_TPL)).getString(REF_ID_TPL) + colName + "." + this.way;
         } else {
             this.path = path;
         }
@@ -168,7 +169,7 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
             return this.getReference().getValue();
         } catch (ReferenceException e) {
             LOG.debug("Reference not found", e);
-            String result = this.basicObj.getString("value");
+            String result = this.basicObj.getString(VALUE_TPL);
             if (result == null) {
                 if (this.way.contains(".")) {
                     this.way = this.way.split("[.]")[this.way.split("[.]").length - 1];
@@ -196,9 +197,9 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
 
     @Override
     public TestDataObject getReference() throws DataException {
-        if (null != this.basicObj.get("value") && !(this.basicObj.get("value") instanceof String)
-                && ((BasicDBObject) this.basicObj.get("value")).containsField("collection")
-                && ((BasicDBObject) this.basicObj.get("value")).containsField("path")) {
+        if (null != this.basicObj.get(VALUE_TPL) && !(this.basicObj.get(VALUE_TPL) instanceof String)
+                && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField("collection")
+                && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField("path")) {
             if (this.rootObj == null) {
                 this.rootObj = this.basicObj;
             } else {
@@ -208,11 +209,11 @@ public class MongoDataObjectAdaptor extends AbstractDataObjectAdaptor implements
                     throw new CyclicReferencesExeption("Cyclic references in database:\n" + rootJson);
                 }
             }
-            String referencedCollection = ((BasicBSONObject) this.basicObj.get("value")).getString("collection");
-            this.path = ((BasicBSONObject) this.basicObj.get("value")).getString("path");
+            String referencedCollection = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("collection");
+            this.path = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("path");
             MongoDataObjectAdaptor reference;
-            if (((BSONObject) this.basicObj.get("value")).containsField("refId")) {
-                String refId = ((BasicBSONObject) this.basicObj.get("value")).getString("refId");
+            if (((BSONObject) this.basicObj.get(VALUE_TPL)).containsField(REF_ID_TPL)) {
+                String refId = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString(REF_ID_TPL);
                 reference = this.fromCollection(referencedCollection, refId);
             } else {
                 reference = this.fromCollection(referencedCollection);

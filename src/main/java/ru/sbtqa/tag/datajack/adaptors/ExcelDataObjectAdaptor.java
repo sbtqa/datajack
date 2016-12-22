@@ -26,9 +26,12 @@ import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.FileNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.GeneratorException;
 import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements TestDataObject {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ExcelDataObjectAdaptor.class);
     private final XSSFWorkbook workBook;
     private final String sheetName;
     private final String dataFileName;
@@ -77,28 +80,29 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
     @Override
     public TestDataObject get(String key) throws DataException {
         this.way = key;
+        String rootObjValue = key;
         ExcelDataObjectAdaptor tdo;
 
         if (key.contains(".")) {
             String[] keys = key.split("[.]");
-            String partialBuilt = "";
+            StringBuilder partialBuilt = new StringBuilder();
             BasicDBObject basicO = this.basicObj;
             for (String partialKey : keys) {
-                partialBuilt += partialKey;
+                partialBuilt.append(partialKey);
                 if (!(basicO.get(partialKey) instanceof BasicDBObject)) {
-                    if (basicO.get(partialKey) instanceof String && !partialBuilt.equals(key)) {
+                    if (basicO.get(partialKey) instanceof String && !partialBuilt.toString().equals(key)) {
                         throw new FieldNotFoundException(format("Field '%s' in '%s' object on sheet '%s' "
                                 + "is not an object. Cannot find any nested fields inside it",
-                                partialKey, partialBuilt.replace("." + partialKey, ""), this.sheetName));
+                                partialKey, partialBuilt.toString().replace("." + partialKey, ""), this.sheetName));
                     }
                     if (null == basicO.get(partialKey)) {
                         throw new FieldNotFoundException(format("Sheet '%s' doesn't contain '%s' field on path '%s'",
-                                this.sheetName, partialKey, partialBuilt));
+                                this.sheetName, partialKey, partialBuilt.toString()));
                     }
                     break;
                 }
                 basicO = (BasicDBObject) basicO.get(partialKey);
-                partialBuilt += ".";
+                partialBuilt.append(".");
             }
 
             tdo = new ExcelDataObjectAdaptor(this.dataFileName, this.workBook, basicO, this.sheetName, this.way);
@@ -117,11 +121,11 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
         tdo = new ExcelDataObjectAdaptor(this.dataFileName, this.workBook, (BasicDBObject) result, this.sheetName, this.way);
         tdo.applyGenerator(this.callback);
         if (this.path != null) {
-            key = this.path + "." + key;
+            rootObjValue = this.path + "." + key;
         } else {
-            key = this.sheetName + "." + key;
+            rootObjValue = this.sheetName + "." + key;
         }
-        tdo.setRootObj(this.rootObj, key);
+        tdo.setRootObj(this.rootObj, rootObjValue);
         return tdo;
     }
 
@@ -137,6 +141,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
         try {
             return this.getReference().getValue();
         } catch (ReferenceException e) {
+            LOG.debug("Reference not found", e);
             String result = this.basicObj.getString("value");
             if (result == null) {
                 if (this.way.contains(".")) {
@@ -215,8 +220,8 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
         List<XSSFRow> effectiveRows = new ArrayList<>();
         int firstRowNumber = 0;
         XSSFSheet sheet = workBook.getSheet(sheetName);
-        if (sheet.getRow(sheet.getFirstRowNum()).cellIterator().next().getStringCellValue()
-                .equals("Описание")) {
+        if ("Описание"
+                .equals(sheet.getRow(sheet.getFirstRowNum()).cellIterator().next().getStringCellValue())) {
             // Check if there is a header on the current shit. If so, skip it
             firstRowNumber++;
         }
@@ -374,6 +379,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
             try {
                 value = cell.getRichStringCellValue().getString();
             } catch (Exception e) {
+                LOG.debug("Failed to get raw cell value, now trying to get typified", e);
                 switch (evaluator.evaluateFormulaCell(cell)) {
                     case Cell.CELL_TYPE_BOOLEAN:
                         value = String.valueOf(cell.getBooleanCellValue());
@@ -403,14 +409,10 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
         //Replace suffix zeros
         if (value.endsWith(".0")) {
             try {
-                double doubleValue = Double.parseDouble(value);
-                if (doubleValue == (long) doubleValue) {
-                    value = String.format("%d", (long) doubleValue);
-                } else {
-                    value = String.format("%s", doubleValue);
-                }
-            } catch (NumberFormatException e) {
+                value = String.format("%d", (long) Double.parseDouble(value));
 
+            } catch (NumberFormatException e) {
+                LOG.debug("Skiped replacing suffix zeroes. Value {} is not a number", value, e);
             }
         }
 

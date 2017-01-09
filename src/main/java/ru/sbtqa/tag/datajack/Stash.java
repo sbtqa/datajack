@@ -44,4 +44,23 @@ public class Stash {
     public static <T> T getValue(String key) {
         return (T) VAULT.get(key);
     }
+
+    /**
+     * Removes value from stash
+     *
+     * @param <T> the type to return
+     * @param key the key as a {@link java.lang.String} object
+     * @return an object removed by specified key
+     */
+    public static <T> T remove(String key) {
+        return (T) VAULT.remove(key);
+    }
+
+    /**
+     * Clear stash
+     *
+     */
+    public static void clear() {
+        VAULT.clear();
+    }
 }

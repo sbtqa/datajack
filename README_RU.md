@@ -16,7 +16,7 @@ DataJack имеет две фичи:
 Вся документация по использованию [здесь](https://github.com/sbtqa/docs/wiki/DataJack)
 
 ### Контакты
-Нашли ошибки или появились вопросы? [Проверьте](https://github.com/sbtqa/datajack/issues), нет ли уже созданых issue. Если нет [создайте новое issue](https://github.com/sbtqa/datajack/issues/new)!
+Нашли ошибки или появились вопросы? [Проверьте](https://github.com/sbtqa/datajack/issues), нет ли уже созданных задач. Если нет, то создайте [новую](https://github.com/sbtqa/datajack/issues/new)!
 
 ### Лицензия 
 Datajack выпущен под лицензией Apache 2.0. [Details here](https://github.com/sbtqa/datajack/blob/master/LICENSE).

@@ -1,5 +1,5 @@
 /.project
 /target/
 /nb-configuration.xml
-/.idea
-/datajack.iml
+.idea/
+datajack.iml

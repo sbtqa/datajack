@@ -13,7 +13,7 @@ DataJack имеет две фичи:
   * [Excel-Adapter](https://github.com/sbtqa/datajack-excel-adaptor)
 
 ### Документация
-Вся документация по использованию [здесь](https://github.com/sbtqa/docs/wiki/DataJack)
+Проект с примером использования можно посмотреть [здесь](https://github.com/sbtqa/datajack-example).Вся документация по использованию [здесь](https://github.com/sbtqa/docs/wiki/DataJack)
 
 ### Контакты
 Нашли ошибки или появились вопросы? [Проверьте](https://github.com/sbtqa/datajack/issues), нет ли уже созданных задач. Если нет, то создайте [новую](https://github.com/sbtqa/datajack/issues/new)!

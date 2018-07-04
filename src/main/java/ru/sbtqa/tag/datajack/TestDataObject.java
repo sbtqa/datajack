@@ -36,6 +36,14 @@ public interface TestDataObject {
     String getValue() throws DataException;
 
     /**
+     * Check value is reference
+     *
+     * @return true if it is reference, false otherwise
+     * @throws DataException if no reference
+     */
+    public boolean isReference() throws DataException;
+
+    /**
      * Get reference from value
      *
      * @return Referenced object

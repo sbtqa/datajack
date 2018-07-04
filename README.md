@@ -13,6 +13,7 @@ DataJack have two important think:
 * **AbstractDataObjectAdaptor** - interface, which using to work with different test data storage systems.   
 We have the following implementation:
   * [JSON-Adapter](https://github.com/sbtqa/datajack-json-adaptor)
+  * [Properties-Adapter](https://github.com/sbtqa/datajack-properties-adaptor)
   * [Mongo-Adapter](https://github.com/sbtqa/datajack-mongo-adaptor)
   * [Excel-Adapter](https://github.com/sbtqa/datajack-excel-adaptor)
 

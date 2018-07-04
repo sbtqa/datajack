@@ -9,7 +9,21 @@ import java.util.Map;
  */
 public class Stash {
 
-    private static final Map<String, Object> VAULT = new HashMap<>();
+    private static final ThreadLocal<Map<String, Object>> THREAD_VAULT = new ThreadLocal<>();
+
+    /**
+     * Thread-safety stash
+     *
+     * @return stash of current thread as a {@link java.util.Map} object
+     */
+    private static Map<String, Object> getThreadVault() {
+        Map<String, Object> vault = THREAD_VAULT.get();
+        if (vault == null) {
+            vault = new HashMap<>();
+            THREAD_VAULT.set(vault);
+        }
+        return vault;
+    }
 
     private Stash() {
         throw new IllegalAccessError("Utility class");
@@ -21,17 +35,17 @@ public class Stash {
      * @return stash as a {@link java.util.Map} object
      */
     public static Map<String, Object> asMap() {
-        return VAULT;
+        return getThreadVault();
     }
 
     /**
      * Puts value in stash
      *
-     * @param key the key as a {@link java.lang.String} object
+     * @param key   the key as a {@link java.lang.String} object
      * @param value Any object
      */
     public static void put(String key, Object value) {
-        VAULT.put(key, value);
+        getThreadVault().put(key, value);
     }
 
     /**
@@ -42,7 +56,7 @@ public class Stash {
      * @return an object found by specified key
      */
     public static <T> T getValue(String key) {
-        return (T) VAULT.get(key);
+        return (T) getThreadVault().get(key);
     }
 
     /**
@@ -53,14 +67,13 @@ public class Stash {
      * @return an object removed by specified key
      */
     public static <T> T remove(String key) {
-        return (T) VAULT.remove(key);
+        return (T) getThreadVault().remove(key);
     }
 
     /**
      * Clear stash
-     *
      */
     public static void clear() {
-        VAULT.clear();
+        getThreadVault().clear();
     }
 }

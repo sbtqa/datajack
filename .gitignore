@@ -1,5 +1,6 @@
-/.project
-/target/
-/nb-configuration.xml
+/**/.project
+/**/target/
+/**/*nb-configuration.xml
 /.idea/
-/datajack.iml
+**/*.iml
+*.iml

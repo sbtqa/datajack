@@ -9,7 +9,6 @@ package ru.sbtqa.tag.datajack.callback;
 public interface Callback<P extends Object, R extends Object> {
 
     /**
-     *
      * @param p Object to inject
      * @return callback result
      */

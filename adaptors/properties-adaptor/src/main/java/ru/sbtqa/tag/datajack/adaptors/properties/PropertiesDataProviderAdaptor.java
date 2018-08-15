@@ -1,63 +1,65 @@
 package ru.sbtqa.tag.datajack.adaptors.properties;
 
 import com.mongodb.BasicDBObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
+import ru.sbtqa.tag.datajack.TestDataProvider;
+import ru.sbtqa.tag.datajack.adaptors.json.JsonDataProviderAdaptor;
+import ru.sbtqa.tag.datajack.exceptions.CollectionNotfoundException;
+import ru.sbtqa.tag.datajack.exceptions.DataException;
+
 import java.io.File;
-import static java.io.File.separator;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
-import ru.sbtqa.tag.datajack.TestDataObject;
-import ru.sbtqa.tag.datajack.adaptors.json.JsonDataObjectAdaptor;
-import ru.sbtqa.tag.datajack.exceptions.CollectionNotfoundException;
-import ru.sbtqa.tag.datajack.exceptions.DataException;
 
-public class PropertiesDataObjectAdaptor extends JsonDataObjectAdaptor implements TestDataObject {
+import static java.io.File.separator;
 
-    private static final Logger LOG = LoggerFactory.getLogger(PropertiesDataObjectAdaptor.class);
+public class PropertiesDataProviderAdaptor extends JsonDataProviderAdaptor implements TestDataProvider {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PropertiesDataProviderAdaptor.class);
 
     /**
-     * Create PropertiesDataObjectAdaptor instance
+     * Create PropertiesDataProviderAdaptor instance
      *
      * @param testDataFolder path to data folder
      * @param collectionName properties file name
      * @throws DataException if file not found in testDataFolder
      */
-    public PropertiesDataObjectAdaptor(String testDataFolder, String collectionName) throws DataException {
+    public PropertiesDataProviderAdaptor(String testDataFolder, String collectionName) throws DataException {
         super(testDataFolder, collectionName, "properties");
     }
 
     /**
-     * Create PropertiesDataObjectAdaptor instance
+     * Create PropertiesDataProviderAdaptor instance
      *
      * @param testDataFolder path to data folder
      * @param collectionName properties file name
-     * @param extension custom file extension
+     * @param extension      custom file extension
      * @throws DataException if file not found in testDataFolder
      */
-    public PropertiesDataObjectAdaptor(String testDataFolder, String collectionName, String extension) throws DataException {
+    public PropertiesDataProviderAdaptor(String testDataFolder, String collectionName, String extension) throws DataException {
         super(testDataFolder, collectionName, extension);
     }
 
-    private PropertiesDataObjectAdaptor(String testDataFolder, BasicDBObject obj, String collectionName, String extension) {
+    private PropertiesDataProviderAdaptor(String testDataFolder, BasicDBObject obj, String collectionName, String extension) {
         super(testDataFolder, obj, collectionName, extension);
     }
 
-    private PropertiesDataObjectAdaptor(String testDataFolder, BasicDBObject obj, String collectionName, String way, String extension) {
+    private PropertiesDataProviderAdaptor(String testDataFolder, BasicDBObject obj, String collectionName, String way, String extension) {
         super(testDataFolder, obj, collectionName, way, extension);
     }
 
     @Override
-    protected <T extends JsonDataObjectAdaptor> T privateInit(String testDataFolder, BasicDBObject obj, String collectionName, String way) {
-        return (T) new PropertiesDataObjectAdaptor(testDataFolder, obj, collectionName, way, extension);
+    protected <T extends JsonDataProviderAdaptor> T privateInit(String testDataFolder, BasicDBObject obj, String collectionName, String way) {
+        return (T) new PropertiesDataProviderAdaptor(testDataFolder, obj, collectionName, way, extension);
     }
 
     @Override
-    protected <T extends JsonDataObjectAdaptor> T privateInit(String testDataFolder, BasicDBObject obj, String collectionName) {
-        return (T) new PropertiesDataObjectAdaptor(testDataFolder, obj, collectionName, extension);
+    protected <T extends JsonDataProviderAdaptor> T privateInit(String testDataFolder, BasicDBObject obj, String collectionName) {
+        return (T) new PropertiesDataProviderAdaptor(testDataFolder, obj, collectionName, extension);
     }
 
     @Override

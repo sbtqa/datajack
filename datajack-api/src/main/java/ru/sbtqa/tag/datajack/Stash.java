@@ -11,6 +11,10 @@ public class Stash {
 
     private static final ThreadLocal<Map<String, Object>> THREAD_VAULT = new ThreadLocal<>();
 
+    private Stash() {
+        throw new IllegalAccessError("Utility class");
+    }
+
     /**
      * Thread-safety stash
      *
@@ -23,10 +27,6 @@ public class Stash {
             THREAD_VAULT.set(vault);
         }
         return vault;
-    }
-
-    private Stash() {
-        throw new IllegalAccessError("Utility class");
     }
 
     /**

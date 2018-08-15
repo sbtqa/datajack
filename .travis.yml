@@ -2,36 +2,36 @@ language: java
 addons:
   sonarqube: true
 jdk:
-  - oraclejdk8
+- oraclejdk8
 before_install:
-  - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import; fi
-  - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; fi
+- if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import; fi
+- if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; fi
 install:
-  - mvn clean --settings .travis/settings.xml install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip -B -V
+- mvn clean --settings .travis/settings.xml install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip -B -V
 script:
-  - mvn org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar -Dsonar.login=$SONAR_TOKEN
+- mvn org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar -Dsonar.login=$SONAR_TOKEN
 deploy:
-  - provider: script
-    script: ".travis/deploy.sh"
-    skip_cleanup: true
-    on:
-      repo: sbtqa/datajack
-      branch: master
-      jdk: oraclejdk8
-  - provider: script
-    script: ".travis/deploy.sh"
-    skip_cleanup: true
-    on:
-      repo: sbtqa/datajack
-      tags: true
-      jdk: oraclejdk8
+- provider: script
+  script: ".travis/deploy.sh"
+  skip_cleanup: true
+  on:
+    repo: sbtqa/datajack
+    branch: master
+    jdk: oraclejdk8
+- provider: script
+  script: ".travis/deploy.sh"
+  skip_cleanup: true
+  on:
+    repo: sbtqa/datajack
+    tags: true
+    jdk: oraclejdk8
 notifications:
   email: false
   slack:
     rooms:
-      - secure: JtcfWEIa3NVm4MQPqlxIRXs8SozjsHK5RKA8e94ozTZr3Ec/mjcmKYjkQ1jdiqxisj+r7/mvPbOWLnBTKibIMO1zvszqJppc+OvfnCuC9ZXYua16Cci0nBSXccis0LsLGewXUv9w9sHBjrHtaspF27USPSIT0wPROtX5IUDoIcdwB75nnQWg2F8Q3QD4KYe2pkYX5NgbrB5R18PmZTjE8SSZBh7dl6hYekjarg6jZrbif2gVquR3OoZkgqm6HZEW1Lt63UkHAjsiWhH7ZnUpImV703RreeQ/ANqtzsbUWDf/JTU+l+lxcaTpRngDUirvlg8UEVOJ72ynlQDpwekDmUkWFN0vbalPEeo6mGTVrvI4LvrI7JLipQVar1awwQZ74tMNioq5rE7oEu9hApBgRwCOoB1eWL/KaNh1iusnhhhpa14hoqZeHJz6pf67vEjc9tSXsn18d8bH0o74Qw/HToaJar2n7FaJTst7aTMttXaeMsIFjcQ64TO3x6fBmKU5qS3wRu1jGJ9B4aO6NNm6AcO+rv38mE58c4/DOOB3TmQe0IUt6x5bnBa5EjafNLkD8dxnOJ4xTBqgBPS12DB+zWjW60iZ10QdYHHiXn8vl0aB2GwpiKeBfyMmwNSOYLbVLeDPMEvlLL5s2lN8f6nEUlZ/h0Nwux1gQ3g6rSSdxKo=
+    - secure: JtcfWEIa3NVm4MQPqlxIRXs8SozjsHK5RKA8e94ozTZr3Ec/mjcmKYjkQ1jdiqxisj+r7/mvPbOWLnBTKibIMO1zvszqJppc+OvfnCuC9ZXYua16Cci0nBSXccis0LsLGewXUv9w9sHBjrHtaspF27USPSIT0wPROtX5IUDoIcdwB75nnQWg2F8Q3QD4KYe2pkYX5NgbrB5R18PmZTjE8SSZBh7dl6hYekjarg6jZrbif2gVquR3OoZkgqm6HZEW1Lt63UkHAjsiWhH7ZnUpImV703RreeQ/ANqtzsbUWDf/JTU+l+lxcaTpRngDUirvlg8UEVOJ72ynlQDpwekDmUkWFN0vbalPEeo6mGTVrvI4LvrI7JLipQVar1awwQZ74tMNioq5rE7oEu9hApBgRwCOoB1eWL/KaNh1iusnhhhpa14hoqZeHJz6pf67vEjc9tSXsn18d8bH0o74Qw/HToaJar2n7FaJTst7aTMttXaeMsIFjcQ64TO3x6fBmKU5qS3wRu1jGJ9B4aO6NNm6AcO+rv38mE58c4/DOOB3TmQe0IUt6x5bnBa5EjafNLkD8dxnOJ4xTBqgBPS12DB+zWjW60iZ10QdYHHiXn8vl0aB2GwpiKeBfyMmwNSOYLbVLeDPMEvlLL5s2lN8f6nEUlZ/h0Nwux1gQ3g6rSSdxKo=
     template:
-      - "Build status: %{message}"
-      - "%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{commit_message}"
-      - "Change view : %{compare_url}"
-      - "Build details : %{build_url}"
+    - "Build status: %{message}"
+    - "%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{commit_message}"
+    - "Change view : %{compare_url}"
+    - "Build details : %{build_url}"

@@ -8,7 +8,7 @@ public class CallbackData {
     /**
      * Crate callback data
      *
-     * @param path use path as key to store cache if needed
+     * @param path   use path as key to store cache if needed
      * @param result string to generate by
      */
     public CallbackData(String path, String result) {

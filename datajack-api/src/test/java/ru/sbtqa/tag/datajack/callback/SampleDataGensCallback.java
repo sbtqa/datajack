@@ -1,11 +1,11 @@
 package ru.sbtqa.tag.datajack.callback;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static ru.sbtqa.tag.datajack.callback.SampleDataCache.getCache;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Default sbt callback. Works with sbt-datagens and Init.stash as cache
@@ -14,33 +14,33 @@ import java.util.Map;
  */
 public class SampleDataGensCallback implements GeneratorCallback {
 
-  @Override
-  public Object call(CallbackData callbackData) {
+    @Override
+    public Object call(CallbackData callbackData) {
 
-    Map<String, Object> cache = getCache();
-    String cacheKey = callbackData.getPath();
-    String result = callbackData.getResult();
+        Map<String, Object> cache = getCache();
+        String cacheKey = callbackData.getPath();
+        String result = callbackData.getResult();
 
-    if (result.startsWith("generate:")) {
-      if (!cache.containsKey("testDataCache")) {
-        cache.put("testDataCache", new HashMap<>());
-      } else if (((Map) cache.get("testDataCache")).containsKey(cacheKey)) {
-        return ((Map) cache.get("testDataCache")).get(cacheKey);
-      }
+        if (result.startsWith("generate:")) {
+            if (!cache.containsKey("testDataCache")) {
+                cache.put("testDataCache", new HashMap<>());
+            } else if (((Map) cache.get("testDataCache")).containsKey(cacheKey)) {
+                return ((Map) cache.get("testDataCache")).get(cacheKey);
+            }
 
-      String genResult = null;
+            String genResult = null;
 
-      try {
-        genResult = valueOf(currentTimeMillis());
-      } catch (Exception ex) {
-        return ex;
-      }
+            try {
+                genResult = valueOf(currentTimeMillis());
+            } catch (Exception ex) {
+                return ex;
+            }
 
-      ((Map) cache.get("testDataCache")).put(cacheKey, genResult);
-      return genResult;
+            ((Map) cache.get("testDataCache")).put(cacheKey, genResult);
+            return genResult;
 
-    } else {
-      return result;
+        } else {
+            return result;
+        }
     }
-  }
 }

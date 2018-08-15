@@ -1,10 +1,6 @@
 package ru.sbtqa.tag.datajack.adaptors;
 
 import com.mongodb.BasicDBObject;
-import java.io.File;
-import java.io.IOException;
-import static java.lang.String.format;
-import java.util.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -16,22 +12,25 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bson.BasicBSONObject;
-import ru.sbtqa.tag.datajack.TestDataObject;
-import ru.sbtqa.tag.datajack.callback.CallbackData;
-import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
-import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesExeption;
-import ru.sbtqa.tag.datajack.exceptions.DataException;
-import ru.sbtqa.tag.datajack.exceptions.DataParseException;
-import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;
-import ru.sbtqa.tag.datajack.exceptions.FileNotFoundException;
-import ru.sbtqa.tag.datajack.exceptions.GeneratorException;
-import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.sbtqa.tag.datajack.TestDataProvider;
+import ru.sbtqa.tag.datajack.callback.CallbackData;
+import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
+import ru.sbtqa.tag.datajack.exceptions.*;
 
-public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements TestDataObject {
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExcelDataObjectAdaptor.class);
+import static java.lang.String.format;
+
+public class ExcelDataProviderAdaptor extends AbstractDataObjectAdaptor implements TestDataProvider {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ExcelDataProviderAdaptor.class);
     private static final String SHEET_NAME_TPL = "sheetName";
     private final XSSFWorkbook workBook;
     private final String sheetName;
@@ -43,10 +42,10 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
      * sheet
      *
      * @param dataFilePath path to an Excel file
-     * @param sheetName sheet name
+     * @param sheetName    sheet name
      * @throws DataException if file not found
      */
-    public ExcelDataObjectAdaptor(String dataFilePath, String sheetName) throws DataException {
+    public ExcelDataProviderAdaptor(String dataFilePath, String sheetName) throws DataException {
         File file = FileUtils.getFile(dataFilePath + ".xlsx");
         if (null == file) {
             throw new FileNotFoundException(format("Could not find data file: '%s'", dataFilePath));
@@ -62,15 +61,15 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
         this.evaluator = workBook.getCreationHelper().createFormulaEvaluator();
     }
 
-    private ExcelDataObjectAdaptor(String dataFileName, XSSFWorkbook workBook, String sheetName) {
+    private ExcelDataProviderAdaptor(String dataFileName, XSSFWorkbook workBook, String sheetName) {
         this.dataFileName = dataFileName;
         this.workBook = workBook;
         this.sheetName = sheetName;
         this.basicObj = parseCollection();
     }
 
-    private ExcelDataObjectAdaptor(String dataFileName, XSSFWorkbook workBook,
-            BasicDBObject obj, String sheetName, String way) {
+    private ExcelDataProviderAdaptor(String dataFileName, XSSFWorkbook workBook,
+                                     BasicDBObject obj, String sheetName, String way) {
         this.dataFileName = dataFileName;
         this.workBook = workBook;
         this.basicObj = obj;
@@ -79,9 +78,9 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
     }
 
     @Override
-    public TestDataObject get(String key) throws DataException {
+    public TestDataProvider get(String key) throws DataException {
         this.way = key;
-        ExcelDataObjectAdaptor tdo;
+        ExcelDataProviderAdaptor tdo;
 
         if (key.contains(".")) {
             String[] keys = key.split("[.]");
@@ -92,7 +91,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
                 if (!(basicO.get(partialKey) instanceof BasicDBObject)) {
                     if (basicO.get(partialKey) instanceof String && !partialBuilt.toString().equals(key)) {
                         throw new FieldNotFoundException(format("Field '%s' in '%s' object on sheet '%s' "
-                                + "is not an object. Cannot find any nested fields inside it",
+                                        + "is not an object. Cannot find any nested fields inside it",
                                 partialKey, partialBuilt.toString().replace("." + partialKey, ""), this.sheetName));
                     }
                     if (null == basicO.get(partialKey)) {
@@ -105,7 +104,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
                 partialBuilt.append(".");
             }
 
-            tdo = new ExcelDataObjectAdaptor(this.dataFileName, this.workBook, basicO, this.sheetName, this.way);
+            tdo = new ExcelDataProviderAdaptor(this.dataFileName, this.workBook, basicO, this.sheetName, this.way);
             tdo.applyGenerator(this.callback);
             tdo.setRootObj(this.rootObj, this.sheetName + "." + key);
             return tdo;
@@ -118,7 +117,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
         if (!(result instanceof BasicDBObject)) {
             result = new BasicDBObject(key, result);
         }
-        tdo = new ExcelDataObjectAdaptor(this.dataFileName, this.workBook, (BasicDBObject) result, this.sheetName, this.way);
+        tdo = new ExcelDataProviderAdaptor(this.dataFileName, this.workBook, (BasicDBObject) result, this.sheetName, this.way);
         tdo.applyGenerator(this.callback);
 
         String rootObjValue;
@@ -132,8 +131,8 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
     }
 
     @Override
-    public ExcelDataObjectAdaptor fromCollection(String collName) throws DataException {
-        ExcelDataObjectAdaptor newObj = new ExcelDataObjectAdaptor(this.dataFileName, this.workBook, collName);
+    public ExcelDataProviderAdaptor fromCollection(String collName) throws DataException {
+        ExcelDataProviderAdaptor newObj = new ExcelDataProviderAdaptor(this.dataFileName, this.workBook, collName);
         newObj.applyGenerator(this.callback);
         return newObj;
     }
@@ -171,7 +170,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
     }
 
     @Override
-    public TestDataObject getReference() throws DataException {
+    public TestDataProvider getReference() throws DataException {
         if (null != this.basicObj.get(VALUE_TPL) && !(this.basicObj.get(VALUE_TPL) instanceof String)
                 && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField(SHEET_NAME_TPL)
                 && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField("path")) {
@@ -186,7 +185,7 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
             }
             String referencedCollection = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString(SHEET_NAME_TPL);
             this.path = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("path");
-            ExcelDataObjectAdaptor reference = this.fromCollection(referencedCollection);
+            ExcelDataProviderAdaptor reference = this.fromCollection(referencedCollection);
             reference.setRootObj(this.rootObj, referencedCollection + "." + this.path);
             return reference.get(this.path);
         } else {
@@ -245,15 +244,15 @@ public class ExcelDataObjectAdaptor extends AbstractDataObjectAdaptor implements
                     currentObjName = row.cellIterator().next().getStringCellValue().trim();
                     resultObj.append(currentObjName, getObjectDeclaration(row));
                 } else // parse a row and append it to object
-                if (isSimpleKeyValueMap(row)) {
-                    Map<String, String> map = getSimpleKeyValueMap(row);
-                    ((BasicDBObject) resultObj.get(currentObjName))
-                            .append(map.keySet().iterator().next(), map.get(map.keySet().iterator().next()));
-                } else {
-                    Map<String, BasicDBObject> map = getObjectMappedToName(row);
-                    ((BasicDBObject) resultObj.get(currentObjName))
-                            .append(map.keySet().iterator().next(), map.get(map.keySet().iterator().next()));
-                }
+                    if (isSimpleKeyValueMap(row)) {
+                        Map<String, String> map = getSimpleKeyValueMap(row);
+                        ((BasicDBObject) resultObj.get(currentObjName))
+                                .append(map.keySet().iterator().next(), map.get(map.keySet().iterator().next()));
+                    } else {
+                        Map<String, BasicDBObject> map = getObjectMappedToName(row);
+                        ((BasicDBObject) resultObj.get(currentObjName))
+                                .append(map.keySet().iterator().next(), map.get(map.keySet().iterator().next()));
+                    }
             } else if (isObjectDeclarator(row)) {
                 currentObjName = row.cellIterator().next().getStringCellValue().trim();
                 resultObj.append(currentObjName, getObjectDeclaration(row));

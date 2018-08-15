@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import ru.sbtqa.tag.datajack.TestDataObject;
+import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.callback.SampleDataGensCallback;
 import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesExeption;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
@@ -22,46 +22,44 @@ import static org.junit.rules.ExpectedException.none;
 import static ru.sbtqa.tag.datajack.callback.SampleDataCache.getCache;
 
 /**
- * 
  * Created by sbt-anikeev-ae on 30.08.2016.
  */
 public class ExcellDataTest {
 
     private final String excellDataPath = "src/test/resources/excell/TestData";
     private final String collectionName = "Tests";
+    @Rule
+    public ExpectedException expectDataExceptions = none();
 
     @Before
     public void setUp() {
         getCache().clear();
     }
 
-    @Rule
-    public ExpectedException expectDataExceptions = none();
-
     @Test
     public void isReferenceTest() throws DataException, IOException, InvalidFormatException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         assertTrue("Value is not reference",
                 tdo.get("Common.linkWithValue").isReference());
     }
-    
+
     @Test
     public void getReferenceTest() throws DataException, IOException, InvalidFormatException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         assertEquals("value",
                 tdo.get("Common.linkWithValue").getValue());
     }
 
     @Test
     public void valuePathTest() throws DataException, IOException, InvalidFormatException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         assertEquals("justSomeTestId",
                 tdo.get("Common").get("id").getValue());
     }
 
     @Test
     public void getFromAnotherCollectionTest() throws DataException, IOException, InvalidFormatException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         assertEquals("HELLO WORLD",
                 tdo.fromCollection("DataBlocks").
                         get("AnotherObject").get("anotherValue").getValue());
@@ -70,27 +68,27 @@ public class ExcellDataTest {
     @Test
     public void getNotValuedValueTest() throws DataException, IOException, InvalidFormatException {
         // TODO: 02.09.2016 is that r'ly actual for xls? Looks like not, cus all values there are strings
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         assertEquals("20.91",
                 tdo.get("Common.price").getValue());
     }
 
     @Test
     public void failWithWrongPath() throws DataException, IOException, InvalidFormatException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         String wrongPath = "Common.password.paww";
         expectDataExceptions
                 .expect(FieldNotFoundException.class
                 );
         expectDataExceptions.expectMessage(format("Field 'password' in 'Common' object on sheet '%s' " +
-                        "is not an object. Cannot find any nested fields inside it", collectionName));
+                "is not an object. Cannot find any nested fields inside it", collectionName));
 
         tdo.get(wrongPath).getValue();
     }
 
     @Test
     public void failWithWrongGetGetPath() throws DataException, IOException, InvalidFormatException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         String wrongPath = "Common.password.paww";
         expectDataExceptions
                 .expect(FieldNotFoundException.class);
@@ -101,7 +99,7 @@ public class ExcellDataTest {
     @Test
     public void failWithCyclicReference() throws DataException, IOException, InvalidFormatException {
         String cyclicPath = "Common.cyclic";
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         String cyclicObject = "{ \"value\" : { \"sheetName\" : \"DataBlocks\", "
                 + "\"path\" : \"AnotherObject.cyclicRef\" }";
         expectDataExceptions
@@ -113,7 +111,7 @@ public class ExcellDataTest {
 
     @Test
     public void genDataSameCollectionTest() throws DataException, IOException, InvalidFormatException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         tdo.applyGenerator(SampleDataGensCallback.class);
         String genGenOrigin = tdo.get("Uncommon.reftestGen").getValue();
         assertFalse("Generator is not applied", genGenOrigin.contains("generate:"));
@@ -124,7 +122,7 @@ public class ExcellDataTest {
 
     @Test
     public void genDataDifferentCollections() throws DataException, IOException, InvalidFormatException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         tdo.applyGenerator(SampleDataGensCallback.class);
         String genGenOrgigin = tdo.get("Common.gendata").getValue();
         assertFalse("Generator is not applied", genGenOrgigin.contains("generate:"));
@@ -133,7 +131,7 @@ public class ExcellDataTest {
 
     @Test
     public void genDataDifferentCollectionsReference() throws DataException, IOException, InvalidFormatException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         tdo.applyGenerator(SampleDataGensCallback.class);
         String genGenOrgigin = tdo.get("Common.gendata").getValue();
         assertFalse("Generator is not applied", genGenOrgigin.contains("generate:"));
@@ -145,8 +143,8 @@ public class ExcellDataTest {
 
     @Test
     public void getRefAsObject() throws DataException, IOException, InvalidFormatException {
-        TestDataObject originalTdo = new ExcelDataObjectAdaptor(this.excellDataPath, "DataBlocks").get("NewObject");
-        TestDataObject referencedTdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName).
+        TestDataProvider originalTdo = new ExcelDataProviderAdaptor(this.excellDataPath, "DataBlocks").get("NewObject");
+        TestDataProvider referencedTdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName).
                 get("Common.ref object data").getReference();
         assertEquals(originalTdo.toString(), referencedTdo.toString());
     }
@@ -154,7 +152,7 @@ public class ExcellDataTest {
     @Test
     public void failRefAsObject() throws DataException, IOException, InvalidFormatException {
         String path = "Common.id";
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         expectDataExceptions.expect(ReferenceException.class);
         expectDataExceptions.expectMessage(String.format("There is no reference in '%s.%s'. Collection '%s'",
                 collectionName, path, collectionName));
@@ -163,8 +161,8 @@ public class ExcellDataTest {
 
     @Test
     public void generatorCacheDiffFiles() throws DataException, IOException, InvalidFormatException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, this.collectionName);
-        TestDataObject tdoNew = new ExcelDataObjectAdaptor("src/test/resources/excell/TestDataNew", this.collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, this.collectionName);
+        TestDataProvider tdoNew = new ExcelDataProviderAdaptor("src/test/resources/excell/TestDataNew", this.collectionName);
         tdo.applyGenerator(SampleDataGensCallback.class);
         tdoNew.applyGenerator(SampleDataGensCallback.class);
         assertNotEquals(tdo.get("Common.gendata").getValue(), tdoNew.get("Common.gendata").getValue());
@@ -172,17 +170,17 @@ public class ExcellDataTest {
 
     @Test
     public void toMapTest() throws DataException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         Object supposedToBeMap = tdo.toMap();
 
         assertTrue("Type of return value toMap() is not Map", supposedToBeMap instanceof Map);
         assertNotNull("Map object is null", supposedToBeMap != null);
         assertFalse("Map is empty", ((Map) supposedToBeMap).isEmpty());
-}
+    }
 
     @Test
     public void getKeySetTest() throws DataException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         Object supposedToBeSet = tdo.getKeySet();
 
         assertTrue("Type of return value getKeySet() is not Set", supposedToBeSet instanceof Set);
@@ -192,7 +190,7 @@ public class ExcellDataTest {
 
     @Test
     public void getValuesTest() throws DataException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName);
         Object rawValues = tdo.getValues();
 
         assertTrue("Type of return value getValues() is not Collection", rawValues instanceof Collection);
@@ -202,7 +200,7 @@ public class ExcellDataTest {
 
     @Test
     public void getStringValuesTest() throws DataException {
-        TestDataObject tdo = new ExcelDataObjectAdaptor(this.excellDataPath, collectionName).get("MapTests");
+        TestDataProvider tdo = new ExcelDataProviderAdaptor(this.excellDataPath, collectionName).get("MapTests");
         Object stringValues = tdo.getStringValues();
 
         assertTrue("Type of return value getStringValues() is not List", stringValues instanceof List);

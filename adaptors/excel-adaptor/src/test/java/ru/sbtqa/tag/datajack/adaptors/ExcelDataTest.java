@@ -21,10 +21,7 @@ import static org.junit.Assert.*;
 import static org.junit.rules.ExpectedException.none;
 import static ru.sbtqa.tag.datajack.callback.SampleDataCache.getCache;
 
-/**
- * Created by sbt-anikeev-ae on 30.08.2016.
- */
-public class ExcellDataTest {
+public class ExcelDataTest {
 
     private final String excellDataPath = "src/test/resources/excell/TestData";
     private final String collectionName = "Tests";

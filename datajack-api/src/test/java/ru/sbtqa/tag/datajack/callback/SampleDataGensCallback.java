@@ -10,7 +10,6 @@ import static ru.sbtqa.tag.datajack.callback.SampleDataCache.getCache;
 /**
  * Default sbt callback. Works with sbt-datagens and Init.stash as cache
  *
- * @author Viktor Sidochenko <viktor.sidochenko@gmail.com>
  */
 public class SampleDataGensCallback implements GeneratorCallback {
 

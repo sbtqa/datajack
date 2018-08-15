@@ -15,7 +15,7 @@
   <artifactId>properties-adaptor</artifactId>
   <name>properties-adaptor</name>
   <packaging>jar</packaging>
-  <description>Datajack adaptor to work with json files as data source</description>
+  <description>Datajack adaptor to work with properties files as data source</description>
 
   <dependencies>
     <dependency>

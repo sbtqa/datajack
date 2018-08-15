@@ -37,7 +37,7 @@ public class PropertiesDataTest {
     @Test
     public void differentExtensionTest() throws DataException {
         String collectionName = "Config";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName, "conf");
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName, "conf");
 
         assertEquals("123qwe",
                 tdo.get("Common.password2").getValue());
@@ -46,7 +46,7 @@ public class PropertiesDataTest {
     @Test
     public void simpleArrayTest() throws DataException {
         String collectionName = "Tests";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         assertEquals("a",
                 tdo.get("array[0]").getValue());
@@ -55,7 +55,7 @@ public class PropertiesDataTest {
     @Test
     public void arrayTest() throws DataException {
         String collectionName = "Tests";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         assertEquals("1",
                 tdo.get("array[1].b").getValue());
@@ -64,7 +64,7 @@ public class PropertiesDataTest {
     @Test
     public void deepArrayTest() throws DataException {
         String collectionName = "Tests";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         assertEquals("1",
                 tdo.get("array[2].b[0].b.c").getValue());
@@ -73,7 +73,7 @@ public class PropertiesDataTest {
     @Test
     public void arrayReferenceTest() throws DataException {
         String collectionName = "Tests";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         assertEquals("123qwe",
                 tdo.get("array[3].ref").getValue());
@@ -82,7 +82,7 @@ public class PropertiesDataTest {
     @Test
     public void arrayGeneratorTest() throws DataException {
         String collectionName = "Tests";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         tdo.applyGenerator(SampleDataGensCallback.class);
 
@@ -95,7 +95,7 @@ public class PropertiesDataTest {
     @Test
     public void getReferenceTest() throws DataException {
         String collectionName = "DataBlocks";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         assertEquals("123qwe",
                 tdo.get("Common.password2").getValue());
@@ -104,7 +104,7 @@ public class PropertiesDataTest {
     @Test
     public void isReferenceTest() throws DataException {
         String collectionName = "DataBlocks";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         assertTrue("This isn't reference",
                 tdo.get("Common.password2").isReference());
@@ -113,7 +113,7 @@ public class PropertiesDataTest {
     @Test
     public void valuePathTest() throws DataException {
         String collectionName = "DataBlocks";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         assertEquals("Params Group 1.password",
                 tdo.get("Common").get("password2.value.path").getValue());
@@ -122,7 +122,7 @@ public class PropertiesDataTest {
     @Test
     public void getFromAnotherCollectionTest() throws DataException {
         String collectionName = "DataBlocks";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         assertEquals("123",
                 tdo.fromCollection("Tests").
@@ -132,7 +132,7 @@ public class PropertiesDataTest {
     @Test
     public void getNotValuedValueTest() throws DataException {
         String collectionName = "DataBlocks";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         assertEquals("20.91",
                 tdo.get("Common.price").getValue());
@@ -141,7 +141,7 @@ public class PropertiesDataTest {
     @Test
     public void failWithWrongPath() throws DataException {
         String collectionName = "DataBlocks";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
         String wrongPath = "Common.password.paww";
 
         expectDataExceptions
@@ -156,7 +156,7 @@ public class PropertiesDataTest {
     @Test
     public void failWithWrongGetGetPath() throws DataException {
         String collection = "DataBlocks";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collection);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collection);
 
         expectDataExceptions
                 .expect(FieldNotFoundException.class);
@@ -170,7 +170,7 @@ public class PropertiesDataTest {
     public void failWithCyclicReference() throws DataException {
         String collectionName = "DataBlocks";
         String cyclicPath = "Common.cyclic";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
         String cyclicObject = format("{ \"comment\" : \"Cyclic\", \"value\" : { \"path\" : \"Common.cyclic\", \"collection\" : \"%s\" } }", collectionName);
 
         expectDataExceptions
@@ -183,7 +183,7 @@ public class PropertiesDataTest {
     @Test
     public void genDataSameCollectionTest() throws DataException {
         String collectionName = "DataBlocks";
-        PropertiesDataProviderAdaptor tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        PropertiesDataAdaptor tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         tdo.applyGenerator(SampleDataGensCallback.class);
 
@@ -200,7 +200,7 @@ public class PropertiesDataTest {
     public void genDataDifferentCollections() throws DataException {
         String collectionName = "Tests";
 
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         tdo.applyGenerator(SampleDataGensCallback.class);
 
@@ -214,7 +214,7 @@ public class PropertiesDataTest {
     @Test
     public void genDataDifferentCollectionsReference() throws DataException {
         String collectionName = "DataBlocks";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collectionName);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collectionName);
 
         tdo.applyGenerator(SampleDataGensCallback.class);
 
@@ -230,10 +230,10 @@ public class PropertiesDataTest {
 
     @Test
     public void getRefAsObject() throws DataException {
-        TestDataProvider originalTdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, "DataBlocks");
+        TestDataProvider originalTdo = new PropertiesDataAdaptor(this.propertiesDataPath, "DataBlocks");
         String original = originalTdo.get("Common").toString();
 
-        TestDataProvider referencedTdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, "Tests");
+        TestDataProvider referencedTdo = new PropertiesDataAdaptor(this.propertiesDataPath, "Tests");
         String referenced = referencedTdo.get("Common.ref object data").getReference().toString();
 
         assertEquals(original, referenced);
@@ -243,7 +243,7 @@ public class PropertiesDataTest {
     public void failRefAsObject() throws DataException {
         String collection = "DataBlocks";
         String path = "testId";
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, collection);
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, collection);
 
         expectDataExceptions.expect(ReferenceException.class);
         expectDataExceptions.expectMessage(String.format("There is no reference in \"%s.%s\". Collection \"%s\"",
@@ -254,7 +254,7 @@ public class PropertiesDataTest {
 
     @Test
     public void toMapTest() throws DataException {
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, "DataBlocks");
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, "DataBlocks");
         Object supposedToBeMap = tdo.toMap();
 
         assertTrue("Type of return value toMap() is not Map", supposedToBeMap instanceof Map);
@@ -264,7 +264,7 @@ public class PropertiesDataTest {
 
     @Test
     public void getKeySetTest() throws DataException {
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, "DataBlocks");
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, "DataBlocks");
         Object supposedToBeSet = tdo.getKeySet();
 
         assertTrue("Type of return value getKeySet() is not Set", supposedToBeSet instanceof Set);
@@ -274,7 +274,7 @@ public class PropertiesDataTest {
 
     @Test
     public void getValuesTest() throws DataException {
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, "DataBlocks");
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, "DataBlocks");
         Object rawValues = tdo.getValues();
 
         assertTrue("Type of return value getValues() is not Collection", rawValues instanceof Collection);
@@ -284,7 +284,7 @@ public class PropertiesDataTest {
 
     @Test
     public void getStringValuesTest() throws DataException {
-        TestDataProvider tdo = new PropertiesDataProviderAdaptor(this.propertiesDataPath, "DataBlocks").get("MapTests");
+        TestDataProvider tdo = new PropertiesDataAdaptor(this.propertiesDataPath, "DataBlocks").get("MapTests");
         Object stringValues = tdo.getStringValues();
 
         assertTrue("Type of return value getStringValues() is not List", stringValues instanceof List);

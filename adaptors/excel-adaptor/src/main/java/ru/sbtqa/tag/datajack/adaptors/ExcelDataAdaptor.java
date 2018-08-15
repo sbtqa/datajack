@@ -28,9 +28,9 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
-public class ExcelDataProviderAdaptor extends AbstractDataObjectAdaptor implements TestDataProvider {
+public class ExcelDataAdaptor extends AbstractDataObjectAdaptor implements TestDataProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExcelDataProviderAdaptor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ExcelDataAdaptor.class);
     private static final String SHEET_NAME_TPL = "sheetName";
     private final XSSFWorkbook workBook;
     private final String sheetName;
@@ -45,7 +45,7 @@ public class ExcelDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
      * @param sheetName    sheet name
      * @throws DataException if file not found
      */
-    public ExcelDataProviderAdaptor(String dataFilePath, String sheetName) throws DataException {
+    public ExcelDataAdaptor(String dataFilePath, String sheetName) throws DataException {
         File file = FileUtils.getFile(dataFilePath + ".xlsx");
         if (null == file) {
             throw new FileNotFoundException(format("Could not find data file: '%s'", dataFilePath));
@@ -61,15 +61,15 @@ public class ExcelDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
         this.evaluator = workBook.getCreationHelper().createFormulaEvaluator();
     }
 
-    private ExcelDataProviderAdaptor(String dataFileName, XSSFWorkbook workBook, String sheetName) {
+    private ExcelDataAdaptor(String dataFileName, XSSFWorkbook workBook, String sheetName) {
         this.dataFileName = dataFileName;
         this.workBook = workBook;
         this.sheetName = sheetName;
         this.basicObj = parseCollection();
     }
 
-    private ExcelDataProviderAdaptor(String dataFileName, XSSFWorkbook workBook,
-                                     BasicDBObject obj, String sheetName, String way) {
+    private ExcelDataAdaptor(String dataFileName, XSSFWorkbook workBook,
+                             BasicDBObject obj, String sheetName, String way) {
         this.dataFileName = dataFileName;
         this.workBook = workBook;
         this.basicObj = obj;
@@ -80,7 +80,7 @@ public class ExcelDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
     @Override
     public TestDataProvider get(String key) throws DataException {
         this.way = key;
-        ExcelDataProviderAdaptor tdo;
+        ExcelDataAdaptor tdo;
 
         if (key.contains(".")) {
             String[] keys = key.split("[.]");
@@ -104,7 +104,7 @@ public class ExcelDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
                 partialBuilt.append(".");
             }
 
-            tdo = new ExcelDataProviderAdaptor(this.dataFileName, this.workBook, basicO, this.sheetName, this.way);
+            tdo = new ExcelDataAdaptor(this.dataFileName, this.workBook, basicO, this.sheetName, this.way);
             tdo.applyGenerator(this.callback);
             tdo.setRootObj(this.rootObj, this.sheetName + "." + key);
             return tdo;
@@ -117,7 +117,7 @@ public class ExcelDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
         if (!(result instanceof BasicDBObject)) {
             result = new BasicDBObject(key, result);
         }
-        tdo = new ExcelDataProviderAdaptor(this.dataFileName, this.workBook, (BasicDBObject) result, this.sheetName, this.way);
+        tdo = new ExcelDataAdaptor(this.dataFileName, this.workBook, (BasicDBObject) result, this.sheetName, this.way);
         tdo.applyGenerator(this.callback);
 
         String rootObjValue;
@@ -131,8 +131,8 @@ public class ExcelDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
     }
 
     @Override
-    public ExcelDataProviderAdaptor fromCollection(String collName) throws DataException {
-        ExcelDataProviderAdaptor newObj = new ExcelDataProviderAdaptor(this.dataFileName, this.workBook, collName);
+    public ExcelDataAdaptor fromCollection(String collName) throws DataException {
+        ExcelDataAdaptor newObj = new ExcelDataAdaptor(this.dataFileName, this.workBook, collName);
         newObj.applyGenerator(this.callback);
         return newObj;
     }
@@ -185,7 +185,7 @@ public class ExcelDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
             }
             String referencedCollection = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString(SHEET_NAME_TPL);
             this.path = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("path");
-            ExcelDataProviderAdaptor reference = this.fromCollection(referencedCollection);
+            ExcelDataAdaptor reference = this.fromCollection(referencedCollection);
             reference.setRootObj(this.rootObj, referencedCollection + "." + this.path);
             return reference.get(this.path);
         } else {

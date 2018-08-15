@@ -15,9 +15,9 @@ import static com.mongodb.BasicDBObject.parse;
 import static com.mongodb.QueryBuilder.start;
 import static java.lang.String.format;
 
-public class MongoDataProviderAdaptor extends AbstractDataObjectAdaptor implements TestDataProvider {
+public class MongoDataAdaptor extends AbstractDataObjectAdaptor implements TestDataProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MongoDataProviderAdaptor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MongoDataAdaptor.class);
     private static final String REF_ID_TPL = "refId";
     private final DB db;
     private DBCollection coll;
@@ -29,7 +29,7 @@ public class MongoDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
      * @param coll Collection
      * @throws DataException if no collection or its empty
      */
-    public MongoDataProviderAdaptor(DB db, String coll) throws DataException {
+    public MongoDataAdaptor(DB db, String coll) throws DataException {
         this.db = db;
         this.coll = this.db.getCollection(coll);
         if (this.coll.count() == 0) {
@@ -39,15 +39,15 @@ public class MongoDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
 
     }
 
-    private MongoDataProviderAdaptor(DB db, BasicDBObject obj, String way) {
+    private MongoDataAdaptor(DB db, BasicDBObject obj, String way) {
         this.db = db;
         this.basicObj = obj;
         this.way = way;
     }
 
     @Override
-    public MongoDataProviderAdaptor fromCollection(String collectionName) throws DataException {
-        MongoDataProviderAdaptor tdo = new MongoDataProviderAdaptor(this.db, collectionName);
+    public MongoDataAdaptor fromCollection(String collectionName) throws DataException {
+        MongoDataAdaptor tdo = new MongoDataAdaptor(this.db, collectionName);
         tdo.applyGenerator(this.callback);
         return tdo;
 
@@ -59,10 +59,10 @@ public class MongoDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
      * @return test data object
      * @throws DataException if no collection or its empty
      */
-    public MongoDataProviderAdaptor fromCollection(String collectionName, String refId) throws DataException {
+    public MongoDataAdaptor fromCollection(String collectionName, String refId) throws DataException {
         this.coll = db.getCollection(collectionName);
         DBObject referenceDocument = this.coll.findOne(new BasicDBObject("_id", new ObjectId(refId)));
-        MongoDataProviderAdaptor tdo = new MongoDataProviderAdaptor(this.db, collectionName);
+        MongoDataAdaptor tdo = new MongoDataAdaptor(this.db, collectionName);
         tdo.basicObj = (BasicDBObject) referenceDocument;
         tdo.path = refId + "." + collectionName;
         tdo.applyGenerator(this.callback);
@@ -71,10 +71,10 @@ public class MongoDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
     }
 
     @Override
-    public MongoDataProviderAdaptor get(String key) throws DataException {
+    public MongoDataAdaptor get(String key) throws DataException {
         this.way = key;
         String documentId = "HERE IS MUST BE ID";
-        MongoDataProviderAdaptor tdo;
+        MongoDataAdaptor tdo;
         if (this.basicObj == null) {
 
             try (DBCursor cursor = coll.find(start(key).exists(true).get()).limit(1).sort((DBObject) parse("{$natural:-1}"))) {
@@ -97,7 +97,7 @@ public class MongoDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
                 basicO = (BasicDBObject) basicO.get(partialKey);
             }
 
-            tdo = new MongoDataProviderAdaptor(this.db, basicO, this.way);
+            tdo = new MongoDataAdaptor(this.db, basicO, this.way);
 
             if (this.path == null || (this.coll != null && this.path.equals(this.coll.getName()))) {
                 this.path = documentId + "." + this.coll.getName();
@@ -118,7 +118,7 @@ public class MongoDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
             result = new BasicDBObject(key, result);
         }
 
-        tdo = new MongoDataProviderAdaptor(this.db, (BasicDBObject) result, this.way);
+        tdo = new MongoDataAdaptor(this.db, (BasicDBObject) result, this.way);
 
         String rootObjValue;
         if (this.path != null) {
@@ -202,7 +202,7 @@ public class MongoDataProviderAdaptor extends AbstractDataObjectAdaptor implemen
             }
             String referencedCollection = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString(COLLECTION_TPL);
             this.path = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("path");
-            MongoDataProviderAdaptor reference;
+            MongoDataAdaptor reference;
             if (((BSONObject) this.basicObj.get(VALUE_TPL)).containsField(REF_ID_TPL)) {
                 String refId = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString(REF_ID_TPL);
                 reference = this.fromCollection(referencedCollection, refId);

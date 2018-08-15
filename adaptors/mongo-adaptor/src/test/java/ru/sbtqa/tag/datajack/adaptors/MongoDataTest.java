@@ -44,28 +44,28 @@ public class MongoDataTest {
 
     @Test
     public void getReference() throws DataException {
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, "DataBlocks");
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, "DataBlocks");
         assertEquals("123qwe",
                 tdo.get("Common.password2").getValue());
     }
 
     @Test
     public void isReference() throws DataException {
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, "DataBlocks");
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, "DataBlocks");
         assertTrue("Value is not reference",
                 tdo.get("Common.password2").isReference());
     }
 
     @Test
     public void valuePath() throws DataException {
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, "DataBlocks");
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, "DataBlocks");
         assertEquals("Params Group 1.password",
                 tdo.get("Common").get("password2.value.path").getValue());
     }
 
     @Test
     public void getFromAnotherCollection() throws DataException {
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, "DataBlocks");
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, "DataBlocks");
         assertEquals("123",
                 tdo.fromCollection("Tests").
                         get("dataBlocks").get("Common").get("password").getValue());
@@ -73,7 +73,7 @@ public class MongoDataTest {
 
     @Test
     public void getFromAnotherCollectionWithRefId() throws DataException {
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, "DataBlocks");
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, "DataBlocks");
         assertEquals("@234234",
                 tdo.fromCollection("Tests").
                         get("Common").get("ref data").getValue());
@@ -81,7 +81,7 @@ public class MongoDataTest {
 
     @Test
     public void getNotValuedValue() throws DataException {
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, "DataBlocks");
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, "DataBlocks");
         assertEquals("20.91",
                 tdo.get("Common.price").getValue());
     }
@@ -94,13 +94,13 @@ public class MongoDataTest {
         expectDataExceptions.expectMessage(format("There is no \"%s\" collection or it's empty",
                 wrongCollection));
 
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, wrongCollection);
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, wrongCollection);
     }
 
     @Test
     public void failWithWrongPath() throws DataException {
         String collection = "DataBlocks";
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, collection);
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, collection);
         String wrongPath = "Common.password.paww";
         expectDataExceptions
                 .expect(FieldNotFoundException.class);
@@ -113,7 +113,7 @@ public class MongoDataTest {
     @Test
     public void failWithWrongGetGetPath() throws DataException {
         String collection = "DataBlocks";
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, collection);
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, collection);
         expectDataExceptions
                 .expect(FieldNotFoundException.class);
         expectDataExceptions.expectMessage("Collection \"DataBlocks\" doesn't contain \"paww\" "
@@ -125,7 +125,7 @@ public class MongoDataTest {
     public void failWithCyclicReference() throws DataException {
         String collection = "DataBlocks";
         String cyclicPath = "Common.cyclic";
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, collection);
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, collection);
 
         String cyclicObject = format("{ \"value\" : { \"collection\" : \"%s\", "
                 + "\"path\" : \"Common.cyclic\" }, \"comment\" : \"Cyclic\"", collection);
@@ -139,7 +139,7 @@ public class MongoDataTest {
     @Test
     public void genDataSameCollection() throws DataException {
         String collection = "DataBlocks";
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, collection);
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, collection);
         tdo.applyGenerator(SampleDataGensCallback.class);
 
         String genGenOrgigin = tdo.get("Common.gen gen.gendata").getValue();
@@ -157,7 +157,7 @@ public class MongoDataTest {
     @Test
     public void genDataDifferentCollections() throws DataException {
         String collection = "Tests";
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, collection);
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, collection);
         tdo.applyGenerator(SampleDataGensCallback.class);
         String genGenOrgigin = tdo.get("Common.gendata").getValue();
         assertFalse("Generator is not applied", genGenOrgigin.contains("generate:"));
@@ -168,7 +168,7 @@ public class MongoDataTest {
     @Test
     public void genDataDifferentCollectionsSamePath() throws DataException {
         String collection = "DataBlocks";
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, collection);
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, collection);
         tdo.applyGenerator(SampleDataGensCallback.class);
 
         String genGenOrgigin = tdo.get("Common.gen gen.gendata").getValue();
@@ -182,7 +182,7 @@ public class MongoDataTest {
 
     @Test
     public void genDataDifferentCollectionWithRefId() throws DataException {
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, "DataBlocks").
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, "DataBlocks").
                 fromCollection("DataBlocks", "57a94a160a279ec293f61665");
         tdo.applyGenerator(SampleDataGensCallback.class);
         String genGenOrgigin = tdo.get("Common.gen gen.gendata").getValue();
@@ -193,7 +193,7 @@ public class MongoDataTest {
 
     @Test
     public void dataDifferentCollectionWithRefId() throws DataException {
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, "DataBlocks");
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, "DataBlocks");
         tdo.applyGenerator(SampleDataGensCallback.class);
         String genGenOrgigin = tdo.get("testId").getValue();
         String genDataTarget = tdo.fromCollection("Tests").
@@ -205,7 +205,7 @@ public class MongoDataTest {
     public void failCyclicReferenceDifferentCollectionWithRefId() throws DataException {
         String collection = "Tests";
         String cyclicPath = "Common.ref cyclic refid";
-        TestDataProvider tdo = new MongoDataProviderAdaptor(mongoDb, collection);
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, collection);
 
         String cyclicObject = "{ \"value\" : { \"path\" : \"Common.failCyclicReferenceDifferentCollectionWithRefId\", \"collection\" : \"DataBlocks\", \"refId\" : \"57a94a160a279ec293f61665\" } }";
         expectDataExceptions
@@ -217,9 +217,9 @@ public class MongoDataTest {
 
     @Test
     public void getRefAsObject() throws DataException {
-        TestDataProvider originalTdo = new MongoDataProviderAdaptor(mongoDb, "DataBlocks").
+        TestDataProvider originalTdo = new MongoDataAdaptor(mongoDb, "DataBlocks").
                 fromCollection("DataBlocks", "57a94a160a279ec293f61665").get("Common");
-        TestDataProvider referencedTdo = new MongoDataProviderAdaptor(mongoDb, "Tests").
+        TestDataProvider referencedTdo = new MongoDataAdaptor(mongoDb, "Tests").
                 get("Common.ref object data").getReference();
         assertEquals(originalTdo.toString(), referencedTdo.toString());
     }
@@ -228,7 +228,7 @@ public class MongoDataTest {
     public void failRefAsObject() throws DataException {
         String collection = "DataBlocks";
         String path = "testId";
-        MongoDataProviderAdaptor tdo = new MongoDataProviderAdaptor(mongoDb, collection);
+        MongoDataAdaptor tdo = new MongoDataAdaptor(mongoDb, collection);
         expectDataExceptions.expect(ReferenceException.class);
         expectDataExceptions.expectMessage(String.format("There is no reference in \"%s.%s\". Collection \"%s\"",
                 collection, path, collection));

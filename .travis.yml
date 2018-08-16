@@ -1,6 +1,9 @@
 language: java
 addons:
-  sonarqube: true
+  sonarcloud:
+    organization: "sbtqasonarkey"
+    token:
+      secure: $SONAR_TOKEN
 jdk:
 - oraclejdk8
 before_install:

@@ -1,12 +1,13 @@
 package ru.sbtqa.tag.datajack.adaptors;
 
 import com.mongodb.BasicDBObject;
+import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 
 import java.util.*;
 
-public abstract class AbstractDataObjectAdaptor {
+public abstract class AbstractDataAdaptor implements TestDataProvider {
 
     protected static final String VALUE_TPL = "value";
     protected static final String COLLECTION_TPL = "collection";
@@ -27,7 +28,10 @@ public abstract class AbstractDataObjectAdaptor {
     public Set<String> getKeySet() throws DataException {
         if (basicObj == null) {
             throw new DataException(NOT_INITIALIZED_EXCEPTION);
+        } else if (getValue() != null) {
+            return new HashSet<>();
         }
+
         return basicObj.keySet();
     }
 

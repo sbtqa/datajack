@@ -271,6 +271,25 @@ public class JsonDataTest {
     }
 
     @Test
+    public void emptyKeySetForValueTest() throws DataException {
+        TestDataProvider tdo = new JsonDataAdaptor(JSON_DATA_PATH, "DataBlocks");
+        Object supposedToBeSet = tdo.get("Common.price").getKeySet();
+
+        assertTrue("Type of return value getKeySet() is not Set", supposedToBeSet instanceof Set);
+        assertNotNull("Set object is null", supposedToBeSet != null);
+        assertTrue("", ((Set) supposedToBeSet).isEmpty());
+    }
+
+    @Test
+    public void getEmptySelfTest() throws DataException {
+        TestDataProvider tdo = new JsonDataAdaptor(JSON_DATA_PATH, "DataBlocks");
+        TestDataProvider origin = tdo.get("Common");
+        TestDataProvider self = origin.get("");
+
+        assertEquals("Objects are not same", origin, self);
+    }
+
+    @Test
     public void getValuesTest() throws DataException {
         TestDataProvider tdo = new JsonDataAdaptor(JSON_DATA_PATH, "DataBlocks");
         Object rawValues = tdo.getValues();

@@ -178,11 +178,21 @@ public class ExcelDataTest {
     @Test
     public void getKeySetTest() throws DataException {
         TestDataProvider tdo = new ExcelDataAdaptor(this.excellDataPath, collectionName);
-        Object supposedToBeSet = tdo.getKeySet();
+        Object supposedToBeSet = tdo.get("Common").getKeySet();
 
         assertTrue("Type of return value getKeySet() is not Set", supposedToBeSet instanceof Set);
         assertNotNull("Set object is null", supposedToBeSet != null);
         assertFalse("", ((Set) supposedToBeSet).isEmpty());
+    }
+
+    @Test
+    public void emptyKeySetForValueTest() throws DataException {
+        TestDataProvider tdo = new ExcelDataAdaptor(this.excellDataPath, collectionName);
+        Object supposedToBeSet = tdo.get("Common.price").getKeySet();
+
+        assertTrue("Type of return value getKeySet() is not Set", supposedToBeSet instanceof Set);
+        assertNotNull("Set object is null", supposedToBeSet != null);
+        assertTrue("", ((Set) supposedToBeSet).isEmpty());
     }
 
     @Test
@@ -193,6 +203,15 @@ public class ExcelDataTest {
         assertTrue("Type of return value getValues() is not Collection", rawValues instanceof Collection);
         assertNotNull("Return value is null", rawValues != null);
         assertFalse("Collection of values is empty", ((Collection) rawValues).isEmpty());
+    }
+
+    @Test
+    public void getEmptySelfTest() throws DataException {
+        TestDataProvider tdo = new ExcelDataAdaptor(this.excellDataPath, collectionName);
+        TestDataProvider origin = tdo.get("Common");
+        TestDataProvider self = origin.get("");
+
+        assertEquals("Objects are not same", origin, self);
     }
 
     @Test

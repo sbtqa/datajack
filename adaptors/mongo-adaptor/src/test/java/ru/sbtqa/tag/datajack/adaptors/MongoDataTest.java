@@ -13,6 +13,8 @@ import ru.sbtqa.tag.datajack.callback.SampleDataGensCallback;
 import ru.sbtqa.tag.datajack.exceptions.*;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 import static java.lang.String.format;
 import static org.junit.Assert.*;
@@ -233,5 +235,48 @@ public class MongoDataTest {
         expectDataExceptions.expectMessage(String.format("There is no reference in \"%s.%s\". Collection \"%s\"",
                 collection, path, collection));
         tdo.get(path).getReference();
+    }
+
+    @Test
+    public void toMapTest() throws DataException {
+        String collection = "DataBlocks";
+        String path = "testId";
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, collection);
+        Object supposedToBeMap = tdo.get("Common").toMap();
+
+        assertTrue("Type of return value toMap() is not Map", supposedToBeMap instanceof Map);
+        assertNotNull("Map object is null", supposedToBeMap != null);
+        assertFalse("Map is empty", ((Map) supposedToBeMap).isEmpty());
+    }
+
+    @Test
+    public void getKeySetTest() throws DataException {
+        String collection = "DataBlocks";TestDataProvider tdo = new MongoDataAdaptor(mongoDb, collection);
+        Object supposedToBeSet = tdo.get("Common").getKeySet();
+
+        assertTrue("Type of return value getKeySet() is not Set", supposedToBeSet instanceof Set);
+        assertNotNull("Set object is null", supposedToBeSet != null);
+        assertFalse("", ((Set) supposedToBeSet).isEmpty());
+    }
+
+    @Test
+    public void emptyKeySetForValueTest() throws DataException {
+        String collection = "DataBlocks";
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, collection);
+        Object supposedToBeSet = tdo.get("Common.price").getKeySet();
+
+        assertTrue("Type of return value getKeySet() is not Set", supposedToBeSet instanceof Set);
+        assertNotNull("Set object is null", supposedToBeSet != null);
+        assertTrue("", ((Set) supposedToBeSet).isEmpty());
+    }
+
+    @Test
+    public void getEmptySelfTest() throws DataException {
+        String collection = "DataBlocks";
+        TestDataProvider tdo = new MongoDataAdaptor(mongoDb, collection);
+        TestDataProvider origin = tdo.get("Common");
+        TestDataProvider self = origin.get("");
+
+        assertEquals("Objects are not same", origin, self);
     }
 }

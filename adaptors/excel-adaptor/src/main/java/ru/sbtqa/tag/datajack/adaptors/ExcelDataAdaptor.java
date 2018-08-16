@@ -28,7 +28,7 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
-public class ExcelDataAdaptor extends AbstractDataObjectAdaptor implements TestDataProvider {
+public class ExcelDataAdaptor extends AbstractDataAdaptor implements TestDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExcelDataAdaptor.class);
     private static final String SHEET_NAME_TPL = "sheetName";
@@ -79,6 +79,10 @@ public class ExcelDataAdaptor extends AbstractDataObjectAdaptor implements TestD
 
     @Override
     public TestDataProvider get(String key) throws DataException {
+        if (key.isEmpty()) {
+            return this;
+        }
+
         this.way = key;
         ExcelDataAdaptor tdo;
 

@@ -6,7 +6,7 @@ import org.bson.BasicBSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.datajack.TestDataProvider;
-import ru.sbtqa.tag.datajack.adaptors.AbstractDataObjectAdaptor;
+import ru.sbtqa.tag.datajack.adaptors.AbstractDataAdaptor;
 import ru.sbtqa.tag.datajack.callback.CallbackData;
 import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
 import ru.sbtqa.tag.datajack.exceptions.*;
@@ -19,7 +19,7 @@ import static java.io.File.separator;
 import static java.lang.String.format;
 import static org.apache.commons.io.FileUtils.readFileToString;
 
-public class JsonDataAdaptor extends AbstractDataObjectAdaptor implements TestDataProvider {
+public class JsonDataAdaptor extends AbstractDataAdaptor implements TestDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonDataAdaptor.class);
     private static final String DEFAULT_EXTENSION = "json";
@@ -137,6 +137,9 @@ public class JsonDataAdaptor extends AbstractDataObjectAdaptor implements TestDa
 
     @Override
     public TestDataProvider get(String key) throws DataException {
+        if (key.isEmpty()) {
+            return this;
+        }
         this.way = key;
         return key.contains(".") ? getComplex(key) : getSimple(key);
 
@@ -243,7 +246,7 @@ public class JsonDataAdaptor extends AbstractDataObjectAdaptor implements TestDa
             LOG.debug("Reference not found", e);
             String result = this.basicObj.getString(VALUE_TPL);
             if (result == null) {
-                if (this.way.contains(".")) {
+                if (this.way != null && this.way.contains(".")) {
                     this.way = this.way.split("[.]")[this.way.split("[.]").length - 1];
                 }
                 result = this.basicObj.getString(this.way);

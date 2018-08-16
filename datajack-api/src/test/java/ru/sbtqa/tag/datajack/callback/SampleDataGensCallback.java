@@ -30,6 +30,7 @@ public class SampleDataGensCallback implements GeneratorCallback {
             String genResult = null;
 
             try {
+                Thread.sleep(1);
                 genResult = valueOf(currentTimeMillis());
             } catch (Exception ex) {
                 return ex;

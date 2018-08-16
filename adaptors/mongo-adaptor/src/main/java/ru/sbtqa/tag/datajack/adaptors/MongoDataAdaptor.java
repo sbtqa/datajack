@@ -15,7 +15,7 @@ import static com.mongodb.BasicDBObject.parse;
 import static com.mongodb.QueryBuilder.start;
 import static java.lang.String.format;
 
-public class MongoDataAdaptor extends AbstractDataObjectAdaptor implements TestDataProvider {
+public class MongoDataAdaptor extends AbstractDataAdaptor implements TestDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDataAdaptor.class);
     private static final String REF_ID_TPL = "refId";
@@ -72,6 +72,9 @@ public class MongoDataAdaptor extends AbstractDataObjectAdaptor implements TestD
 
     @Override
     public MongoDataAdaptor get(String key) throws DataException {
+        if (key.isEmpty()) {
+            return this;
+        }
         this.way = key;
         String documentId = "HERE IS MUST BE ID";
         MongoDataAdaptor tdo;

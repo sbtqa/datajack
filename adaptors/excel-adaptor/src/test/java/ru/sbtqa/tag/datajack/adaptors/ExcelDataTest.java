@@ -178,7 +178,7 @@ public class ExcelDataTest {
     @Test
     public void getKeySetTest() throws DataException {
         TestDataProvider tdo = new ExcelDataAdaptor(this.excellDataPath, collectionName);
-        Object supposedToBeSet = tdo.get("Common").getKeySet();
+        Object supposedToBeSet = tdo.getKeySet();
 
         assertTrue("Type of return value getKeySet() is not Set", supposedToBeSet instanceof Set);
         assertNotNull("Set object is null", supposedToBeSet != null);

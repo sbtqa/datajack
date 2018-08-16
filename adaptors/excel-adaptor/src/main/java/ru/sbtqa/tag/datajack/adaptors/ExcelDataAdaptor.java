@@ -149,7 +149,7 @@ public class ExcelDataAdaptor extends AbstractDataAdaptor implements TestDataPro
             LOG.debug("Reference not found", e);
             String result = this.basicObj.getString(VALUE_TPL);
             if (result == null) {
-                if (this.way.contains(".")) {
+                if (this.way != null && this.way.contains(".")) {
                     this.way = this.way.split("[.]")[this.way.split("[.]").length - 1];
                 }
                 result = this.basicObj.getString(this.way);

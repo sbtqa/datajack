@@ -89,26 +89,34 @@ public class ExcelDataProvider extends AbstractDataProvider {
         if (key.contains(".")) {
             String[] keys = key.split("[.]");
             StringBuilder partialBuilt = new StringBuilder();
-            BasicDBObject basicO = this.basicObj;
+            BasicDBObject basicObject = this.basicObj;
             for (String partialKey : keys) {
                 partialBuilt.append(partialKey);
-                if (!(basicO.get(partialKey) instanceof BasicDBObject)) {
-                    if (basicO.get(partialKey) instanceof String && !partialBuilt.toString().equals(key)) {
+
+                if (isReference(basicObject)) {
+                    String collection = ((BasicDBObject) basicObject.get("value")).getString("sheetName");
+                    String path = ((BasicDBObject) basicObject.get("value")).getString("path");
+                    TestDataProvider dataProviderN = new ExcelDataProvider(this.dataFileName,this.workBook, collection).get(path);
+                    basicObject = ((ExcelDataProvider) dataProviderN).basicObj;
+                }
+
+                if (!(basicObject.get(partialKey) instanceof BasicDBObject)) {
+                    if (basicObject.get(partialKey) instanceof String && !partialBuilt.toString().equals(key)) {
                         throw new FieldNotFoundException(format("Field '%s' in '%s' object on sheet '%s' "
                                         + "is not an object. Cannot find any nested fields inside it",
                                 partialKey, partialBuilt.toString().replace("." + partialKey, ""), this.sheetName));
                     }
-                    if (null == basicO.get(partialKey)) {
+                    if (null == basicObject.get(partialKey)) {
                         throw new FieldNotFoundException(format("Sheet '%s' doesn't contain '%s' field on path '%s'",
                                 this.sheetName, partialKey, partialBuilt.toString()));
                     }
                     break;
                 }
-                basicO = (BasicDBObject) basicO.get(partialKey);
+                basicObject = (BasicDBObject) basicObject.get(partialKey);
                 partialBuilt.append(".");
             }
 
-            dataProvider = new ExcelDataProvider(this.dataFileName, this.workBook, basicO, this.sheetName, this.way);
+            dataProvider = new ExcelDataProvider(this.dataFileName, this.workBook, basicObject, this.sheetName, this.way);
             dataProvider.applyGenerator(this.callback);
             dataProvider.setRootObj(this.rootObj, this.sheetName + "." + key);
             return dataProvider;
@@ -428,6 +436,14 @@ public class ExcelDataProvider extends AbstractDataProvider {
     @Override
     public boolean isReference() throws DataException {
         Object value = this.basicObj.get("value");
+        if (!(value instanceof BasicDBObject)) {
+            return false;
+        }
+        return ((BasicDBObject) value).containsField(SHEET_NAME_TPL) && ((BasicDBObject) value).containsField("path");
+    }
+
+    public boolean isReference(BasicDBObject basicDBObject) throws DataException {
+        Object value = basicDBObject.get("value");
         if (!(value instanceof BasicDBObject)) {
             return false;
         }

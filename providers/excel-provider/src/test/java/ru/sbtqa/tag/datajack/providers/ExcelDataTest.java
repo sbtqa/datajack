@@ -48,6 +48,21 @@ public class ExcelDataTest {
     }
 
     @Test
+    public void getDeepReferenceTest() throws DataException {
+        TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
+        testDataProvider.applyGenerator(SampleDataGensCallback.class);
+
+        String deepReferenceValue = testDataProvider.get("Common.ref object data.refToAnother").getValue();
+        String shortReferenceValue = testDataProvider.fromCollection("DataBlocks").get("NewObject.refToAnother").getValue();
+        String shortValue = testDataProvider.fromCollection("DataBlocks").get("AnotherObject").get("anotherValue").getValue();
+        String shortComplexValue = testDataProvider.fromCollection("DataBlocks").get("AnotherObject.anotherValue").getValue();
+
+        assertEquals("Deep reference isn't equal direct value", shortValue, deepReferenceValue);
+        assertEquals("Short reference isn't equal direct value", shortValue, shortReferenceValue);
+        assertEquals("Short complex value isn't equal direct value", shortValue, shortComplexValue);
+    }
+
+    @Test
     public void valuePathTest() throws DataException, IOException, InvalidFormatException {
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         assertEquals("justSomeTestId",

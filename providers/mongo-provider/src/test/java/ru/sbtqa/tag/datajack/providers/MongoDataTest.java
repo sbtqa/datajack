@@ -187,10 +187,10 @@ public class MongoDataTest {
         TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, "DataBlocks").
                 fromCollection("DataBlocks", "57a94a160a279ec293f61665");
         testDataProvider.applyGenerator(SampleDataGensCallback.class);
-        String genGenOrgigin = testDataProvider.get("Common.gen gen.gendata").getValue();
+        String genGenOrigin = testDataProvider.get("Common.gen gen.gendata").getValue();
         String genDataTarget = testDataProvider.fromCollection("Tests").
                 get("Common.ref data gen").getValue();
-        assertEquals(genGenOrgigin, genDataTarget);
+        assertEquals(genGenOrigin, genDataTarget);
     }
 
     @Test

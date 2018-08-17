@@ -38,11 +38,11 @@
     <commons.io.version>2.5</commons.io.version>
     <junit.version>4.12</junit.version>
     <slf4j.version>1.7.5</slf4j.version>
-    <!--excel-adaptor-->
+    <!--excel-provider-->
     <apache.poi-ooxml.version>3.15</apache.poi-ooxml.version>
-    <!--mongo-adaptor-->
+    <!--mongo-provider-->
     <fakemongo.fongo.version>2.1.1</fakemongo.fongo.version>
-    <!--properties-adaptor-->
+    <!--properties-provider-->
     <java.properties.to.json.version>3.0</java.properties.to.json.version>
     <!--Plugins versions-->
     <maven.compilier.plugin.version>3.3</maven.compilier.plugin.version>
@@ -55,10 +55,10 @@
 
   <modules>
     <module>datajack-api</module>
-    <module>adaptors/json-adaptor</module>
-    <module>adaptors/properties-adaptor</module>
-    <module>adaptors/excel-adaptor</module>
-    <module>adaptors/mongo-adaptor</module>
+    <module>providers/json-provider</module>
+    <module>providers/properties-provider</module>
+    <module>providers/excel-provider</module>
+    <module>providers/mongo-provider</module>
   </modules>
 
   <distributionManagement>

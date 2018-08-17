@@ -1,7 +1,7 @@
 package ru.sbtqa.tag.datajack.callback;
 
 /**
- * Simple callback to be injected into adaptor
+ * Simple callback to be injected into provider
  *
  * @param <P> Object to inject
  * @param <R> Object to return

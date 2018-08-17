@@ -10,12 +10,13 @@ DataJack - opensource java framework which help you work with you test data.
 ### About
 DataJack have two important think:
 * **Stash** - use this class, if you want store something when tests execute.
-* **AbstractDataObjectAdaptor** - interface, which using to work with different test data storage systems.   
+* **TestDataProvider** - interface, which using to work with different test data storage systems.   
 We have the following implementation:
-  * [JSON-Adapter](https://github.com/sbtqa/datajack-json-adaptor)
-  * [Properties-Adapter](https://github.com/sbtqa/datajack-properties-adaptor)
-  * [Mongo-Adapter](https://github.com/sbtqa/datajack-mongo-adaptor)
-  * [Excel-Adapter](https://github.com/sbtqa/datajack-excel-adaptor)
+  * [JSON-Provider](https://github.com/sbtqa/datajack/providers/json-provider)
+  * [Properties-Provider](https://github.com/sbtqa/datajack/providers/properties-provider)
+  * [Mongo-Provider](https://github.com/sbtqa/datajack/providers/mongo-provider)
+  * [Excel-Provider](https://github.com/sbtqa/datajack/providers/excel-provider)
+
 
 ### Documentation
 Example how to use [here](https://github.com/sbtqa/datajack-example). All of the documentation [here](https://github.com/sbtqa/docs/wiki/DataJack)

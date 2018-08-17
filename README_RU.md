@@ -6,12 +6,12 @@ DataJack - opensource java framework, который позволяет вам �
 ### О DataJack
 DataJack имеет две фичи:
 * **Stash** - класс, который можно использовать для хранения и использования данных во время выполнения тестов.
-* **AbstractDataObjectAdaptor** - интерфейс, который используется для реализации различных хранилищ тестовых данных.   
+* **TestDataProvider** - интерфейс, который используется для реализации различных хранилищ тестовых данных.   
 Сейчас поддерживаются следующие типы хранилищ:
-  * [JSON-Adapter](https://github.com/sbtqa/datajack-json-adaptor)
-  * [Properties-Adapter](https://github.com/sbtqa/datajack-properties-adaptor)
-  * [Mongo-Adapter](https://github.com/sbtqa/datajack-mongo-adaptor)
-  * [Excel-Adapter](https://github.com/sbtqa/datajack-excel-adaptor)
+  * [JSON-Provider](https://github.com/sbtqa/datajack/providers/json-provider)
+  * [Properties-Provider](https://github.com/sbtqa/datajack/providers/properties-provider)
+  * [Mongo-Provider](https://github.com/sbtqa/datajack/providers/mongo-provider)
+  * [Excel-Provider](https://github.com/sbtqa/datajack/providers/excel-provider)
 
 ### Документация
 Проект с примером использования можно посмотреть [здесь](https://github.com/sbtqa/datajack-example).Вся документация по использованию [здесь](https://github.com/sbtqa/docs/wiki/DataJack)

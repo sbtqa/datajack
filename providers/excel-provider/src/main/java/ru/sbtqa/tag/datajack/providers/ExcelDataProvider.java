@@ -84,7 +84,7 @@ public class ExcelDataProvider extends AbstractDataProvider {
         }
 
         this.way = key;
-        ExcelDataProvider tdo;
+        ExcelDataProvider dataProvider;
 
         if (key.contains(".")) {
             String[] keys = key.split("[.]");
@@ -108,10 +108,10 @@ public class ExcelDataProvider extends AbstractDataProvider {
                 partialBuilt.append(".");
             }
 
-            tdo = new ExcelDataProvider(this.dataFileName, this.workBook, basicO, this.sheetName, this.way);
-            tdo.applyGenerator(this.callback);
-            tdo.setRootObj(this.rootObj, this.sheetName + "." + key);
-            return tdo;
+            dataProvider = new ExcelDataProvider(this.dataFileName, this.workBook, basicO, this.sheetName, this.way);
+            dataProvider.applyGenerator(this.callback);
+            dataProvider.setRootObj(this.rootObj, this.sheetName + "." + key);
+            return dataProvider;
         }
         if (!basicObj.containsField(key)) {
             throw new FieldNotFoundException(format("Sheet '%s' doesn't contain '%s' field in path '%s'",
@@ -121,8 +121,8 @@ public class ExcelDataProvider extends AbstractDataProvider {
         if (!(result instanceof BasicDBObject)) {
             result = new BasicDBObject(key, result);
         }
-        tdo = new ExcelDataProvider(this.dataFileName, this.workBook, (BasicDBObject) result, this.sheetName, this.way);
-        tdo.applyGenerator(this.callback);
+        dataProvider = new ExcelDataProvider(this.dataFileName, this.workBook, (BasicDBObject) result, this.sheetName, this.way);
+        dataProvider.applyGenerator(this.callback);
 
         String rootObjValue;
         if (this.path != null) {
@@ -130,15 +130,15 @@ public class ExcelDataProvider extends AbstractDataProvider {
         } else {
             rootObjValue = this.sheetName + "." + key;
         }
-        tdo.setRootObj(this.rootObj, rootObjValue);
-        return tdo;
+        dataProvider.setRootObj(this.rootObj, rootObjValue);
+        return dataProvider;
     }
 
     @Override
     public ExcelDataProvider fromCollection(String collName) throws DataException {
-        ExcelDataProvider newObj = new ExcelDataProvider(this.dataFileName, this.workBook, collName);
-        newObj.applyGenerator(this.callback);
-        return newObj;
+        ExcelDataProvider dataProvider = new ExcelDataProvider(this.dataFileName, this.workBook, collName);
+        dataProvider.applyGenerator(this.callback);
+        return dataProvider;
     }
 
     @Override

@@ -130,9 +130,9 @@ public class JsonDataProvider extends AbstractDataProvider {
     public JsonDataProvider fromCollection(String collName) throws DataException {
         String json = readFile(this.testDataFolder, collName);
         BasicDBObject parsed = parse(json);
-        JsonDataProvider newObj = privateInit(this.testDataFolder, parsed, collName);
-        newObj.applyGenerator(this.callback);
-        return newObj;
+        JsonDataProvider dataProvider = privateInit(this.testDataFolder, parsed, collName);
+        dataProvider.applyGenerator(this.callback);
+        return dataProvider;
     }
 
     @Override
@@ -161,8 +161,8 @@ public class JsonDataProvider extends AbstractDataProvider {
         if (!(result instanceof BasicDBObject)) {
             result = new BasicDBObject(key, result);
         }
-        JsonDataProvider tdo = privateInit(this.testDataFolder, (BasicDBObject) result, this.collectionName, this.way);
-        tdo.applyGenerator(this.callback);
+        JsonDataProvider dataProvider = privateInit(this.testDataFolder, (BasicDBObject) result, this.collectionName, this.way);
+        dataProvider.applyGenerator(this.callback);
 
         String rootObjValue;
         if (this.path != null) {
@@ -170,17 +170,17 @@ public class JsonDataProvider extends AbstractDataProvider {
         } else {
             rootObjValue = this.collectionName + "." + key;
         }
-        tdo.setRootObj(this.rootObj, rootObjValue);
-        return tdo;
+        dataProvider.setRootObj(this.rootObj, rootObjValue);
+        return dataProvider;
     }
 
     private TestDataProvider getComplex(String key) throws FieldNotFoundException, DataException {
 
-        JsonDataProvider tdo = privateInit(this.testDataFolder, parseComplexDBObject(key), this.collectionName, this.way);
-        tdo.applyGenerator(this.callback);
-        tdo.setRootObj(this.rootObj, this.collectionName + "." + key);
+        JsonDataProvider dataProvider = privateInit(this.testDataFolder, parseComplexDBObject(key), this.collectionName, this.way);
+        dataProvider.applyGenerator(this.callback);
+        dataProvider.setRootObj(this.rootObj, this.collectionName + "." + key);
 
-        return tdo;
+        return dataProvider;
     }
 
     private BasicDBObject parseComplexDBObject(String key) throws DataException {

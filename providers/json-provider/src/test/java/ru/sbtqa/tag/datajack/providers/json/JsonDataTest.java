@@ -227,11 +227,11 @@ public class JsonDataTest {
 
     @Test
     public void getRefAsObject() throws DataException {
-        TestDataProvider originalTdo = new JsonDataProvider(JSON_DATA_PATH, "DataBlocks");
-        String original = originalTdo.get("Common").toString();
+        TestDataProvider originalProvider = new JsonDataProvider(JSON_DATA_PATH, "DataBlocks");
+        String original = originalProvider.get("Common").toString();
 
-        TestDataProvider referencedTdo = new JsonDataProvider(JSON_DATA_PATH, "Tests");
-        String referenced = referencedTdo.get("Common.ref object data").getReference().toString();
+        TestDataProvider referencedProvider = new JsonDataProvider(JSON_DATA_PATH, "Tests");
+        String referenced = referencedProvider.get("Common.ref object data").getReference().toString();
 
         assertEquals(original, referenced);
     }

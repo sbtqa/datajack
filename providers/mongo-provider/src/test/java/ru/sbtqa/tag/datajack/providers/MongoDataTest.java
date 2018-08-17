@@ -219,11 +219,11 @@ public class MongoDataTest {
 
     @Test
     public void getRefAsObject() throws DataException {
-        TestDataProvider originalTdo = new MongoDataProvider(mongoDb, "DataBlocks").
+        TestDataProvider originalProvider = new MongoDataProvider(mongoDb, "DataBlocks").
                 fromCollection("DataBlocks", "57a94a160a279ec293f61665").get("Common");
-        TestDataProvider referencedTdo = new MongoDataProvider(mongoDb, "Tests").
+        TestDataProvider referencedProvider = new MongoDataProvider(mongoDb, "Tests").
                 get("Common.ref object data").getReference();
-        assertEquals(originalTdo.toString(), referencedTdo.toString());
+        assertEquals(originalProvider.toString(), referencedProvider.toString());
     }
 
     @Test

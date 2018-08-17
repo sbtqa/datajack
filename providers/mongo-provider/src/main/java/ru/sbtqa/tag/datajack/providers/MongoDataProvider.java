@@ -47,9 +47,9 @@ public class MongoDataProvider extends AbstractDataProvider {
 
     @Override
     public MongoDataProvider fromCollection(String collectionName) throws DataException {
-        MongoDataProvider tdo = new MongoDataProvider(this.db, collectionName);
-        tdo.applyGenerator(this.callback);
-        return tdo;
+        MongoDataProvider dataProvider = new MongoDataProvider(this.db, collectionName);
+        dataProvider.applyGenerator(this.callback);
+        return dataProvider;
 
     }
 
@@ -62,11 +62,11 @@ public class MongoDataProvider extends AbstractDataProvider {
     public MongoDataProvider fromCollection(String collectionName, String refId) throws DataException {
         this.coll = db.getCollection(collectionName);
         DBObject referenceDocument = this.coll.findOne(new BasicDBObject("_id", new ObjectId(refId)));
-        MongoDataProvider tdo = new MongoDataProvider(this.db, collectionName);
-        tdo.basicObj = (BasicDBObject) referenceDocument;
-        tdo.path = refId + "." + collectionName;
-        tdo.applyGenerator(this.callback);
-        return tdo;
+        MongoDataProvider dataProvider = new MongoDataProvider(this.db, collectionName);
+        dataProvider.basicObj = (BasicDBObject) referenceDocument;
+        dataProvider.path = refId + "." + collectionName;
+        dataProvider.applyGenerator(this.callback);
+        return dataProvider;
 
     }
 
@@ -77,7 +77,7 @@ public class MongoDataProvider extends AbstractDataProvider {
         }
         this.way = key;
         String documentId = "HERE IS MUST BE ID";
-        MongoDataProvider tdo;
+        MongoDataProvider dataProvider;
         if (this.basicObj == null) {
 
             try (DBCursor cursor = coll.find(start(key).exists(true).get()).limit(1).sort((DBObject) parse("{$natural:-1}"))) {
@@ -100,17 +100,17 @@ public class MongoDataProvider extends AbstractDataProvider {
                 basicO = (BasicDBObject) basicO.get(partialKey);
             }
 
-            tdo = new MongoDataProvider(this.db, basicO, this.way);
+            dataProvider = new MongoDataProvider(this.db, basicO, this.way);
 
             if (this.path == null || (this.coll != null && this.path.equals(this.coll.getName()))) {
                 this.path = documentId + "." + this.coll.getName();
             } else if (this.coll == null) {
                 this.path = documentId + "." + this.path;
             }
-            tdo.applyGenerator(this.callback);
-            tdo.coll = coll;
-            tdo.setRootObj(this.rootObj, this.path + "." + key);
-            return tdo;
+            dataProvider.applyGenerator(this.callback);
+            dataProvider.coll = coll;
+            dataProvider.setRootObj(this.rootObj, this.path + "." + key);
+            return dataProvider;
         }
         if (!basicObj.containsField(key)) {
             throw new FieldNotFoundException(format("Collection \"%s\" doesn't contain \"%s\" field in path \"%s\"",
@@ -121,7 +121,7 @@ public class MongoDataProvider extends AbstractDataProvider {
             result = new BasicDBObject(key, result);
         }
 
-        tdo = new MongoDataProvider(this.db, (BasicDBObject) result, this.way);
+        dataProvider = new MongoDataProvider(this.db, (BasicDBObject) result, this.way);
 
         String rootObjValue;
         if (this.path != null) {
@@ -129,10 +129,10 @@ public class MongoDataProvider extends AbstractDataProvider {
         } else {
             rootObjValue = this.coll.getName() + "." + key;
         }
-        tdo.applyGenerator(this.callback);
-        tdo.coll = coll;
-        tdo.setRootObj(this.rootObj, rootObjValue);
-        return tdo;
+        dataProvider.applyGenerator(this.callback);
+        dataProvider.coll = coll;
+        dataProvider.setRootObj(this.rootObj, rootObjValue);
+        return dataProvider;
     }
 
     @Override

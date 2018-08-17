@@ -140,10 +140,10 @@ public class ExcelDataTest {
 
     @Test
     public void getRefAsObject() throws DataException, IOException, InvalidFormatException {
-        TestDataProvider originalTdo = new ExcelDataProvider(this.excellDataPath, "DataBlocks").get("NewObject");
-        TestDataProvider referencedTdo = new ExcelDataProvider(this.excellDataPath, collectionName).
+        TestDataProvider originalProvider = new ExcelDataProvider(this.excellDataPath, "DataBlocks").get("NewObject");
+        TestDataProvider referencedProvider = new ExcelDataProvider(this.excellDataPath, collectionName).
                 get("Common.ref object data").getReference();
-        assertEquals(originalTdo.toString(), referencedTdo.toString());
+        assertEquals(originalProvider.toString(), referencedProvider.toString());
     }
 
     @Test

@@ -95,6 +95,10 @@ public class JsonDataProvider extends AbstractDataProvider {
         this.collectionName = collectionName;
     }
 
+    public BasicDBObject getBasicDBObject() {
+        return this.basicObj;
+    }
+
     public static boolean isArray(String key) {
         return key.matches("(.+\\[\\d+\\])");
     }
@@ -171,6 +175,9 @@ public class JsonDataProvider extends AbstractDataProvider {
             rootObjValue = this.collectionName + "." + key;
         }
         dataProvider.setRootObj(this.rootObj, rootObjValue);
+        if(dataProvider.isReference()) {
+            return dataProvider.getReference();
+        }
         return dataProvider;
     }
 
@@ -196,6 +203,13 @@ public class JsonDataProvider extends AbstractDataProvider {
                 continue;
             }
 
+            if (isReference(basicObject)) {
+                String collection = ((BasicDBObject) basicObject.get("value")).getString("collection");
+                String path = ((BasicDBObject) basicObject.get("value")).getString("path");
+                TestDataProvider dataProvider = new JsonDataProvider(this.testDataFolder, collection).get(path);
+                basicObject = ((JsonDataProvider) dataProvider).basicObj;
+            }
+
             if (!(basicObject.get(partialKey) instanceof BasicDBObject)) {
                 if (null == basicObject.get(partialKey)) {
                     throw new FieldNotFoundException(format("Collection \"%s\" doesn't contain \"%s\" field on path \"%s\"",
@@ -203,7 +217,6 @@ public class JsonDataProvider extends AbstractDataProvider {
                 }
                 break;
             }
-
             basicObject = (BasicDBObject) basicObject.get(partialKey);
             partialBuilt.append(".");
         }
@@ -311,6 +324,13 @@ public class JsonDataProvider extends AbstractDataProvider {
     @Override
     public boolean isReference() throws DataException {
         Object value = this.basicObj.get("value");
+        if (!(value instanceof BasicDBObject)) {
+            return false;
+        }
+        return ((BasicDBObject) value).containsField("collection") && ((BasicDBObject) value).containsField("path");
+    }
+    public boolean isReference(BasicDBObject basicDBObject) throws DataException {
+        Object value = basicDBObject.get("value");
         if (!(value instanceof BasicDBObject)) {
             return false;
         }

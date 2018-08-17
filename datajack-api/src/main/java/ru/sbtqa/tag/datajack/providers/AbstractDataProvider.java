@@ -33,7 +33,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         }
         if (isReference()) {
             this.rootObj = null;
-            return getReference().getKeySet();
+            return getReference().toMap().keySet();
         } else {
             return basicObj.keySet();
         }

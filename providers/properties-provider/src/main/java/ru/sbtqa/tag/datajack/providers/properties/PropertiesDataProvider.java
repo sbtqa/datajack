@@ -52,6 +52,11 @@ public class PropertiesDataProvider extends JsonDataProvider {
     }
 
     @Override
+    protected <T extends JsonDataProvider> T privateInit(String testDataFolder, String collectionName) throws DataException {
+        return (T) new PropertiesDataProvider(testDataFolder, collectionName, extension);
+    }
+
+    @Override
     protected <T extends JsonDataProvider> T privateInit(String testDataFolder, BasicDBObject obj, String collectionName, String way) {
         return (T) new PropertiesDataProvider(testDataFolder, obj, collectionName, way, extension);
     }

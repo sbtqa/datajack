@@ -108,6 +108,18 @@ public class JsonDataProvider extends AbstractDataProvider {
      *
      * @param <T>            Overrider type
      * @param testDataFolder path to data folder
+     * @param collectionName file name
+     * @return
+     */
+    protected <T extends JsonDataProvider> T privateInit(String testDataFolder, String collectionName) throws DataException {
+        return (T) new JsonDataProvider(testDataFolder, collectionName, extension);
+    }
+
+    /**
+     * Internal use only for provider overriding purposes
+     *
+     * @param <T>            Overrider type
+     * @param testDataFolder path to data folder
      * @param obj            Basic object
      * @param collectionName file name
      * @param way            complex path to value
@@ -149,7 +161,7 @@ public class JsonDataProvider extends AbstractDataProvider {
 
     }
 
-    private TestDataProvider getSimple(String key) throws FieldNotFoundException, DataException {
+    private TestDataProvider getSimple(String key) throws DataException {
         Object result;
 
         if (isArray(key)) {
@@ -206,7 +218,7 @@ public class JsonDataProvider extends AbstractDataProvider {
             if (isReference(basicObject)) {
                 String collection = ((BasicDBObject) basicObject.get("value")).getString("collection");
                 String path = ((BasicDBObject) basicObject.get("value")).getString("path");
-                TestDataProvider dataProvider = new JsonDataProvider(this.testDataFolder, collection).get(path);
+                TestDataProvider dataProvider = privateInit(this.testDataFolder, collection).get(path);
                 basicObject = ((JsonDataProvider) dataProvider).basicObj;
             }
 

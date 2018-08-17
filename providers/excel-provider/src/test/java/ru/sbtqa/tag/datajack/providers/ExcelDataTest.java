@@ -34,14 +34,14 @@ public class ExcelDataTest {
     }
 
     @Test
-    public void isReferenceTest() throws DataException, IOException, InvalidFormatException {
+    public void isReferenceTest() throws DataException {
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         assertTrue("Value is not reference",
                 testDataProvider.get("Common.linkWithValue").isReference());
     }
 
     @Test
-    public void getReferenceTest() throws DataException, IOException, InvalidFormatException {
+    public void getReferenceTest() throws DataException {
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         assertEquals("value",
                 testDataProvider.get("Common.linkWithValue").getValue());
@@ -63,14 +63,14 @@ public class ExcelDataTest {
     }
 
     @Test
-    public void valuePathTest() throws DataException, IOException, InvalidFormatException {
+    public void valuePathTest() throws DataException {
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         assertEquals("justSomeTestId",
                 testDataProvider.get("Common").get("id").getValue());
     }
 
     @Test
-    public void getFromAnotherCollectionTest() throws DataException, IOException, InvalidFormatException {
+    public void getFromAnotherCollectionTest() throws DataException {
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         assertEquals("HELLO WORLD",
                 testDataProvider.fromCollection("DataBlocks").
@@ -78,7 +78,7 @@ public class ExcelDataTest {
     }
 
     @Test
-    public void getNotValuedValueTest() throws DataException, IOException, InvalidFormatException {
+    public void getNotValuedValueTest() throws DataException {
         // TODO: 02.09.2016 is that r'ly actual for xls? Looks like not, cus all values there are strings
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         assertEquals("20.91",
@@ -86,7 +86,7 @@ public class ExcelDataTest {
     }
 
     @Test
-    public void failWithWrongPath() throws DataException, IOException, InvalidFormatException {
+    public void failWithWrongPath() throws DataException {
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         String wrongPath = "Common.password.paww";
         expectDataExceptions
@@ -99,7 +99,7 @@ public class ExcelDataTest {
     }
 
     @Test
-    public void failWithWrongGetGetPath() throws DataException, IOException, InvalidFormatException {
+    public void failWithWrongGetGetPath() throws DataException {
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         String wrongPath = "Common.password.paww";
         expectDataExceptions
@@ -109,7 +109,7 @@ public class ExcelDataTest {
     }
 
     @Test
-    public void failWithCyclicReference() throws DataException, IOException, InvalidFormatException {
+    public void failWithCyclicReference() throws DataException {
         String cyclicPath = "Common.cyclic";
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         String cyclicObject = "{ \"value\" : { \"sheetName\" : \"DataBlocks\", "
@@ -122,7 +122,7 @@ public class ExcelDataTest {
     }
 
     @Test
-    public void genDataSameCollectionTest() throws DataException, IOException, InvalidFormatException {
+    public void genDataSameCollectionTest() throws DataException {
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         testDataProvider.applyGenerator(SampleDataGensCallback.class);
         String genGenOrigin = testDataProvider.get("Uncommon.reftestGen").getValue();
@@ -133,7 +133,7 @@ public class ExcelDataTest {
     }
 
     @Test
-    public void genDataDifferentCollections() throws DataException, IOException, InvalidFormatException {
+    public void genDataDifferentCollections() throws DataException {
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         testDataProvider.applyGenerator(SampleDataGensCallback.class);
         String genGenOrgigin = testDataProvider.get("Common.gendata").getValue();
@@ -142,7 +142,7 @@ public class ExcelDataTest {
     }
 
     @Test
-    public void genDataDifferentCollectionsReference() throws DataException, IOException, InvalidFormatException {
+    public void genDataDifferentCollectionsReference() throws DataException {
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         testDataProvider.applyGenerator(SampleDataGensCallback.class);
         String genGenOrgigin = testDataProvider.get("Common.gendata").getValue();
@@ -154,7 +154,7 @@ public class ExcelDataTest {
     }
 
     @Test
-    public void getRefAsObject() throws DataException, IOException, InvalidFormatException {
+    public void getRefAsObject() throws DataException {
         TestDataProvider originalProvider = new ExcelDataProvider(this.excellDataPath, "DataBlocks").get("NewObject");
         TestDataProvider referencedProvider = new ExcelDataProvider(this.excellDataPath, collectionName).
                 get("Common.ref object data").getReference();
@@ -162,7 +162,7 @@ public class ExcelDataTest {
     }
 
     @Test
-    public void failRefAsObject() throws DataException, IOException, InvalidFormatException {
+    public void failRefAsObject() throws DataException {
         String path = "Common.id";
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, collectionName);
         expectDataExceptions.expect(ReferenceException.class);
@@ -172,7 +172,7 @@ public class ExcelDataTest {
     }
 
     @Test
-    public void generatorCacheDiffFiles() throws DataException, IOException, InvalidFormatException {
+    public void generatorCacheDiffFiles() throws DataException {
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excellDataPath, this.collectionName);
         TestDataProvider testDataProviderNew = new ExcelDataProvider("src/test/resources/excell/TestDataNew", this.collectionName);
         testDataProvider.applyGenerator(SampleDataGensCallback.class);

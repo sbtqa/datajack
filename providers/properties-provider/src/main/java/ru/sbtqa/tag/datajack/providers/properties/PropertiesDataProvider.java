@@ -4,10 +4,9 @@ import com.mongodb.BasicDBObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
-import ru.sbtqa.tag.datajack.TestDataProvider;
-import ru.sbtqa.tag.datajack.providers.json.JsonDataProvider;
 import ru.sbtqa.tag.datajack.exceptions.CollectionNotfoundException;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
+import ru.sbtqa.tag.datajack.providers.json.JsonDataProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +16,7 @@ import java.util.Properties;
 
 import static java.io.File.separator;
 
-public class PropertiesDataProvider extends JsonDataProvider implements TestDataProvider {
+public class PropertiesDataProvider extends JsonDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesDataProvider.class);
 

@@ -19,7 +19,7 @@ import static java.io.File.separator;
 import static java.lang.String.format;
 import static org.apache.commons.io.FileUtils.readFileToString;
 
-public class JsonDataProvider extends AbstractDataProvider implements TestDataProvider {
+public class JsonDataProvider extends AbstractDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonDataProvider.class);
     private static final String DEFAULT_EXTENSION = "json";

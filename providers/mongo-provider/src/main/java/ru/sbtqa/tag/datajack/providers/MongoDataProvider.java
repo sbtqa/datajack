@@ -15,7 +15,7 @@ import static com.mongodb.BasicDBObject.parse;
 import static com.mongodb.QueryBuilder.start;
 import static java.lang.String.format;
 
-public class MongoDataProvider extends AbstractDataProvider implements TestDataProvider {
+public class MongoDataProvider extends AbstractDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDataProvider.class);
     private static final String REF_ID_TPL = "refId";

@@ -28,7 +28,7 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
-public class ExcelDataProvider extends AbstractDataProvider implements TestDataProvider{
+public class ExcelDataProvider extends AbstractDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExcelDataProvider.class);
     private static final String SHEET_NAME_TPL = "sheetName";

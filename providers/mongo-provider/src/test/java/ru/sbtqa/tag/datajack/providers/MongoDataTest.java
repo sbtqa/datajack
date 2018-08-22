@@ -59,13 +59,6 @@ public class MongoDataTest {
     }
 
     @Test
-    public void valuePath() throws DataException {
-        TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, "DataBlocks");
-        assertEquals("Params Group 1.password",
-                testDataProvider.get("Common").get("password2.value.path").getValue());
-    }
-
-    @Test
     public void getFromAnotherCollection() throws DataException {
         TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, "DataBlocks");
         assertEquals("123",
@@ -220,7 +213,7 @@ public class MongoDataTest {
     @Test
     public void getRefAsObject() throws DataException {
         TestDataProvider originalProvider = new MongoDataProvider(mongoDb, "DataBlocks").
-                fromCollection("DataBlocks", "57a94a160a279ec293f61665").get("Common");
+                    fromCollection("DataBlocks", "57a94a160a279ec293f61665").get("Common");
         TestDataProvider referencedProvider = new MongoDataProvider(mongoDb, "Tests").
                 get("Common.ref object data").getReference();
         assertEquals(originalProvider.toString(), referencedProvider.toString());

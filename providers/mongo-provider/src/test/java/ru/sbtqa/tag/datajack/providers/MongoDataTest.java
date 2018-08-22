@@ -52,6 +52,23 @@ public class MongoDataTest {
     }
 
     @Test
+    public void getDeepReferenceTest() throws DataException {
+        String collectionName = "Tests";
+        TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, collectionName);
+        testDataProvider.applyGenerator(SampleDataGensCallback.class);
+
+        String deepReferenceValue = testDataProvider.get("Common.ref object data.gendata reference").getValue();
+        String shortReferenceValue = testDataProvider.fromCollection("DataBlocks").get("Common.gendata reference").getValue();
+        String shortComplexValue = testDataProvider.fromCollection("DataBlocks").get("Common.gen gen.gendata").getValue();
+        String shortValue = testDataProvider.fromCollection("DataBlocks").get("Common").get("gen gen").get("gendata").getValue();
+
+        assertEquals("Deep reference isn't equal direct value", shortValue, deepReferenceValue);
+        assertEquals("Short reference isn't equal direct value", shortValue, shortReferenceValue);
+        assertEquals("Short complex value isn't equal direct value", shortValue, shortComplexValue);
+    }
+
+
+    @Test
     public void isReference() throws DataException {
         TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, "DataBlocks");
         assertTrue("Value is not reference",

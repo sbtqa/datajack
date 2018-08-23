@@ -101,6 +101,23 @@ public class PropertiesDataTest {
                 dataProvider.get("Common.password2").getValue());
     }
 
+
+    @Test
+    public void getDeepReferenceTest() throws DataException {
+        String collectionName = "Tests";
+        TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName);
+        dataProvider.applyGenerator(SampleDataGensCallback.class);
+
+        String deepReferenceValue = dataProvider.get("Common.ref object data.gendata reference").getValue();
+        String shortReferenceValue = dataProvider.fromCollection("DataBlocks").get("Common.gendata reference").getValue();
+        String shortComplexValue = dataProvider.fromCollection("DataBlocks").get("Common.gen gen.gendata").getValue();
+        String shortValue = dataProvider.fromCollection("DataBlocks").get("Common").get("gen gen").get("gendata").getValue();
+
+        assertEquals("Deep reference isn't equal direct value", shortValue, deepReferenceValue);
+        assertEquals("Short reference isn't equal direct value", shortValue, shortReferenceValue);
+        assertEquals("Short complex value isn't equal direct value", shortValue, shortComplexValue);
+    }
+
     @Test
     public void isReferenceTest() throws DataException {
         String collectionName = "DataBlocks";
@@ -108,15 +125,6 @@ public class PropertiesDataTest {
 
         assertTrue("This isn't reference",
                 dataProvider.get("Common.password2").isReference());
-    }
-
-    @Test
-    public void valuePathTest() throws DataException {
-        String collectionName = "DataBlocks";
-        TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName);
-
-        assertEquals("Params Group 1.password",
-                dataProvider.get("Common").get("password2.value.path").getValue());
     }
 
     @Test

@@ -52,17 +52,27 @@ public class MongoDataTest {
     }
 
     @Test
+    public void getDeepReferenceTest() throws DataException {
+        String collectionName = "Tests";
+        TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, collectionName);
+        testDataProvider.applyGenerator(SampleDataGensCallback.class);
+
+        String deepReferenceValue = testDataProvider.get("Common.ref object data.gendata reference").getValue();
+        String shortReferenceValue = testDataProvider.fromCollection("DataBlocks").get("Common.gendata reference").getValue();
+        String shortComplexValue = testDataProvider.fromCollection("DataBlocks").get("Common.gen gen.gendata").getValue();
+        String shortValue = testDataProvider.fromCollection("DataBlocks").get("Common").get("gen gen").get("gendata").getValue();
+
+        assertEquals("Deep reference isn't equal direct value", shortValue, deepReferenceValue);
+        assertEquals("Short reference isn't equal direct value", shortValue, shortReferenceValue);
+        assertEquals("Short complex value isn't equal direct value", shortValue, shortComplexValue);
+    }
+
+
+    @Test
     public void isReference() throws DataException {
         TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, "DataBlocks");
         assertTrue("Value is not reference",
                 testDataProvider.get("Common.password2").isReference());
-    }
-
-    @Test
-    public void valuePath() throws DataException {
-        TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, "DataBlocks");
-        assertEquals("Params Group 1.password",
-                testDataProvider.get("Common").get("password2.value.path").getValue());
     }
 
     @Test
@@ -220,7 +230,7 @@ public class MongoDataTest {
     @Test
     public void getRefAsObject() throws DataException {
         TestDataProvider originalProvider = new MongoDataProvider(mongoDb, "DataBlocks").
-                fromCollection("DataBlocks", "57a94a160a279ec293f61665").get("Common");
+                    fromCollection("DataBlocks", "57a94a160a279ec293f61665").get("Common");
         TestDataProvider referencedProvider = new MongoDataProvider(mongoDb, "Tests").
                 get("Common.ref object data").getReference();
         assertEquals(originalProvider.toString(), referencedProvider.toString());

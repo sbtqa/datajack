@@ -31,8 +31,12 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         } else if (getValue() != null) {
             return new HashSet<>();
         }
-
-        return basicObj.keySet();
+        if (isReference()) {
+            this.rootObj = null;
+            return getReference().toMap().keySet();
+        } else {
+            return basicObj.keySet();
+        }
     }
 
     public Collection<Object> getValues() throws DataException {

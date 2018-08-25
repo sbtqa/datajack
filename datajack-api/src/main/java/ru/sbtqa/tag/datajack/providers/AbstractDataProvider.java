@@ -28,11 +28,11 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return key.matches("(.+\\[\\d+\\])");
     }
 
-    protected abstract AbstractDataProvider createInstance(BasicDBObject basicObject, String collectionName, String way) throws DataException;
+    protected abstract <T extends AbstractDataProvider> T createInstance(BasicDBObject basicObject, String collectionName, String way) throws DataException;
 
-    protected abstract AbstractDataProvider createInstance(BasicDBObject basicObject, String collectionName) throws DataException;
+    protected abstract <T extends AbstractDataProvider> T createInstance(BasicDBObject basicObject, String collectionName) throws DataException;
 
-    protected abstract AbstractDataProvider createInstance(String collectionName) throws DataException;
+    protected abstract <T extends AbstractDataProvider> T createInstance(String collectionName) throws DataException;
 
 
     @Override

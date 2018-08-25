@@ -31,9 +31,8 @@ import static java.lang.String.format;
 public class ExcelDataProvider extends AbstractDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExcelDataProvider.class);
-    private static final String SHEET_NAME_TPL = "sheetName";
+    private static final String SHEET_NAME_TPL = "collection";
     private final XSSFWorkbook workBook;
-    private final String sheetName;
     private final String dataFileName;
     private XSSFFormulaEvaluator evaluator;
 
@@ -41,11 +40,11 @@ public class ExcelDataProvider extends AbstractDataProvider {
      * Constructs ExcellDataProvider object Collection = an Excel work book
      * sheet
      *
-     * @param dataFilePath path to an Excel file
-     * @param sheetName    sheet name
+     * @param dataFilePath   path to an Excel file
+     * @param collectionName sheet name
      * @throws DataException if file not found
      */
-    public ExcelDataProvider(String dataFilePath, String sheetName) throws DataException {
+    public ExcelDataProvider(String dataFilePath, String collectionName) throws DataException {
         File file = FileUtils.getFile(dataFilePath + ".xlsx");
         if (null == file) {
             throw new FileNotFoundException(format("Could not find data file: '%s'", dataFilePath));
@@ -56,172 +55,47 @@ public class ExcelDataProvider extends AbstractDataProvider {
         } catch (IOException | InvalidFormatException ex) {
             throw new DataParseException("Could not parse \"" + file + "\"", ex);
         }
-        this.sheetName = sheetName;
-        this.basicObj = parseCollection();
+        this.collectionName = collectionName;
+        this.basicObject = parseCollection();
         this.evaluator = workBook.getCreationHelper().createFormulaEvaluator();
     }
 
-    private ExcelDataProvider(String dataFileName, XSSFWorkbook workBook, String sheetName) {
+    private ExcelDataProvider(String dataFileName, XSSFWorkbook workBook, String collectionName) {
         this.dataFileName = dataFileName;
         this.workBook = workBook;
-        this.sheetName = sheetName;
-        this.basicObj = parseCollection();
+        this.collectionName = collectionName;
+        this.basicObject = parseCollection();
     }
 
     private ExcelDataProvider(String dataFileName, XSSFWorkbook workBook,
-                              BasicDBObject obj, String sheetName, String way) {
+                              BasicDBObject obj, String collectionName, String way) {
         this.dataFileName = dataFileName;
         this.workBook = workBook;
-        this.basicObj = obj;
-        this.sheetName = sheetName;
+        this.basicObject = obj;
+        this.collectionName = collectionName;
         this.way = way;
     }
 
     @Override
-    public TestDataProvider get(String key) throws DataException {
-        if (key.isEmpty()) {
-            return this;
-        }
-
-        this.way = key;
-        ExcelDataProvider dataProvider;
-
-        if (key.contains(".")) {
-            String[] keys = key.split("[.]");
-            StringBuilder partialBuilt = new StringBuilder();
-            BasicDBObject basicObject = this.basicObj;
-            for (String partialKey : keys) {
-                partialBuilt.append(partialKey);
-
-                if (isReference(basicObject)) {
-                    String collection = ((BasicDBObject) basicObject.get("value")).getString("sheetName");
-                    String path = ((BasicDBObject) basicObject.get("value")).getString("path");
-                    TestDataProvider dataProviderN = new ExcelDataProvider(this.dataFileName,this.workBook, collection).get(path);
-                    basicObject = ((ExcelDataProvider) dataProviderN).basicObj;
-                }
-
-                if (!(basicObject.get(partialKey) instanceof BasicDBObject)) {
-                    if (basicObject.get(partialKey) instanceof String && !partialBuilt.toString().equals(key)) {
-                        throw new FieldNotFoundException(format("Field '%s' in '%s' object on sheet '%s' "
-                                        + "is not an object. Cannot find any nested fields inside it",
-                                partialKey, partialBuilt.toString().replace("." + partialKey, ""), this.sheetName));
-                    }
-                    if (null == basicObject.get(partialKey)) {
-                        throw new FieldNotFoundException(format("Sheet '%s' doesn't contain '%s' field on path '%s'",
-                                this.sheetName, partialKey, partialBuilt.toString()));
-                    }
-                    break;
-                }
-                basicObject = (BasicDBObject) basicObject.get(partialKey);
-                partialBuilt.append(".");
-            }
-
-            dataProvider = new ExcelDataProvider(this.dataFileName, this.workBook, basicObject, this.sheetName, this.way);
-            dataProvider.applyGenerator(this.callback);
-            dataProvider.setRootObj(this.rootObj, this.sheetName + "." + key);
-            return dataProvider;
-        }
-        if (!basicObj.containsField(key)) {
-            throw new FieldNotFoundException(format("Sheet '%s' doesn't contain '%s' field in path '%s'",
-                    this.sheetName, key, this.path));
-        }
-        Object result = this.basicObj.get(key);
-        if (!(result instanceof BasicDBObject)) {
-            result = new BasicDBObject(key, result);
-        }
-        dataProvider = new ExcelDataProvider(this.dataFileName, this.workBook, (BasicDBObject) result, this.sheetName, this.way);
-        dataProvider.applyGenerator(this.callback);
-
-        String rootObjValue;
-        if (this.path != null) {
-            rootObjValue = this.path + "." + key;
-        } else {
-            rootObjValue = this.sheetName + "." + key;
-        }
-        dataProvider.setRootObj(this.rootObj, rootObjValue);
-        return dataProvider;
+    protected ExcelDataProvider createInstance(BasicDBObject basicObject, String collectionName, String way) {
+        return new ExcelDataProvider(dataFileName, workBook, basicObject, collectionName, way);
     }
 
     @Override
-    public ExcelDataProvider fromCollection(String collName) throws DataException {
-        ExcelDataProvider dataProvider = new ExcelDataProvider(this.dataFileName, this.workBook, collName);
+    protected ExcelDataProvider createInstance(BasicDBObject basicObject, String collectionName) {
+        return new ExcelDataProvider(dataFileName, workBook, basicObject, collectionName, way);
+    }
+
+    @Override
+    protected ExcelDataProvider createInstance(String collectionName) throws DataException {
+        return new ExcelDataProvider(dataFileName, workBook, collectionName);
+    }
+
+    @Override
+    public ExcelDataProvider fromCollection(String collectionName) throws DataException {
+        ExcelDataProvider dataProvider = createInstance(collectionName);
         dataProvider.applyGenerator(this.callback);
         return dataProvider;
-    }
-
-    @Override
-    public String getValue() throws DataException {
-        try {
-            return this.getReference().getValue();
-        } catch (ReferenceException e) {
-            LOG.debug("Reference not found", e);
-            String result = this.basicObj.getString(VALUE_TPL);
-            if (result == null) {
-                if (this.way != null && this.way.contains(".")) {
-                    this.way = this.way.split("[.]")[this.way.split("[.]").length - 1];
-                }
-                result = this.basicObj.getString(this.way);
-            }
-
-            if (this.callback != null) {
-                CallbackData generatorParams = new CallbackData(String.join(".", this.dataFileName, this.path), result);
-                Object callbackResult = null;
-                try {
-                    callbackResult = callback.newInstance().call(generatorParams);
-                } catch (InstantiationException | IllegalAccessException ex) {
-                    throw new GeneratorException("Could not initialize callback", ex);
-                }
-                if (callbackResult instanceof Exception) {
-                    throw (GeneratorException) callbackResult;
-                } else {
-                    result = (String) callbackResult;
-                }
-            }
-            return result;
-        }
-    }
-
-    @Override
-    public TestDataProvider getReference() throws DataException {
-        if (null != this.basicObj.get(VALUE_TPL) && !(this.basicObj.get(VALUE_TPL) instanceof String)
-                && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField(SHEET_NAME_TPL)
-                && ((BasicDBObject) this.basicObj.get(VALUE_TPL)).containsField("path")) {
-            if (this.rootObj == null) {
-                this.rootObj = this.basicObj;
-            } else {
-                String rootJson = this.rootObj.toJson();
-                String baseJson = this.basicObj.toJson();
-                if (rootJson.equals(baseJson)) {
-                    throw new CyclicReferencesExeption("Cyclic references in database:\n" + rootJson);
-                }
-            }
-            String referencedCollection = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString(SHEET_NAME_TPL);
-            this.path = ((BasicBSONObject) this.basicObj.get(VALUE_TPL)).getString("path");
-            ExcelDataProvider reference = this.fromCollection(referencedCollection);
-            reference.setRootObj(this.rootObj, referencedCollection + "." + this.path);
-            return reference.get(this.path);
-        } else {
-            throw new ReferenceException(String.format("There is no reference in '%s'. Collection '%s'",
-                    this.path, this.sheetName));
-        }
-    }
-
-    @Override
-    public void applyGenerator(Class<? extends GeneratorCallback> callback) {
-        this.callback = callback;
-    }
-
-    @Override
-    public String toString() {
-        if (this.basicObj == null) {
-            return "";
-        }
-        return this.basicObj.toString();
-    }
-
-    private void setRootObj(BasicDBObject obj, String path) {
-        this.rootObj = obj;
-        this.path = path;
     }
 
     /**
@@ -232,7 +106,7 @@ public class ExcelDataProvider extends AbstractDataProvider {
     private List<XSSFRow> getRows() {
         List<XSSFRow> effectiveRows = new ArrayList<>();
         int firstRowNumber = 0;
-        XSSFSheet sheet = workBook.getSheet(sheetName);
+        XSSFSheet sheet = workBook.getSheet(collectionName);
         if ("Описание"
                 .equals(sheet.getRow(sheet.getFirstRowNum()).cellIterator().next().getStringCellValue())) {
             // Check if there is a header on the current shit. If so, skip it
@@ -433,20 +307,4 @@ public class ExcelDataProvider extends AbstractDataProvider {
         return value;
     }
 
-    @Override
-    public boolean isReference() throws DataException {
-        Object value = this.basicObj.get("value");
-        if (!(value instanceof BasicDBObject)) {
-            return false;
-        }
-        return ((BasicDBObject) value).containsField(SHEET_NAME_TPL) && ((BasicDBObject) value).containsField("path");
-    }
-
-    public boolean isReference(BasicDBObject basicDBObject) throws DataException {
-        Object value = basicDBObject.get("value");
-        if (!(value instanceof BasicDBObject)) {
-            return false;
-        }
-        return ((BasicDBObject) value).containsField(SHEET_NAME_TPL) && ((BasicDBObject) value).containsField("path");
-    }
 }

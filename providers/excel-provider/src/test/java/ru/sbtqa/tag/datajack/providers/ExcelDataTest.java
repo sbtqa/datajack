@@ -90,8 +90,8 @@ public class ExcelDataTest {
         expectDataExceptions
                 .expect(FieldNotFoundException.class
                 );
-        expectDataExceptions.expectMessage(format("Field 'password' in 'Common' object on sheet '%s' " +
-                "is not an object. Cannot find any nested fields inside it", collectionName));
+        expectDataExceptions.expectMessage(format("Collection \"%s\" doesn't contain \"%s\" field on path \"%s\"",
+                collectionName, wrongPath.split("[.]")[wrongPath.split("[.]").length - 1], wrongPath));
 
         testDataProvider.get(wrongPath).getValue();
     }
@@ -102,7 +102,7 @@ public class ExcelDataTest {
         String wrongPath = "Common.password.paww";
         expectDataExceptions
                 .expect(FieldNotFoundException.class);
-        expectDataExceptions.expectMessage("Sheet 'Tests' doesn't contain 'paww' field in path 'Tests.Common.password'");
+        expectDataExceptions.expectMessage("Collection \"Tests\" doesn't contain \"paww\" field in path \"Tests.Common.password\"");
         testDataProvider.get("Common").get("password").get("paww");
     }
 
@@ -110,7 +110,7 @@ public class ExcelDataTest {
     public void failWithCyclicReference() throws DataException {
         String cyclicPath = "Common.cyclic";
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excelDataPath, collectionName);
-        String cyclicObject = "{ \"value\" : { \"sheetName\" : \"DataBlocks\", "
+        String cyclicObject = "{ \"value\" : { \"collection\" : \"DataBlocks\", "
                 + "\"path\" : \"AnotherObject.cyclicRef\" }";
         expectDataExceptions
                 .expect(CyclicReferencesExeption.class);
@@ -164,7 +164,7 @@ public class ExcelDataTest {
         String path = "Common.id";
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excelDataPath, collectionName);
         expectDataExceptions.expect(ReferenceException.class);
-        expectDataExceptions.expectMessage(String.format("There is no reference in '%s.%s'. Collection '%s'",
+        expectDataExceptions.expectMessage(String.format("There is no reference in \"%s.%s\". Collection \"%s\"",
                 collectionName, path, collectionName));
         testDataProvider.get(path).getReference();
     }

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 import ru.sbtqa.tag.datajack.exceptions.CollectionNotfoundException;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
+import ru.sbtqa.tag.datajack.providers.AbstractDataProvider;
 import ru.sbtqa.tag.datajack.providers.json.JsonDataProvider;
 
 import java.io.File;
@@ -51,19 +52,37 @@ public class PropertiesDataProvider extends JsonDataProvider {
         super(testDataFolder, obj, collectionName, way, extension);
     }
 
-    @Override
-    protected <T extends JsonDataProvider> T privateInit(String testDataFolder, String collectionName) throws DataException {
-        return (T) new PropertiesDataProvider(testDataFolder, collectionName, extension);
+    /**
+     * Internal use only for provider overriding purposes
+     *
+     * @param collectionName file name
+     * @return
+     */
+    protected PropertiesDataProvider createInstance(String collectionName) throws DataException {
+        return new PropertiesDataProvider(testDataFolder, collectionName, extension);
     }
 
-    @Override
-    protected <T extends JsonDataProvider> T privateInit(String testDataFolder, BasicDBObject obj, String collectionName, String way) {
-        return (T) new PropertiesDataProvider(testDataFolder, obj, collectionName, way, extension);
+    /**
+     * Internal use only for provider overriding purposes
+     *
+     * @param obj            Basic object
+     * @param collectionName file name
+     * @param way            complex path to value
+     * @return
+     */
+    protected PropertiesDataProvider createInstance(BasicDBObject obj, String collectionName, String way) {
+        return new PropertiesDataProvider(testDataFolder, obj, collectionName, way, extension);
     }
 
-    @Override
-    protected <T extends JsonDataProvider> T privateInit(String testDataFolder, BasicDBObject obj, String collectionName) {
-        return (T) new PropertiesDataProvider(testDataFolder, obj, collectionName, extension);
+    /**
+     * Internal use only for provider overriding purposes
+     *
+     * @param obj            Basic object
+     * @param collectionName file name
+     * @return
+     */
+    protected PropertiesDataProvider createInstance(BasicDBObject obj, String collectionName) {
+        return new PropertiesDataProvider(testDataFolder, obj, collectionName, extension);
     }
 
     @Override

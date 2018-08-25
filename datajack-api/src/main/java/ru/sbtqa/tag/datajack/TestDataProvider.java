@@ -1,5 +1,6 @@
 package ru.sbtqa.tag.datajack;
 
+import com.mongodb.BasicDBObject;
 import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 
@@ -42,7 +43,7 @@ public interface TestDataProvider {
      * @return true if it is reference, false otherwise
      * @throws DataException if no reference
      */
-    public boolean isReference() throws DataException;
+    boolean isReference() throws DataException;
 
     /**
      * Get reference from value
@@ -50,7 +51,7 @@ public interface TestDataProvider {
      * @return Referenced object
      * @throws DataException if no reference
      */
-    public TestDataProvider getReference() throws DataException;
+    TestDataProvider getReference() throws DataException;
 
     /**
      * Apply generator callback
@@ -65,7 +66,7 @@ public interface TestDataProvider {
      * @return map of objects
      * @throws DataException if not initialized yet
      */
-    public Map<String, Object> toMap() throws DataException;
+    Map<String, Object> toMap() throws DataException;
 
     /**
      * Get set of keys from TestDataProvider
@@ -73,7 +74,7 @@ public interface TestDataProvider {
      * @return set of keys
      * @throws DataException if not initialized yet
      */
-    public Set<String> getKeySet() throws DataException;
+    Set<String> getKeySet() throws DataException;
 
     /**
      * Get list of values as Objects from TestDataProvider
@@ -81,7 +82,7 @@ public interface TestDataProvider {
      * @return collection of Object values
      * @throws DataException if not initialized yet
      */
-    public Collection<Object> getValues() throws DataException;
+    Collection<Object> getValues() throws DataException;
 
     /**
      * Get list of String representations of all primitive values from
@@ -90,7 +91,7 @@ public interface TestDataProvider {
      * @return list of String values
      * @throws DataException if not initialized yet
      */
-    public List<String> getStringValues() throws DataException;
+    List<String> getStringValues() throws DataException;
 
     /**
      * @return List of parsed string values

@@ -161,9 +161,9 @@ public class ExcelDataProvider extends AbstractDataProvider {
      * @return boolean result
      */
     private boolean isObjectDeclarator(XSSFRow row) {
-        return null != row.getCell(0, Row.RETURN_BLANK_AS_NULL)
-                && null == row.getCell(1, Row.RETURN_BLANK_AS_NULL)
-                && null == row.getCell(2, Row.RETURN_BLANK_AS_NULL);
+        return null != row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)
+                && null == row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)
+                && null == row.getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
     }
 
     /**
@@ -173,9 +173,9 @@ public class ExcelDataProvider extends AbstractDataProvider {
      * @return boolean result
      */
     private boolean isDelimiter(XSSFRow row) {
-        return null == row.getCell(0, Row.RETURN_BLANK_AS_NULL)
-                && null == row.getCell(1, Row.RETURN_BLANK_AS_NULL)
-                && null == row.getCell(2, Row.RETURN_BLANK_AS_NULL);
+        return null == row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)
+                && null == row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)
+                && null == row.getCell(2, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
     }
 
     private boolean isSimpleKeyValueMap(XSSFRow row) {

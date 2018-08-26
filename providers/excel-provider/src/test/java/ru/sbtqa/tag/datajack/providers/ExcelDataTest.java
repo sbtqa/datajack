@@ -91,7 +91,7 @@ public class ExcelDataTest {
                 .expect(FieldNotFoundException.class
                 );
         expectDataExceptions.expectMessage(format("Collection \"%s\" doesn't contain \"%s\" field on path \"%s\"",
-                collectionName, wrongPath.split("[.]")[wrongPath.split("[.]").length - 1], wrongPath));
+                collectionName, "paww", "Common.password"));
 
         testDataProvider.get(wrongPath).getValue();
     }
@@ -167,15 +167,6 @@ public class ExcelDataTest {
         expectDataExceptions.expectMessage(String.format("There is no reference in \"%s.%s\". Collection \"%s\"",
                 collectionName, path, collectionName));
         testDataProvider.get(path).getReference();
-    }
-
-    @Test
-    public void generatorCacheDiffFiles() throws DataException {
-        TestDataProvider testDataProvider = new ExcelDataProvider(this.excelDataPath, this.collectionName);
-        TestDataProvider testDataProviderNew = new ExcelDataProvider("src/test/resources/excell/TestDataNew", this.collectionName);
-        testDataProvider.applyGenerator(SampleDataGensCallback.class);
-        testDataProviderNew.applyGenerator(SampleDataGensCallback.class);
-        assertNotEquals(testDataProvider.get("Common.gendata").getValue(), testDataProviderNew.get("Common.gendata").getValue());
     }
 
     @Test

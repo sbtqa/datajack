@@ -155,7 +155,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         StringBuilder partialBuilt = new StringBuilder();
         BasicDBObject basicObject = this.basicObject;
 
-        for (String partialKey : keys) {
+        for (int i=0; i< keys.length; i++) {
+            String partialKey = keys[i];
+
             partialBuilt.append(partialKey);
 
             if (isArray(partialKey)) {
@@ -171,9 +173,10 @@ public abstract class AbstractDataProvider implements TestDataProvider {
             }
 
             if (!(basicObject.get(partialKey) instanceof BasicDBObject)) {
-                if (null == basicObject.get(partialKey)) {
+                if (null == basicObject.get(partialKey) || i < keys.length - 1) {
+                    String wrongField = basicObject.get(partialKey)==null ? partialKey : keys[keys.length-1];
                     throw new FieldNotFoundException(format("Collection \"%s\" doesn't contain \"%s\" field on path \"%s\"",
-                            this.collectionName, partialKey, partialBuilt.toString()));
+                            this.collectionName, wrongField, partialBuilt.toString()));
                 }
                 break;
             }

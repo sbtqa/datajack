@@ -2,6 +2,7 @@ package ru.sbtqa.tag.datajack.callback;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
@@ -30,8 +31,7 @@ public class SampleDataGensCallback implements GeneratorCallback {
             String genResult = null;
 
             try {
-                Thread.sleep(1);
-                genResult = valueOf(currentTimeMillis());
+                genResult = valueOf(new Random().nextLong());
             } catch (Exception ex) {
                 return ex;
             }

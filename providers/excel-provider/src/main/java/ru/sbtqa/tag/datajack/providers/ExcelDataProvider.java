@@ -11,12 +11,8 @@ import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.bson.BasicBSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.sbtqa.tag.datajack.TestDataProvider;
-import ru.sbtqa.tag.datajack.callback.CallbackData;
-import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
 import ru.sbtqa.tag.datajack.exceptions.*;
 
 import java.io.File;
@@ -244,7 +240,7 @@ public class ExcelDataProvider extends AbstractDataProvider {
             pureObject.append("comment", getComment(row));
         }
         if (isLink(row)) {
-            pureObject.append(VALUE_TPL, getLink(row));
+            pureObject.append("value", getLink(row));
         } else {
             Map<String, String> map = getSimpleKeyValueMap(row);
             pureObject.append(map.keySet().iterator().next(), map.get(map.keySet().iterator().next()));

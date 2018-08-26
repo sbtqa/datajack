@@ -1,8 +1,6 @@
 package ru.sbtqa.tag.datajack.providers.json;
 
 import com.mongodb.BasicDBObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.providers.AbstractDataProvider;
 import ru.sbtqa.tag.datajack.exceptions.*;
@@ -12,12 +10,10 @@ import java.io.IOException;
 
 import static com.mongodb.BasicDBObject.parse;
 import static java.io.File.separator;
-import static java.lang.String.format;
 import static org.apache.commons.io.FileUtils.readFileToString;
 
 public class JsonDataProvider extends AbstractDataProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JsonDataProvider.class);
     private static final String DEFAULT_EXTENSION = "json";
     protected String testDataFolder;
     protected String extension;
@@ -90,40 +86,18 @@ public class JsonDataProvider extends AbstractDataProvider {
         this.collectionName = collectionName;
     }
 
-    public BasicDBObject getBasicDBObject() {
-        return this.basicObject;
-    }
-
-
-    /**
-     * Internal use only for provider overriding purposes
-     *
-     * @param collectionName file name
-     * @return
-     */
+    @Override
     protected JsonDataProvider createInstance(String collectionName) throws DataException {
         return new JsonDataProvider(testDataFolder, collectionName, extension);
     }
 
-    /**
-     * Internal use only for provider overriding purposes
-     *
-     * @param obj            Basic object
-     * @param collectionName file name
-     * @param way            complex path to value
-     * @return
-     */
+    @Override
     protected JsonDataProvider createInstance(BasicDBObject obj, String collectionName, String way) {
         return new JsonDataProvider(testDataFolder, obj, collectionName, way, extension);
     }
 
-    /**
-     * Internal use only for provider overriding purposes
-     *
-     * @param obj            Basic object
-     * @param collectionName file name
-     * @return
-     */
+
+    @Override
     protected JsonDataProvider createInstance(BasicDBObject obj, String collectionName) {
         return new JsonDataProvider(testDataFolder, obj, collectionName, extension);
     }

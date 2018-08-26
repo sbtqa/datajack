@@ -1,6 +1,5 @@
 package ru.sbtqa.tag.datajack;
 
-import com.mongodb.BasicDBObject;
 import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 
@@ -66,7 +65,7 @@ public interface TestDataProvider {
      * @return map of objects
      * @throws DataException if not initialized yet
      */
-    Map<String, Object> toMap() throws DataException;
+    Map toMap() throws DataException;
 
     /**
      * Get set of keys from TestDataProvider

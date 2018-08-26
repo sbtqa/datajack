@@ -2,23 +2,11 @@ package ru.sbtqa.tag.datajack.providers;
 
 import com.mongodb.*;
 import org.bson.BSONObject;
-import org.bson.BasicBSONObject;
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.sbtqa.tag.datajack.TestDataProvider;
-import ru.sbtqa.tag.datajack.callback.CallbackData;
-import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
 import ru.sbtqa.tag.datajack.exceptions.*;
-
-import static com.mongodb.BasicDBObject.parse;
-import static com.mongodb.QueryBuilder.start;
-import static java.lang.String.format;
-import static org.apache.commons.io.FileUtils.readFileToString;
 
 public class MongoDataProvider extends AbstractDataProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MongoDataProvider.class);
     private final DB db;
     private DBCollection collection;
 
@@ -68,7 +56,7 @@ public class MongoDataProvider extends AbstractDataProvider {
      * @param collectionName file name
      * @param way            complex path to value
      */
-    protected MongoDataProvider(DB db, BasicDBObject obj, String collectionName, String way) {
+    private MongoDataProvider(DB db, BasicDBObject obj, String collectionName, String way) {
         this.db = db;
         this.basicObject = obj;
         this.way = way;

@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 import ru.sbtqa.tag.datajack.exceptions.CollectionNotfoundException;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
-import ru.sbtqa.tag.datajack.providers.AbstractDataProvider;
 import ru.sbtqa.tag.datajack.providers.json.JsonDataProvider;
 
 import java.io.File;
@@ -52,12 +51,7 @@ public class PropertiesDataProvider extends JsonDataProvider {
         super(testDataFolder, obj, collectionName, way, extension);
     }
 
-    /**
-     * Internal use only for provider overriding purposes
-     *
-     * @param collectionName file name
-     * @return
-     */
+    @Override
     protected PropertiesDataProvider createInstance(String collectionName) throws DataException {
         return new PropertiesDataProvider(testDataFolder, collectionName, extension);
     }
@@ -70,6 +64,7 @@ public class PropertiesDataProvider extends JsonDataProvider {
      * @param way            complex path to value
      * @return
      */
+    @Override
     protected PropertiesDataProvider createInstance(BasicDBObject obj, String collectionName, String way) {
         return new PropertiesDataProvider(testDataFolder, obj, collectionName, way, extension);
     }
@@ -81,6 +76,7 @@ public class PropertiesDataProvider extends JsonDataProvider {
      * @param collectionName file name
      * @return
      */
+    @Override
     protected PropertiesDataProvider createInstance(BasicDBObject obj, String collectionName) {
         return new PropertiesDataProvider(testDataFolder, obj, collectionName, extension);
     }

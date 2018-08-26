@@ -28,10 +28,35 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return key.matches("(.+\\[\\d+\\])");
     }
 
+    /**
+     * Internal use only for provider overriding purposes
+     * @param basicObject Current object
+     * @param collectionName Name of collection
+     * @param way Passed way
+     * @param <T> Adaptor type
+     * @return return Adaptor instance
+     * @throws DataException
+     */
     protected abstract <T extends AbstractDataProvider> T createInstance(BasicDBObject basicObject, String collectionName, String way) throws DataException;
 
+
+    /**
+     * Internal use only for provider overriding purposes
+     * @param basicObject Current object
+     * @param collectionName Name of collection
+     * @param <T> Adaptor type
+     * @return return Adaptor instance
+     * @throws DataException
+     */
     protected abstract <T extends AbstractDataProvider> T createInstance(BasicDBObject basicObject, String collectionName) throws DataException;
 
+    /**
+     * Internal use only for provider overriding purposes
+     * @param collectionName Name of collection
+     * @param <T> Adaptor type
+     * @return Adaptor instance
+     * @throws DataException
+     */
     protected abstract <T extends AbstractDataProvider> T createInstance(String collectionName) throws DataException;
 
 
@@ -157,7 +182,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
     private BasicDBObject parseComplexDBObject(String key) throws DataException {
         String[] keys = key.split("[.]");
         StringBuilder partialBuiltPath = new StringBuilder();
-        BasicDBObject basicObject = this.basicObject;
+        BasicDBObject curentBasicObject = this.basicObject;
 
         for (int i = 0; i < keys.length; i++) {
             String partialKey = keys[i];
@@ -165,32 +190,32 @@ public abstract class AbstractDataProvider implements TestDataProvider {
             partialBuiltPath.append(partialKey);
 
             if (isArray(partialKey)) {
-                basicObject = (BasicDBObject) parseArray(basicObject, partialKey);
+                curentBasicObject = (BasicDBObject) parseArray(curentBasicObject, partialKey);
                 continue;
             }
 
-            if (isReference(basicObject)) {
-                String referenceCollection = ((BasicDBObject) basicObject.get("value")).getString("collection");
-                String referencePath = ((BasicDBObject) basicObject.get("value")).getString("path");
+            if (isReference(curentBasicObject)) {
+                String referenceCollection = ((BasicDBObject) curentBasicObject.get(VALUE_TPL)).getString(COLLECTION_TPL);
+                String referencePath = ((BasicDBObject) curentBasicObject.get(VALUE_TPL)).getString("path");
                 AbstractDataProvider dataProvider = (AbstractDataProvider) createInstance(referenceCollection).get(referencePath);
-                basicObject = dataProvider.basicObject;
+                curentBasicObject = dataProvider.basicObject;
             }
 
-            Object currentValue = basicObject.get(partialKey);
+            Object currentValue = curentBasicObject.get(partialKey);
             if (!(currentValue instanceof BasicDBObject)) {
                 if (null == currentValue || i < keys.length - 1) {
                     String lastKey = keys[keys.length - 1];
-                    String wrongField = basicObject.get(partialKey) == null ? partialKey : lastKey;
+                    String wrongField = curentBasicObject.get(partialKey) == null ? partialKey : lastKey;
 
                     throw new FieldNotFoundException(format("Collection \"%s\" doesn't contain \"%s\" field on path \"%s\"",
                             this.collectionName, wrongField, partialBuiltPath.toString()));
                 }
                 break;
             }
-            basicObject = (BasicDBObject) basicObject.get(partialKey);
+            curentBasicObject = (BasicDBObject) curentBasicObject.get(partialKey);
             partialBuiltPath.append(".");
         }
-        return basicObject;
+        return curentBasicObject;
     }
 
     @Override
@@ -269,19 +294,19 @@ public abstract class AbstractDataProvider implements TestDataProvider {
 
 
     @Override
-    public boolean isReference() throws DataException {
-        Object value = this.basicObject.get("value");
+    public boolean isReference() {
+        Object value = this.basicObject.get(VALUE_TPL);
         if (!(value instanceof BasicDBObject)) {
             return false;
         }
-        return ((BasicDBObject) value).containsField("collection") && ((BasicDBObject) value).containsField("path");
+        return ((BasicDBObject) value).containsField(COLLECTION_TPL) && ((BasicDBObject) value).containsField("path");
     }
 
     private boolean isReference(BasicDBObject basicDBObject) {
-        Object value = basicDBObject.get("value");
+        Object value = basicDBObject.get(VALUE_TPL);
         if (!(value instanceof BasicDBObject)) {
             return false;
         }
-        return ((BasicDBObject) value).containsField("collection") && ((BasicDBObject) value).containsField("path");
+        return ((BasicDBObject) value).containsField(COLLECTION_TPL) && ((BasicDBObject) value).containsField("path");
     }
 }

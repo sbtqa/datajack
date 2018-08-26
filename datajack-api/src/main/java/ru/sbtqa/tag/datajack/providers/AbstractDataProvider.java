@@ -14,17 +14,17 @@ import static java.lang.String.format;
 
 public abstract class AbstractDataProvider implements TestDataProvider {
 
-    protected static final String VALUE_TPL = "value";
-    protected static final String COLLECTION_TPL = "collection";
+    private static final String VALUE_TPL = "value";
+    private static final String COLLECTION_TPL = "collection";
     protected BasicDBObject basicObject;
     protected String collectionName;
     protected String way;
     protected String path;
     protected Class<? extends GeneratorCallback> callback;
-    protected BasicDBObject rootObject;
+    private BasicDBObject rootObject;
     private static final String NOT_INITIALIZED_EXCEPTION = "BasicDBObject is not initialized yet";
 
-    public static boolean isArray(String key) {
+    private static boolean isArray(String key) {
         return key.matches("(.+\\[\\d+\\])");
     }
 
@@ -45,6 +45,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
 
     }
 
+    @Override
     public Map<String, Object> toMap() throws DataException {
         if (basicObject == null) {
             throw new DataException(NOT_INITIALIZED_EXCEPTION);
@@ -52,6 +53,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return basicObject.toMap();
     }
 
+    @Override
     public Set<String> getKeySet() throws DataException {
         if (basicObject == null) {
             throw new DataException(NOT_INITIALIZED_EXCEPTION);
@@ -66,6 +68,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         }
     }
 
+    @Override
     public Collection<Object> getValues() throws DataException {
         if (basicObject == null) {
             throw new DataException(NOT_INITIALIZED_EXCEPTION);
@@ -73,6 +76,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return basicObject.values();
     }
 
+    @Override
     public List<String> getStringValues() throws DataException {
         if (basicObject == null) {
             throw new DataException(NOT_INITIALIZED_EXCEPTION);
@@ -194,7 +198,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return this.basicObject == null ? "" : this.basicObject.toString();
     }
 
-    protected void setRootObject(BasicDBObject rootObject, String path) {
+    private void setRootObject(BasicDBObject rootObject, String path) {
         this.rootObject = rootObject;
         this.path = path;
     }
@@ -273,7 +277,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return ((BasicDBObject) value).containsField("collection") && ((BasicDBObject) value).containsField("path");
     }
 
-    public boolean isReference(BasicDBObject basicDBObject) {
+    private boolean isReference(BasicDBObject basicDBObject) {
         Object value = basicDBObject.get("value");
         if (!(value instanceof BasicDBObject)) {
             return false;

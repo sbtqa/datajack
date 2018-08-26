@@ -4,9 +4,10 @@ import com.mongodb.BasicDBObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
+import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.exceptions.CollectionNotfoundException;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
-import ru.sbtqa.tag.datajack.providers.json.JsonDataProvider;
+import ru.sbtqa.tag.datajack.providers.AbstractDataProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,11 +15,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
+import static com.mongodb.BasicDBObject.parse;
 import static java.io.File.separator;
 
-public class PropertiesDataProvider extends JsonDataProvider {
+public class PropertiesDataProvider extends AbstractDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesDataProvider.class);
+    private static final String DEFAULT_EXTENSION = "properties";
+    private String testDataFolder;
+    private String extension;
 
     /**
      * Create PropertiesDataProvider instance
@@ -28,7 +33,13 @@ public class PropertiesDataProvider extends JsonDataProvider {
      * @throws DataException if file not found in testDataFolder
      */
     public PropertiesDataProvider(String testDataFolder, String collectionName) throws DataException {
-        super(testDataFolder, collectionName, "properties");
+        this.extension = DEFAULT_EXTENSION;
+        String json = readFile(testDataFolder, collectionName);
+
+        BasicDBObject parsed = parse(json);
+        this.testDataFolder = testDataFolder;
+        this.basicObject = parsed;
+        this.collectionName = collectionName;
     }
 
     /**
@@ -40,15 +51,29 @@ public class PropertiesDataProvider extends JsonDataProvider {
      * @throws DataException if file not found in testDataFolder
      */
     public PropertiesDataProvider(String testDataFolder, String collectionName, String extension) throws DataException {
-        super(testDataFolder, collectionName, extension);
+        this.extension = extension;
+
+        String json = readFile(testDataFolder, collectionName);
+
+        BasicDBObject parsed = parse(json);
+        this.testDataFolder = testDataFolder;
+        this.basicObject = parsed;
+        this.collectionName = collectionName;
     }
 
     private PropertiesDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String extension) {
-        super(testDataFolder, obj, collectionName, extension);
+        this.extension = extension;
+        this.testDataFolder = testDataFolder;
+        this.basicObject = obj;
+        this.collectionName = collectionName;;
     }
 
     private PropertiesDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String way, String extension) {
-        super(testDataFolder, obj, collectionName, way, extension);
+        this.extension = extension;
+        this.testDataFolder = testDataFolder;
+        this.basicObject = obj;
+        this.way = way;
+        this.collectionName = collectionName;
     }
 
     @Override
@@ -82,7 +107,15 @@ public class PropertiesDataProvider extends JsonDataProvider {
     }
 
     @Override
-    protected String readFile(String testDataFolder, String collectionName) throws CollectionNotfoundException {
+    public TestDataProvider fromCollection(String collName) throws DataException {
+        String json = readFile(this.testDataFolder, collName);
+        BasicDBObject parsed = parse(json);
+        AbstractDataProvider dataProvider = createInstance(parsed, collName);
+        dataProvider.applyGenerator(this.callback);
+        return dataProvider;
+    }
+
+    private String readFile(String testDataFolder, String collectionName) throws CollectionNotfoundException {
         String json;
         try {
             Properties properties = getProperties(testDataFolder + separator + collectionName + "." + extension);

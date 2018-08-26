@@ -19,8 +19,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>ru.sbtqa.tag.datajack.providers</groupId>
-      <artifactId>json-provider</artifactId>
+      <groupId>ru.sbtqa.tag.datajack</groupId>
+      <artifactId>datajack-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

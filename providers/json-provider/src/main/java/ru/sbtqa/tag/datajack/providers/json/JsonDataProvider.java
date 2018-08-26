@@ -15,8 +15,8 @@ import static org.apache.commons.io.FileUtils.readFileToString;
 public class JsonDataProvider extends AbstractDataProvider {
 
     private static final String DEFAULT_EXTENSION = "json";
-    protected String testDataFolder;
-    protected String extension;
+    private String testDataFolder;
+    private String extension;
 
     /**
      * Create JsonDataProvider instance
@@ -62,7 +62,7 @@ public class JsonDataProvider extends AbstractDataProvider {
      * @param collectionName file name
      * @param extension      custom file extension
      */
-    protected JsonDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String extension) {
+    private JsonDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String extension) {
         this.extension = extension;
         this.testDataFolder = testDataFolder;
         this.basicObject = obj;
@@ -78,7 +78,7 @@ public class JsonDataProvider extends AbstractDataProvider {
      * @param way            complex path to value
      * @param extension      custom file extension
      */
-    protected JsonDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String way, String extension) {
+    private JsonDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String way, String extension) {
         this.extension = extension;
         this.testDataFolder = testDataFolder;
         this.basicObject = obj;
@@ -96,12 +96,10 @@ public class JsonDataProvider extends AbstractDataProvider {
         return new JsonDataProvider(testDataFolder, obj, collectionName, way, extension);
     }
 
-
     @Override
     protected JsonDataProvider createInstance(BasicDBObject obj, String collectionName) {
         return new JsonDataProvider(testDataFolder, obj, collectionName, extension);
     }
-
 
     @Override
     public TestDataProvider fromCollection(String collName) throws DataException {
@@ -112,8 +110,7 @@ public class JsonDataProvider extends AbstractDataProvider {
         return dataProvider;
     }
 
-
-    protected String readFile(String testDataFolder, String collectionName) throws CollectionNotfoundException {
+    private String readFile(String testDataFolder, String collectionName) throws CollectionNotfoundException {
         try {
             return readFileToString(new File(testDataFolder + separator + collectionName + "." + this.extension), "UTF-8");
         } catch (IOException ex) {

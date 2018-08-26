@@ -152,13 +152,13 @@ public abstract class AbstractDataProvider implements TestDataProvider {
 
     private BasicDBObject parseComplexDBObject(String key) throws DataException {
         String[] keys = key.split("[.]");
-        StringBuilder partialBuilt = new StringBuilder();
+        StringBuilder partialBuiltPath = new StringBuilder();
         BasicDBObject basicObject = this.basicObject;
 
-        for (int i=0; i< keys.length; i++) {
+        for (int i = 0; i < keys.length; i++) {
             String partialKey = keys[i];
 
-            partialBuilt.append(partialKey);
+            partialBuiltPath.append(partialKey);
 
             if (isArray(partialKey)) {
                 basicObject = (BasicDBObject) parseArray(basicObject, partialKey);
@@ -172,26 +172,26 @@ public abstract class AbstractDataProvider implements TestDataProvider {
                 basicObject = dataProvider.basicObject;
             }
 
-            if (!(basicObject.get(partialKey) instanceof BasicDBObject)) {
-                if (null == basicObject.get(partialKey) || i < keys.length - 1) {
-                    String wrongField = basicObject.get(partialKey)==null ? partialKey : keys[keys.length-1];
+            Object currentValue = basicObject.get(partialKey);
+            if (!(currentValue instanceof BasicDBObject)) {
+                if (null == currentValue || i < keys.length - 1) {
+                    String lastKey = keys[keys.length - 1];
+                    String wrongField = basicObject.get(partialKey) == null ? partialKey : lastKey;
+
                     throw new FieldNotFoundException(format("Collection \"%s\" doesn't contain \"%s\" field on path \"%s\"",
-                            this.collectionName, wrongField, partialBuilt.toString()));
+                            this.collectionName, wrongField, partialBuiltPath.toString()));
                 }
                 break;
             }
             basicObject = (BasicDBObject) basicObject.get(partialKey);
-            partialBuilt.append(".");
+            partialBuiltPath.append(".");
         }
         return basicObject;
     }
 
     @Override
     public String toString() {
-        if (this.basicObject == null) {
-            return "";
-        }
-        return this.basicObject.toString();
+        return this.basicObject == null ? "" : this.basicObject.toString();
     }
 
     protected void setRootObject(BasicDBObject rootObject, String path) {
@@ -215,18 +215,19 @@ public abstract class AbstractDataProvider implements TestDataProvider {
             }
             if (this.callback != null) {
                 CallbackData generatorParams = new CallbackData(this.path, result);
-                Object callbackResult = null;
 
                 try {
-                    callbackResult = callback.newInstance().call(generatorParams);
+                    Object callbackResult = callback.newInstance().call(generatorParams);
+
+                    if (callbackResult instanceof Exception) {
+                        throw (GeneratorException) callbackResult;
+                    } else {
+                        result = (String) callbackResult;
+                    }
                 } catch (InstantiationException | IllegalAccessException ex) {
                     throw new GeneratorException("Could not initialize callback", ex);
                 }
-                if (callbackResult instanceof Exception) {
-                    throw (GeneratorException) callbackResult;
-                } else {
-                    result = (String) callbackResult;
-                }
+
             }
             return result;
         }

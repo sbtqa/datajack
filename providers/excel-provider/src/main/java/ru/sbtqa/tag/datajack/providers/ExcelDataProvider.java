@@ -4,6 +4,7 @@ import com.mongodb.BasicDBObject;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -271,30 +272,30 @@ public class ExcelDataProvider extends AbstractDataProvider {
      */
     private String getCellValue(Cell cell) {
         //noinspection deprecation
-        if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+        if (cell.getCellTypeEnum() == CellType.FORMULA) {
             String value = "";
             try {
                 value = cell.getRichStringCellValue().getString();
             } catch (Exception e) {
                 LOG.debug("Failed to get raw cell value, now trying to get typified", e);
-                switch (evaluator.evaluateFormulaCell(cell)) {
-                    case Cell.CELL_TYPE_BOOLEAN:
+                switch (evaluator.evaluateFormulaCellEnum(cell)) {
+                    case BOOLEAN:
                         value = String.valueOf(cell.getBooleanCellValue());
                         break;
-                    case Cell.CELL_TYPE_NUMERIC:
+                    case NUMERIC:
                         if (DateUtil.isCellDateFormatted(cell)) {
                             value = new DataFormatter().formatCellValue(cell, evaluator);
                         } else {
                             value = String.valueOf(cell.getNumericCellValue());
                         }
                         break;
-                    case Cell.CELL_TYPE_ERROR:
+                    case ERROR:
                         value = String.valueOf(cell.getErrorCellValue());
                         break;
-                    case Cell.CELL_TYPE_STRING:
+                    case STRING:
                         value = cell.getStringCellValue();
                         break;
-                    case Cell.CELL_TYPE_BLANK:
+                    case BLANK:
                     default:
                         break;
                 }

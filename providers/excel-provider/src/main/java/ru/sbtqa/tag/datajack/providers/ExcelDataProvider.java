@@ -24,28 +24,29 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
+@SuppressWarnings("deprecation")
 public class ExcelDataProvider extends AbstractDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExcelDataProvider.class);
-    private static final String SHEET_NAME_TPL = "collection";
+    private static final String DEFAULT_EXTENSION = "xlsx";
     private final XSSFWorkbook workBook;
     private final String dataFileName;
     private XSSFFormulaEvaluator evaluator;
 
     /**
-     * Constructs ExcellDataProvider object Collection = an Excel work book
+     * Constructs ExcelDataProvider object Collection = an Excel work book
      * sheet
      *
-     * @param dataFilePath   path to an Excel file
+     * @param dataFilePath path to an Excel file
      * @param collectionName sheet name
      * @throws DataException if file not found
      */
     public ExcelDataProvider(String dataFilePath, String collectionName) throws DataException {
-        File file = FileUtils.getFile(dataFilePath + ".xlsx");
+        File file = FileUtils.getFile(dataFilePath + "." + DEFAULT_EXTENSION);
         if (null == file) {
             throw new FileNotFoundException(format("Could not find data file: '%s'", dataFilePath));
         }
-        this.dataFileName = file.getName().replace(".xlsx", "");
+        this.dataFileName = file.getName().replace(DEFAULT_EXTENSION, "");
         try {
             this.workBook = new XSSFWorkbook(file);
         } catch (IOException | InvalidFormatException ex) {
@@ -72,23 +73,35 @@ public class ExcelDataProvider extends AbstractDataProvider {
         this.way = way;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected ExcelDataProvider createInstance(BasicDBObject basicObject, String collectionName, String way) {
         return new ExcelDataProvider(dataFileName, workBook, basicObject, collectionName, way);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected ExcelDataProvider createInstance(BasicDBObject basicObject, String collectionName) {
         return new ExcelDataProvider(dataFileName, workBook, basicObject, collectionName, way);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected ExcelDataProvider createInstance(String collectionName) throws DataException {
+    protected ExcelDataProvider createInstance(String collectionName) {
         return new ExcelDataProvider(dataFileName, workBook, collectionName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ExcelDataProvider fromCollection(String collectionName) throws DataException {
+    public ExcelDataProvider fromCollection(String collectionName) {
         ExcelDataProvider dataProvider = createInstance(collectionName);
         dataProvider.applyGenerator(this.callback);
         return dataProvider;
@@ -205,7 +218,7 @@ public class ExcelDataProvider extends AbstractDataProvider {
         BasicDBObject link = new BasicDBObject();
         String[] fullPathDelimited = linkPath.split("[.]", 2);
         // Link to another sheetName (sheet)
-        link.append(SHEET_NAME_TPL, fullPathDelimited[0]);
+        link.append(COLLECTION_TPL, fullPathDelimited[0]);
         link.append("path", fullPathDelimited[1]);
         return link;
     }
@@ -250,13 +263,14 @@ public class ExcelDataProvider extends AbstractDataProvider {
     }
 
     /**
-     * Get value from Cell Read data/formated date, result of formula/excel
+     * Get value from Cell Read data/formatted date, result of formula/excel
      * function;
      *
      * @param cell data cell
      * @return value of cell
      */
     private String getCellValue(Cell cell) {
+        //noinspection deprecation
         if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
             String value = "";
             try {
@@ -296,7 +310,7 @@ public class ExcelDataProvider extends AbstractDataProvider {
                 value = String.format("%d", (long) Double.parseDouble(value));
 
             } catch (NumberFormatException e) {
-                LOG.debug("Skiped replacing suffix zeroes. Value {} is not a number", value, e);
+                LOG.debug("Skipped replacing suffix zeroes. Value {} is not a number", value, e);
             }
         }
 

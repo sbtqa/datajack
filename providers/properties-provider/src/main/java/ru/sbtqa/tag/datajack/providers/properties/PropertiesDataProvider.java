@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 import ru.sbtqa.tag.datajack.TestDataProvider;
-import ru.sbtqa.tag.datajack.exceptions.CollectionNotfoundException;
+import ru.sbtqa.tag.datajack.exceptions.CollectionNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 import ru.sbtqa.tag.datajack.providers.AbstractDataProvider;
 
@@ -22,8 +22,8 @@ public class PropertiesDataProvider extends AbstractDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesDataProvider.class);
     private static final String DEFAULT_EXTENSION = "properties";
+    private final String extension;
     private String testDataFolder;
-    private String extension;
 
     /**
      * Create PropertiesDataProvider instance
@@ -47,7 +47,7 @@ public class PropertiesDataProvider extends AbstractDataProvider {
      *
      * @param testDataFolder path to data folder
      * @param collectionName properties file name
-     * @param extension      custom file extension
+     * @param extension custom file extension
      * @throws DataException if file not found in testDataFolder
      */
     public PropertiesDataProvider(String testDataFolder, String collectionName, String extension) throws DataException {
@@ -65,7 +65,7 @@ public class PropertiesDataProvider extends AbstractDataProvider {
         this.extension = extension;
         this.testDataFolder = testDataFolder;
         this.basicObject = obj;
-        this.collectionName = collectionName;;
+        this.collectionName = collectionName;
     }
 
     private PropertiesDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String way, String extension) {
@@ -76,18 +76,16 @@ public class PropertiesDataProvider extends AbstractDataProvider {
         this.collectionName = collectionName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected PropertiesDataProvider createInstance(String collectionName) throws DataException {
         return new PropertiesDataProvider(testDataFolder, collectionName, extension);
     }
 
     /**
-     * Internal use only for provider overriding purposes
-     *
-     * @param obj            Basic object
-     * @param collectionName file name
-     * @param way            complex path to value
-     * @return
+     * {@inheritDoc}
      */
     @Override
     protected PropertiesDataProvider createInstance(BasicDBObject obj, String collectionName, String way) {
@@ -95,11 +93,7 @@ public class PropertiesDataProvider extends AbstractDataProvider {
     }
 
     /**
-     * Internal use only for provider overriding purposes
-     *
-     * @param obj            Basic object
-     * @param collectionName file name
-     * @return
+     * {@inheritDoc}
      */
     @Override
     protected PropertiesDataProvider createInstance(BasicDBObject obj, String collectionName) {
@@ -115,14 +109,14 @@ public class PropertiesDataProvider extends AbstractDataProvider {
         return dataProvider;
     }
 
-    private String readFile(String testDataFolder, String collectionName) throws CollectionNotfoundException {
+    private String readFile(String testDataFolder, String collectionName) throws CollectionNotFoundException {
         String json;
         try {
             Properties properties = getProperties(testDataFolder + separator + collectionName + "." + extension);
             json = new PropertiesToJsonConverter().parseToJson(properties);
 
         } catch (DataException ex) {
-            throw new CollectionNotfoundException(String.format("File %s.%s not found in %s",
+            throw new CollectionNotFoundException(String.format("File %s.%s not found in %s",
                     collectionName, extension, testDataFolder), ex);
         }
         return json;
@@ -137,7 +131,7 @@ public class PropertiesDataProvider extends AbstractDataProvider {
             InputStreamReader isr = new InputStreamReader(streamFromResources, "UTF-8");
             properties.load(isr);
         } catch (IOException | NullPointerException e) {
-            throw new CollectionNotfoundException("Failed to access file", e);
+            throw new CollectionNotFoundException("Failed to access file", e);
         }
         return properties;
     }

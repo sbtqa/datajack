@@ -15,8 +15,8 @@ import static org.apache.commons.io.FileUtils.readFileToString;
 public class JsonDataProvider extends AbstractDataProvider {
 
     private static final String DEFAULT_EXTENSION = "json";
+    private final String extension;
     private String testDataFolder;
-    private String extension;
 
     /**
      * Create JsonDataProvider instance
@@ -40,7 +40,7 @@ public class JsonDataProvider extends AbstractDataProvider {
      *
      * @param testDataFolder path to data folder
      * @param collectionName json file name
-     * @param extension      custom file extension
+     * @param extension custom file extension
      * @throws DataException if file not found in testDataFolder
      */
     public JsonDataProvider(String testDataFolder, String collectionName, String extension) throws DataException {
@@ -58,9 +58,9 @@ public class JsonDataProvider extends AbstractDataProvider {
      * Internal use only for provider overriding purposes
      *
      * @param testDataFolder path to data folder
-     * @param obj            basic object
+     * @param obj basic object
      * @param collectionName file name
-     * @param extension      custom file extension
+     * @param extension custom file extension
      */
     private JsonDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String extension) {
         this.extension = extension;
@@ -73,10 +73,10 @@ public class JsonDataProvider extends AbstractDataProvider {
      * Internal use only for provider overriding purposes
      *
      * @param testDataFolder path to data folder
-     * @param obj            basic object
+     * @param obj basic object
      * @param collectionName file name
-     * @param way            complex path to value
-     * @param extension      custom file extension
+     * @param way complex path to value
+     * @param extension custom file extension
      */
     private JsonDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String way, String extension) {
         this.extension = extension;
@@ -86,16 +86,25 @@ public class JsonDataProvider extends AbstractDataProvider {
         this.collectionName = collectionName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected JsonDataProvider createInstance(String collectionName) throws DataException {
         return new JsonDataProvider(testDataFolder, collectionName, extension);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected JsonDataProvider createInstance(BasicDBObject obj, String collectionName, String way) {
         return new JsonDataProvider(testDataFolder, obj, collectionName, way, extension);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected JsonDataProvider createInstance(BasicDBObject obj, String collectionName) {
         return new JsonDataProvider(testDataFolder, obj, collectionName, extension);
@@ -110,11 +119,11 @@ public class JsonDataProvider extends AbstractDataProvider {
         return dataProvider;
     }
 
-    private String readFile(String testDataFolder, String collectionName) throws CollectionNotfoundException {
+    private String readFile(String testDataFolder, String collectionName) throws CollectionNotFoundException {
         try {
             return readFileToString(new File(testDataFolder + separator + collectionName + "." + this.extension), "UTF-8");
         } catch (IOException ex) {
-            throw new CollectionNotfoundException(String.format("File %s.json not found in %s",
+            throw new CollectionNotFoundException(String.format("File %s.json not found in %s",
                     collectionName, testDataFolder), ex);
         }
     }

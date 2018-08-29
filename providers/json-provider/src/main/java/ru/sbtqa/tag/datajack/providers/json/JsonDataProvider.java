@@ -110,6 +110,9 @@ public class JsonDataProvider extends AbstractDataProvider {
         return new JsonDataProvider(testDataFolder, obj, collectionName, extension);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TestDataProvider fromCollection(String collName) throws DataException {
         String json = readFile(this.testDataFolder, collName);

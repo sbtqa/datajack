@@ -67,7 +67,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
      */
     protected abstract <T extends AbstractDataProvider> T createInstance(String collectionName) throws DataException;
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TestDataProvider get(String key) throws DataException {
         if (key.isEmpty()) {
@@ -78,6 +80,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, Object> toMap() throws DataException {
         if (basicObject == null) {
@@ -86,6 +91,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return basicObject.toMap();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<String> getKeySet() throws DataException {
         if (basicObject == null) {
@@ -101,6 +109,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<Object> getValues() throws DataException {
         if (basicObject == null) {
@@ -109,6 +120,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return basicObject.values();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> getStringValues() throws DataException {
         if (basicObject == null) {
@@ -230,6 +244,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return currentBasicObject;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.basicObject == null ? "" : this.basicObject.toString();
@@ -240,6 +257,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         this.path = path;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getValue() throws DataException {
         if (this.isReference()) {
@@ -278,6 +298,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TestDataProvider getReference() throws DataException {
         if (null != this.basicObject.get(VALUE_TPL) && !(this.basicObject.get(VALUE_TPL) instanceof String)
@@ -303,12 +326,17 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void applyGenerator(Class<? extends GeneratorCallback> callback) {
         this.callback = callback;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isReference() {
         Object value = this.basicObject.get(VALUE_TPL);

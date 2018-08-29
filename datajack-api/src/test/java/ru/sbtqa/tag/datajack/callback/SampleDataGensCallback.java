@@ -13,6 +13,9 @@ import static ru.sbtqa.tag.datajack.callback.SampleDataCache.getCache;
  */
 public class SampleDataGensCallback implements GeneratorCallback {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object call(CallbackData callbackData) {
 

@@ -89,6 +89,9 @@ public class MongoDataProvider extends AbstractDataProvider {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MongoDataProvider fromCollection(String collName) throws DataException {
 

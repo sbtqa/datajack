@@ -12,10 +12,10 @@ DataJack have two important think:
 * **Stash** - use this class, if you want store something when tests execute.
 * **TestDataProvider** - interface, which using to work with different test data storage systems.   
 We have the following implementation:
-  * [JSON-Provider](https://github.com/sbtqa/datajack/providers/json-provider)
-  * [Properties-Provider](https://github.com/sbtqa/datajack/providers/properties-provider)
-  * [Mongo-Provider](https://github.com/sbtqa/datajack/providers/mongo-provider)
-  * [Excel-Provider](https://github.com/sbtqa/datajack/providers/excel-provider)
+  * [JSON-Provider](https://github.com/sbtqa/datajack/tree/master/providers/json-provider)
+  * [Properties-Provider](https://github.com/sbtqa/datajack/tree/master/providers/properties-provider)
+  * [Mongo-Provider](https://github.com/sbtqa/datajack/tree/master/providers/mongo-provider)
+  * [Excel-Provider](https://github.com/sbtqa/datajack/tree/master/providers/excel-provider)
 
 
 ### Documentation

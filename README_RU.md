@@ -8,10 +8,10 @@ DataJack имеет две фичи:
 * **Stash** - класс, который можно использовать для хранения и использования данных во время выполнения тестов.
 * **TestDataProvider** - интерфейс, который используется для работы с различными хранилищами тестовых данных.   
 Сейчас поддерживаются следующие типы хранилищ:
-  * [JSON-Provider](https://github.com/sbtqa/datajack/providers/json-provider)
-  * [Properties-Provider](https://github.com/sbtqa/datajack/providers/properties-provider)
-  * [Mongo-Provider](https://github.com/sbtqa/datajack/providers/mongo-provider)
-  * [Excel-Provider](https://github.com/sbtqa/datajack/providers/excel-provider)
+  * [JSON-Provider](https://github.com/sbtqa/datajack/tree/master/providers/json-provider)
+  * [Properties-Provider](https://github.com/sbtqa/datajack/tree/master/providers/properties-provider)
+  * [Mongo-Provider](https://github.com/sbtqa/datajack/tree/master/providers/mongo-provider)
+  * [Excel-Provider](https://github.com/sbtqa/datajack/tree/master/providers/excel-provider)
 
 ### Документация
 Проект с примером использования можно посмотреть [здесь](https://github.com/sbtqa/datajack-example).Вся документация по использованию [здесь](https://github.com/sbtqa/docs/wiki/DataJack)

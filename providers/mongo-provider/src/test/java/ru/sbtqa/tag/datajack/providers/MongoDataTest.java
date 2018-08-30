@@ -229,10 +229,10 @@ public class MongoDataTest {
 
     @Test
     public void getRefAsObject() throws DataException {
-        TestDataProvider originalProvider = new MongoDataProvider(mongoDb, "DataBlocks").
-                fromCollection("DataBlocks", "57a94a160a279ec293f61665").get("Common");
-        TestDataProvider referencedProvider = new MongoDataProvider(mongoDb, "Tests").
-                get("Common.ref object data").getReference();
+        TestDataProvider originalProvider = new MongoDataProvider(mongoDb, "DataBlocks")
+                .fromCollection("DataBlocks", "57a94a160a279ec293f61665").get("Common");
+        TestDataProvider referencedProvider = new MongoDataProvider(mongoDb, "Tests")
+                .get("Common.ref object data").getReference();
         assertEquals(originalProvider.toString(), referencedProvider.toString());
     }
 
@@ -250,7 +250,6 @@ public class MongoDataTest {
     @Test
     public void toMapTest() throws DataException {
         String collection = "DataBlocks";
-        String path = "testId";
         TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, collection);
         Object supposedToBeMap = testDataProvider.get("Common").toMap();
 

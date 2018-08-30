@@ -88,7 +88,6 @@ public class MongoDataProvider extends AbstractDataProvider {
         return new MongoDataProvider(db, collectionName);
     }
 
-
     /**
      * {@inheritDoc}
      */

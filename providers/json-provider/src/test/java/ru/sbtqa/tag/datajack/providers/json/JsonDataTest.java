@@ -13,6 +13,8 @@ import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 import static org.junit.Assert.*;
@@ -110,6 +112,22 @@ public class JsonDataTest {
         assertEquals("Deep reference isn't equal direct value", shortValue, deepReferenceValue);
         assertEquals("Short reference isn't equal direct value", shortValue, shortReferenceValue);
         assertEquals("Short complex value isn't equal direct value", shortValue, shortComplexValue);
+    }
+
+    @Test
+    public void getByPathTest() throws DataException {
+        String collectionName = "Tests";
+        TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);
+        testDataProvider.applyGenerator(SampleDataGensCallback.class);
+
+        String fullPathValue = testDataProvider.getByPath("$Tests{Common.ref object data.gendata reference}").getValue();
+        String fullPathReferenceValue = testDataProvider.getByPath("$DataBlocks{Common.gendata reference}").getValue();
+        String shortPathValue = testDataProvider.getByPath("$DataBlocks").getByPath("${Common.gen gen.gendata}").getValue();
+        String shortPathCombinedValue = testDataProvider.getByPath("$DataBlocks").getByPath("${Common}").get("gen gen").get("gendata").getValue();
+
+        assertEquals("Deep reference isn't equal direct value", shortPathCombinedValue, fullPathValue);
+        assertEquals("Short reference isn't equal direct value", shortPathCombinedValue, fullPathReferenceValue);
+        assertEquals("Short complex value isn't equal direct value", shortPathCombinedValue, shortPathValue);
     }
 
     @Test

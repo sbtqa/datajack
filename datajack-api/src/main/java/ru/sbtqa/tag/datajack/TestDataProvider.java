@@ -14,7 +14,7 @@ public interface TestDataProvider {
      * Switch current collection
      *
      * @param collectionName name of data collection
-     * @return test data object instance
+     * @return test data provider instance
      * @throws DataException If no collection found
      */
     TestDataProvider fromCollection(String collectionName) throws DataException;
@@ -23,10 +23,19 @@ public interface TestDataProvider {
      * Get sub-object from test data object by key
      *
      * @param key key to get
-     * @return test data object instance
+     * @return test data provider instance
      * @throws DataException f no value
      */
     TestDataProvider get(String key) throws DataException;
+
+    /**
+     * Get sub-object from test data object by path
+     *
+     * @param key path to get like $Collection[path.to.smth] or ${path.to.smth} relative to current collection
+     * @return test data provider instance
+     * @throws DataException f no value
+     */
+    TestDataProvider getByPath(String key) throws DataException;
 
     /**
      * Get value of current test data object

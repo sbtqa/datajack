@@ -104,17 +104,33 @@ public class PropertiesDataTest {
     @Test
     public void getDeepReferenceTest() throws DataException {
         String collectionName = "Tests";
-        TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName);
-        dataProvider.applyGenerator(SampleDataGensCallback.class);
+        TestDataProvider testDataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName);
+        testDataProvider.applyGenerator(SampleDataGensCallback.class);
 
-        String deepReferenceValue = dataProvider.get("Common.ref object data.gendata reference").getValue();
-        String shortReferenceValue = dataProvider.fromCollection("DataBlocks").get("Common.gendata reference").getValue();
-        String shortComplexValue = dataProvider.fromCollection("DataBlocks").get("Common.gen gen.gendata").getValue();
-        String shortValue = dataProvider.fromCollection("DataBlocks").get("Common").get("gen gen").get("gendata").getValue();
+        String deepReferenceValue = testDataProvider.get("Common.ref object data.gendata reference").getValue();
+        String shortReferenceValue = testDataProvider.fromCollection("DataBlocks").get("Common.gendata reference").getValue();
+        String shortComplexValue = testDataProvider.fromCollection("DataBlocks").get("Common.gen gen.gendata").getValue();
+        String shortValue = testDataProvider.fromCollection("DataBlocks").get("Common").get("gen gen").get("gendata").getValue();
 
         assertEquals("Deep reference isn't equal direct value", shortValue, deepReferenceValue);
         assertEquals("Short reference isn't equal direct value", shortValue, shortReferenceValue);
         assertEquals("Short complex value isn't equal direct value", shortValue, shortComplexValue);
+    }
+
+    @Test
+    public void getByPathTest() throws DataException {
+        String collectionName = "Tests";
+        TestDataProvider testDataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName);
+        testDataProvider.applyGenerator(SampleDataGensCallback.class);
+
+        String fullPathValue = testDataProvider.getByPath("$Tests{Common.ref object data.gendata reference}").getValue();
+        String fullPathReferenceValue = testDataProvider.getByPath("$DataBlocks{Common.gendata reference}").getValue();
+        String shortPathValue = testDataProvider.getByPath("$DataBlocks").getByPath("${Common.gen gen.gendata}").getValue();
+        String shortPathCombinedValue = testDataProvider.getByPath("$DataBlocks").getByPath("${Common}").get("gen gen").get("gendata").getValue();
+
+        assertEquals("Deep reference isn't equal direct value", shortPathCombinedValue, fullPathValue);
+        assertEquals("Short reference isn't equal direct value", shortPathCombinedValue, fullPathReferenceValue);
+        assertEquals("Short complex value isn't equal direct value", shortPathCombinedValue, shortPathValue);
     }
 
     @Test
@@ -200,7 +216,6 @@ public class PropertiesDataTest {
         assertEquals(genGenOrgigin, dataProvider.get("Common.gendata reference").getValue());
         assertEquals(genGenOrgigin, dataProvider.get("Common").get("gen gen").get("gendata").getValue());
         assertEquals(dataProvider.get("Common.gendata").getValue(), dataProvider.get("Common").get("gendata").getValue());
-
     }
 
     @Test
@@ -215,7 +230,6 @@ public class PropertiesDataTest {
 
         assertFalse("Generator is not applied", genGenOrgigin.contains("generate:"));
         assertEquals(genGenOrgigin, dataProvider.get("Common").get("gendata").getValue());
-
     }
 
     @Test

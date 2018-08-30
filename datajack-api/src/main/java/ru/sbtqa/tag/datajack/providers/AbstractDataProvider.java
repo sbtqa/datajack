@@ -147,7 +147,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
 
     private TestDataProvider getSimple(String key) throws DataException {
 
-        AbstractDataProvider dataProvider = createInstance((BasicDBObject) parseSimpleResult(key), this.collectionName, this.way);
+        AbstractDataProvider dataProvider = createInstance(parseSimpleResult(key), this.collectionName, this.way);
         dataProvider.applyGenerator(this.callback);
 
         String rootObjValue;
@@ -163,7 +163,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return dataProvider;
     }
 
-    private Object parseSimpleResult(String key) throws DataException {
+    private BasicDBObject parseSimpleResult(String key) throws DataException {
         Object result;
 
         if (isArray(key)) {
@@ -178,7 +178,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         if (!(result instanceof BasicDBObject)) {
             result = new BasicDBObject(key, result);
         }
-        return result;
+        return (BasicDBObject) result;
     }
 
     private TestDataProvider getComplex(String key) throws DataException {

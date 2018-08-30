@@ -101,7 +101,6 @@ public class PropertiesDataTest {
                 dataProvider.get("Common.password2").getValue());
     }
 
-
     @Test
     public void getDeepReferenceTest() throws DataException {
         String collectionName = "Tests";
@@ -280,7 +279,6 @@ public class PropertiesDataTest {
         assertFalse("Set object shouldn't be empty", ((Set) supposedToBeSet).isEmpty());
     }
 
-
     @Test
     public void emptyKeySetForValueTest() throws DataException {
         TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, "DataBlocks");
@@ -299,7 +297,6 @@ public class PropertiesDataTest {
 
         assertEquals("Objects are not same", origin, self);
     }
-
 
     @Test
     public void getValuesTest() throws DataException {

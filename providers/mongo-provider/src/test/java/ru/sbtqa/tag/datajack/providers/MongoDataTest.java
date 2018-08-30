@@ -67,7 +67,6 @@ public class MongoDataTest {
         assertEquals("Short complex value isn't equal direct value", shortValue, shortComplexValue);
     }
 
-
     @Test
     public void isReference() throws DataException {
         TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, "DataBlocks");

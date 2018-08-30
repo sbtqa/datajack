@@ -45,7 +45,6 @@ public abstract class AbstractDataProvider implements TestDataProvider {
      */
     protected abstract <T extends AbstractDataProvider> T createInstance(BasicDBObject basicObject, String collectionName, String way) throws DataException;
 
-
     /**
      * Internal use only for provider overriding purposes
      *

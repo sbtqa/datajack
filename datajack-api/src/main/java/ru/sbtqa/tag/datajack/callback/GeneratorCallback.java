@@ -10,6 +10,6 @@ public interface GeneratorCallback extends Callback<CallbackData, Object> {
      * @return Callback instance
      */
     @Override
-    public Object call(CallbackData callbackData);
+    Object call(CallbackData callbackData);
 
 }

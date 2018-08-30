@@ -2,6 +2,7 @@ package ru.sbtqa.tag.datajack.callback;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
@@ -9,10 +10,12 @@ import static ru.sbtqa.tag.datajack.callback.SampleDataCache.getCache;
 
 /**
  * Default sbt callback. Works with sbt-datagens and Init.stash as cache
- *
  */
 public class SampleDataGensCallback implements GeneratorCallback {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object call(CallbackData callbackData) {
 
@@ -30,8 +33,7 @@ public class SampleDataGensCallback implements GeneratorCallback {
             String genResult = null;
 
             try {
-                Thread.sleep(1);
-                genResult = valueOf(currentTimeMillis());
+                genResult = valueOf(new Random().nextLong());
             } catch (Exception ex) {
                 return ex;
             }

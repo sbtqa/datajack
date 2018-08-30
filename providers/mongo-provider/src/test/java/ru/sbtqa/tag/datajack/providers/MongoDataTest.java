@@ -67,7 +67,6 @@ public class MongoDataTest {
         assertEquals("Short complex value isn't equal direct value", shortValue, shortComplexValue);
     }
 
-
     @Test
     public void isReference() throws DataException {
         TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, "DataBlocks");
@@ -102,7 +101,7 @@ public class MongoDataTest {
     public void failInitWithNotExistenCollection() throws DataException {
         String wrongCollection = "sdfsfsdf";
         expectDataExceptions
-                .expect(CollectionNotfoundException.class);
+                .expect(CollectionNotFoundException.class);
         expectDataExceptions.expectMessage(format("There is no \"%s\" collection or it's empty",
                 wrongCollection));
 
@@ -142,7 +141,7 @@ public class MongoDataTest {
         String cyclicObject = format("{ \"value\" : { \"collection\" : \"%s\", "
                 + "\"path\" : \"Common.cyclic\" }, \"comment\" : \"Cyclic\"", collection);
         expectDataExceptions
-                .expect(CyclicReferencesExeption.class);
+                .expect(CyclicReferencesException.class);
         expectDataExceptions.expectMessage(format("Cyclic references in database:\n%s", cyclicObject));
 
         testDataProvider.get(cyclicPath).getValue();
@@ -221,7 +220,7 @@ public class MongoDataTest {
 
         String cyclicObject = "{ \"value\" : { \"path\" : \"Common.failCyclicReferenceDifferentCollectionWithRefId\", \"collection\" : \"DataBlocks\", \"refId\" : \"57a94a160a279ec293f61665\" } }";
         expectDataExceptions
-                .expect(CyclicReferencesExeption.class);
+                .expect(CyclicReferencesException.class);
         expectDataExceptions.expectMessage(format("Cyclic references in database:\n%s", cyclicObject));
 
         testDataProvider.get(cyclicPath).getValue();
@@ -229,10 +228,10 @@ public class MongoDataTest {
 
     @Test
     public void getRefAsObject() throws DataException {
-        TestDataProvider originalProvider = new MongoDataProvider(mongoDb, "DataBlocks").
-                    fromCollection("DataBlocks", "57a94a160a279ec293f61665").get("Common");
-        TestDataProvider referencedProvider = new MongoDataProvider(mongoDb, "Tests").
-                get("Common.ref object data").getReference();
+        TestDataProvider originalProvider = new MongoDataProvider(mongoDb, "DataBlocks")
+                .fromCollection("DataBlocks", "57a94a160a279ec293f61665").get("Common");
+        TestDataProvider referencedProvider = new MongoDataProvider(mongoDb, "Tests")
+                .get("Common.ref object data").getReference();
         assertEquals(originalProvider.toString(), referencedProvider.toString());
     }
 
@@ -250,7 +249,6 @@ public class MongoDataTest {
     @Test
     public void toMapTest() throws DataException {
         String collection = "DataBlocks";
-        String path = "testId";
         TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, collection);
         Object supposedToBeMap = testDataProvider.get("Common").toMap();
 
@@ -261,7 +259,8 @@ public class MongoDataTest {
 
     @Test
     public void getKeySetTest() throws DataException {
-        String collection = "DataBlocks";TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, collection);
+        String collection = "DataBlocks";
+        TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, collection);
         Object supposedToBeSet = testDataProvider.get("Common").getKeySet();
 
         assertTrue("Type of return value getKeySet() is not Set", supposedToBeSet instanceof Set);

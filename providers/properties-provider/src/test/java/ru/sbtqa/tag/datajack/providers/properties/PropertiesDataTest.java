@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.callback.SampleDataGensCallback;
-import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesExeption;
+import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesException;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
@@ -101,7 +101,6 @@ public class PropertiesDataTest {
                 dataProvider.get("Common.password2").getValue());
     }
 
-
     @Test
     public void getDeepReferenceTest() throws DataException {
         String collectionName = "Tests";
@@ -182,7 +181,7 @@ public class PropertiesDataTest {
         String cyclicObject = format("{ \"comment\" : \"Cyclic\", \"value\" : { \"path\" : \"Common.cyclic\", \"collection\" : \"%s\" } }", collectionName);
 
         expectDataExceptions
-                .expect(CyclicReferencesExeption.class);
+                .expect(CyclicReferencesException.class);
         expectDataExceptions.expectMessage(format("Cyclic references in database:\n%s", cyclicObject));
 
         dataProvider.get(cyclicPath).getValue();
@@ -280,7 +279,6 @@ public class PropertiesDataTest {
         assertFalse("Set object shouldn't be empty", ((Set) supposedToBeSet).isEmpty());
     }
 
-
     @Test
     public void emptyKeySetForValueTest() throws DataException {
         TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, "DataBlocks");
@@ -288,7 +286,7 @@ public class PropertiesDataTest {
 
         assertTrue("Type of return value getKeySet() is not Set", supposedToBeSet instanceof Set);
         assertNotNull("Set object is null", supposedToBeSet != null);
-            assertTrue("Set object should be empty", ((Set) supposedToBeSet).isEmpty());
+        assertTrue("Set object should be empty", ((Set) supposedToBeSet).isEmpty());
     }
 
     @Test
@@ -299,7 +297,6 @@ public class PropertiesDataTest {
 
         assertEquals("Objects are not same", origin, self);
     }
-
 
     @Test
     public void getValuesTest() throws DataException {

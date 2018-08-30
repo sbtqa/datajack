@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.callback.SampleDataGensCallback;
-import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesExeption;
+import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesException;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
@@ -90,8 +90,8 @@ public class ExcelDataTest {
         expectDataExceptions
                 .expect(FieldNotFoundException.class
                 );
-        expectDataExceptions.expectMessage(format("Field 'password' in 'Common' object on sheet '%s' " +
-                "is not an object. Cannot find any nested fields inside it", collectionName));
+        expectDataExceptions.expectMessage(format("Collection \"%s\" doesn't contain \"%s\" field on path \"%s\"",
+                collectionName, "paww", "Common.password"));
 
         testDataProvider.get(wrongPath).getValue();
     }
@@ -102,7 +102,7 @@ public class ExcelDataTest {
         String wrongPath = "Common.password.paww";
         expectDataExceptions
                 .expect(FieldNotFoundException.class);
-        expectDataExceptions.expectMessage("Sheet 'Tests' doesn't contain 'paww' field in path 'Tests.Common.password'");
+        expectDataExceptions.expectMessage("Collection \"Tests\" doesn't contain \"paww\" field in path \"Tests.Common.password\"");
         testDataProvider.get("Common").get("password").get("paww");
     }
 
@@ -110,10 +110,10 @@ public class ExcelDataTest {
     public void failWithCyclicReference() throws DataException {
         String cyclicPath = "Common.cyclic";
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excelDataPath, collectionName);
-        String cyclicObject = "{ \"value\" : { \"sheetName\" : \"DataBlocks\", "
+        String cyclicObject = "{ \"value\" : { \"collection\" : \"DataBlocks\", "
                 + "\"path\" : \"AnotherObject.cyclicRef\" }";
         expectDataExceptions
-                .expect(CyclicReferencesExeption.class);
+                .expect(CyclicReferencesException.class);
         expectDataExceptions.expectMessage(format("Cyclic references in database:\n%s", cyclicObject));
 
         testDataProvider.get(cyclicPath).getValue();
@@ -164,18 +164,9 @@ public class ExcelDataTest {
         String path = "Common.id";
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excelDataPath, collectionName);
         expectDataExceptions.expect(ReferenceException.class);
-        expectDataExceptions.expectMessage(String.format("There is no reference in '%s.%s'. Collection '%s'",
+        expectDataExceptions.expectMessage(String.format("There is no reference in \"%s.%s\". Collection \"%s\"",
                 collectionName, path, collectionName));
         testDataProvider.get(path).getReference();
-    }
-
-    @Test
-    public void generatorCacheDiffFiles() throws DataException {
-        TestDataProvider testDataProvider = new ExcelDataProvider(this.excelDataPath, this.collectionName);
-        TestDataProvider testDataProviderNew = new ExcelDataProvider("src/test/resources/excell/TestDataNew", this.collectionName);
-        testDataProvider.applyGenerator(SampleDataGensCallback.class);
-        testDataProviderNew.applyGenerator(SampleDataGensCallback.class);
-        assertNotEquals(testDataProvider.get("Common.gendata").getValue(), testDataProviderNew.get("Common.gendata").getValue());
     }
 
     @Test

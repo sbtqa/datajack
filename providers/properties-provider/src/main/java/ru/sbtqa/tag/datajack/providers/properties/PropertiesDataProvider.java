@@ -4,9 +4,10 @@ import com.mongodb.BasicDBObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
-import ru.sbtqa.tag.datajack.exceptions.CollectionNotfoundException;
+import ru.sbtqa.tag.datajack.TestDataProvider;
+import ru.sbtqa.tag.datajack.exceptions.CollectionNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
-import ru.sbtqa.tag.datajack.providers.json.JsonDataProvider;
+import ru.sbtqa.tag.datajack.providers.AbstractDataProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,11 +15,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
+import static com.mongodb.BasicDBObject.parse;
 import static java.io.File.separator;
 
-public class PropertiesDataProvider extends JsonDataProvider {
+public class PropertiesDataProvider extends AbstractDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesDataProvider.class);
+    private static final String DEFAULT_EXTENSION = "properties";
+    private final String extension;
+    private String testDataFolder;
 
     /**
      * Create PropertiesDataProvider instance
@@ -28,7 +33,13 @@ public class PropertiesDataProvider extends JsonDataProvider {
      * @throws DataException if file not found in testDataFolder
      */
     public PropertiesDataProvider(String testDataFolder, String collectionName) throws DataException {
-        super(testDataFolder, collectionName, "properties");
+        this.extension = DEFAULT_EXTENSION;
+        String json = readFile(testDataFolder, collectionName);
+
+        BasicDBObject parsed = parse(json);
+        this.testDataFolder = testDataFolder;
+        this.basicObject = parsed;
+        this.collectionName = collectionName;
     }
 
     /**
@@ -36,45 +47,76 @@ public class PropertiesDataProvider extends JsonDataProvider {
      *
      * @param testDataFolder path to data folder
      * @param collectionName properties file name
-     * @param extension      custom file extension
+     * @param extension custom file extension
      * @throws DataException if file not found in testDataFolder
      */
     public PropertiesDataProvider(String testDataFolder, String collectionName, String extension) throws DataException {
-        super(testDataFolder, collectionName, extension);
+        this.extension = extension;
+
+        String json = readFile(testDataFolder, collectionName);
+
+        BasicDBObject parsed = parse(json);
+        this.testDataFolder = testDataFolder;
+        this.basicObject = parsed;
+        this.collectionName = collectionName;
     }
 
     private PropertiesDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String extension) {
-        super(testDataFolder, obj, collectionName, extension);
+        this.extension = extension;
+        this.testDataFolder = testDataFolder;
+        this.basicObject = obj;
+        this.collectionName = collectionName;
     }
 
     private PropertiesDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String way, String extension) {
-        super(testDataFolder, obj, collectionName, way, extension);
+        this.extension = extension;
+        this.testDataFolder = testDataFolder;
+        this.basicObject = obj;
+        this.way = way;
+        this.collectionName = collectionName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected PropertiesDataProvider createInstance(String collectionName) throws DataException {
+        return new PropertiesDataProvider(testDataFolder, collectionName, extension);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected PropertiesDataProvider createInstance(BasicDBObject obj, String collectionName, String way) {
+        return new PropertiesDataProvider(testDataFolder, obj, collectionName, way, extension);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected PropertiesDataProvider createInstance(BasicDBObject obj, String collectionName) {
+        return new PropertiesDataProvider(testDataFolder, obj, collectionName, extension);
     }
 
     @Override
-    protected <T extends JsonDataProvider> T privateInit(String testDataFolder, String collectionName) throws DataException {
-        return (T) new PropertiesDataProvider(testDataFolder, collectionName, extension);
+    public TestDataProvider fromCollection(String collName) throws DataException {
+        String json = readFile(this.testDataFolder, collName);
+        BasicDBObject parsed = parse(json);
+        AbstractDataProvider dataProvider = createInstance(parsed, collName);
+        dataProvider.applyGenerator(this.callback);
+        return dataProvider;
     }
 
-    @Override
-    protected <T extends JsonDataProvider> T privateInit(String testDataFolder, BasicDBObject obj, String collectionName, String way) {
-        return (T) new PropertiesDataProvider(testDataFolder, obj, collectionName, way, extension);
-    }
-
-    @Override
-    protected <T extends JsonDataProvider> T privateInit(String testDataFolder, BasicDBObject obj, String collectionName) {
-        return (T) new PropertiesDataProvider(testDataFolder, obj, collectionName, extension);
-    }
-
-    @Override
-    protected String readFile(String testDataFolder, String collectionName) throws CollectionNotfoundException {
+    private String readFile(String testDataFolder, String collectionName) throws CollectionNotFoundException {
         String json;
         try {
             Properties properties = getProperties(testDataFolder + separator + collectionName + "." + extension);
             json = new PropertiesToJsonConverter().parseToJson(properties);
 
         } catch (DataException ex) {
-            throw new CollectionNotfoundException(String.format("File %s.%s not found in %s",
+            throw new CollectionNotFoundException(String.format("File %s.%s not found in %s",
                     collectionName, extension, testDataFolder), ex);
         }
         return json;
@@ -89,7 +131,7 @@ public class PropertiesDataProvider extends JsonDataProvider {
             InputStreamReader isr = new InputStreamReader(streamFromResources, "UTF-8");
             properties.load(isr);
         } catch (IOException | NullPointerException e) {
-            throw new CollectionNotfoundException("Failed to access file", e);
+            throw new CollectionNotFoundException("Failed to access file", e);
         }
         return properties;
     }

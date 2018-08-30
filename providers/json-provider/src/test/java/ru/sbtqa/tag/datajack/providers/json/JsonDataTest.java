@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.callback.SampleDataGensCallback;
-import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesExeption;
+import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesException;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
@@ -179,7 +179,7 @@ public class JsonDataTest {
                 + "\"path\" : \"Common.cyclic\" }, \"comment\" : \"Cyclic\"", collectionName);
 
         expectDataExceptions
-                .expect(CyclicReferencesExeption.class);
+                .expect(CyclicReferencesException.class);
         expectDataExceptions.expectMessage(format("Cyclic references in database:\n%s", cyclicObject));
 
         testDataProvider.get(cyclicPath).getValue();

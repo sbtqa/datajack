@@ -41,7 +41,7 @@ public class Stash {
     /**
      * Puts value in stash
      *
-     * @param key   the key as a {@link java.lang.String} object
+     * @param key the key as a {@link java.lang.String} object
      * @param value Any object
      */
     public static void put(String key, Object value) {

@@ -110,7 +110,7 @@ public class PropertiesDataTest {
         String deepReferenceValue = testDataProvider.get("Common.ref object data.gendata reference").getValue();
         String shortReferenceValue = testDataProvider.fromCollection("DataBlocks").get("Common.gendata reference").getValue();
         String shortComplexValue = testDataProvider.fromCollection("DataBlocks").get("Common.gen gen.gendata").getValue();
-        String shortValue = testDataProvider.fromCollection("DataBlocks").get("Common").get("gen gen").get("gendata").getValue();
+        String shortValue = testDataProvider.fromCollection("DataBlocks").get("Common").getByPath("${gen gen}").get("gendata").getValue();
 
         assertEquals("Deep reference isn't equal direct value", shortValue, deepReferenceValue);
         assertEquals("Short reference isn't equal direct value", shortValue, shortReferenceValue);

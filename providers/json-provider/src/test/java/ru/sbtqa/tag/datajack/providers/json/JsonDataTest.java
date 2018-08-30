@@ -123,7 +123,7 @@ public class JsonDataTest {
         String fullPathValue = testDataProvider.getByPath("$Tests{Common.ref object data.gendata reference}").getValue();
         String fullPathReferenceValue = testDataProvider.getByPath("$DataBlocks{Common.gendata reference}").getValue();
         String shortPathValue = testDataProvider.getByPath("$DataBlocks").getByPath("${Common.gen gen.gendata}").getValue();
-        String shortPathCombinedValue = testDataProvider.getByPath("$DataBlocks").getByPath("${Common}").get("gen gen").get("gendata").getValue();
+        String shortPathCombinedValue = testDataProvider.getByPath("$DataBlocks").getByPath("${Common}").getByPath("${gen gen}").get("gendata").getValue();
 
         assertEquals("Deep reference isn't equal direct value", shortPathCombinedValue, fullPathValue);
         assertEquals("Short reference isn't equal direct value", shortPathCombinedValue, fullPathReferenceValue);

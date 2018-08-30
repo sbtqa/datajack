@@ -68,7 +68,7 @@ public class ExcelDataTest {
         String fullPathValue = testDataProvider.getByPath("$Tests{Common.ref object data.refToAnother}").getValue();
         String fullPathReferenceValue = testDataProvider.getByPath("$DataBlocks{NewObject.refToAnother}").getValue();
         String shortPathValue = testDataProvider.getByPath("$DataBlocks").getByPath("${AnotherObject.anotherValue}").getValue();
-        String shortPathCombinedValue = testDataProvider.getByPath("$DataBlocks").getByPath("${AnotherObject}").get("anotherValue").getValue();
+        String shortPathCombinedValue = testDataProvider.getByPath("$DataBlocks").getByPath("${AnotherObject}").getByPath("${anotherValue}").getValue();
 
         assertEquals("Deep reference isn't equal direct value", shortPathCombinedValue, fullPathValue);
         assertEquals("Short reference isn't equal direct value", shortPathCombinedValue, fullPathReferenceValue);

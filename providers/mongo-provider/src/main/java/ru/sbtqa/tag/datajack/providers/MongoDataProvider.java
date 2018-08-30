@@ -93,7 +93,6 @@ public class MongoDataProvider extends AbstractDataProvider {
      */
     @Override
     public MongoDataProvider fromCollection(String collName) throws DataException {
-
         MongoDataProvider dataProvider = createInstance(collName);
         dataProvider.applyGenerator(this.callback);
         return dataProvider;

@@ -130,5 +130,4 @@ public class JsonDataProvider extends AbstractDataProvider {
                     collectionName, testDataFolder), ex);
         }
     }
-
 }

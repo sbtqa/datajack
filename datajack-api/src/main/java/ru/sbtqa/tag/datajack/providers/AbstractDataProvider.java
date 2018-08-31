@@ -13,6 +13,8 @@ import ru.sbtqa.tag.datajack.exceptions.GeneratorException;
 import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
@@ -20,8 +22,12 @@ public abstract class AbstractDataProvider implements TestDataProvider {
 
     protected static final String VALUE_TPL = "value";
     protected static final String COLLECTION_TPL = "collection";
+
     private static final String NOT_INITIALIZED_EXCEPTION = "BasicDBObject is not initialized yet. Try to get some path first.";
     private static final String ARRAY_MATCHER_REGEX = "(.+\\[\\d+\\])";
+    private static final String COLLECTION_PARSE_REGEX = "\\$([^\\{]+)";
+    private static final String PATH_PARSE_REGEX = "(?:\\$([^\\{]+)?(\\{([^\\}]+)\\}))";
+
     protected BasicDBObject basicObject;
     protected String collectionName;
     protected String way;
@@ -77,6 +83,14 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         this.way = key;
         return key.contains(".") ? getComplex(key) : getSimple(key);
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TestDataProvider getByPath(String path) throws DataException {
+        return parseTestDataProvider(path);
     }
 
     /**
@@ -351,5 +365,38 @@ public abstract class AbstractDataProvider implements TestDataProvider {
             return false;
         }
         return ((BasicDBObject) value).containsField(COLLECTION_TPL) && ((BasicDBObject) value).containsField("path");
+    }
+
+    private TestDataProvider parseTestDataProvider(String path) throws DataException {
+        Pattern collectionPattern = Pattern.compile(COLLECTION_PARSE_REGEX);
+        Matcher collectionMatcher = collectionPattern.matcher(path.trim());
+
+        Pattern pathPattern = Pattern.compile(PATH_PARSE_REGEX);
+        Matcher pathMatcher = pathPattern.matcher(path.trim());
+
+        if (collectionMatcher.matches()) {
+            String collectionToParse = collectionMatcher.group(1);
+
+            return fromCollection(collectionToParse);
+        } else if (pathMatcher.matches()) {
+            String collectionToParse = pathMatcher.group(1);
+            String pathValueToParse = pathMatcher.group(3);
+            TestDataProvider testDataProvider = parseCollection(collectionToParse);
+
+            if (pathValueToParse != null) {
+                return testDataProvider.get(pathValueToParse);
+            }
+        }
+        throw new DataException(format("Could not parse path %s", path));
+    }
+
+    private TestDataProvider parseCollection(String collectionToParse) throws DataException {
+        if (collectionToParse != null) {
+            return fromCollection(collectionToParse);
+        } else if (this.collectionName == null) {
+            throw new DataException("Trying to parse object with uninitialized collection.");
+        } else {
+            return this;
+        }
     }
 }

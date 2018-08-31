@@ -68,6 +68,22 @@ public class MongoDataTest {
     }
 
     @Test
+    public void getByPathTest() throws DataException {
+        String collectionName = "Tests";
+        TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, collectionName);
+        testDataProvider.applyGenerator(SampleDataGensCallback.class);
+
+        String fullPathValue = testDataProvider.getByPath("$Tests{Common.ref object data.gendata reference}").getValue();
+        String fullPathReferenceValue = testDataProvider.getByPath("$DataBlocks{Common.gendata reference}").getValue();
+        String shortPathValue = testDataProvider.getByPath("$DataBlocks").getByPath("${Common.gen gen.gendata}").getValue();
+        String shortPathCombinedValue = testDataProvider.getByPath("$DataBlocks").getByPath("${Common}").getByPath("${gen gen}").get("gendata").getValue();
+
+        assertEquals("Deep reference isn't equal direct value", shortPathCombinedValue, fullPathValue);
+        assertEquals("Short reference isn't equal direct value", shortPathCombinedValue, fullPathReferenceValue);
+        assertEquals("Short complex value isn't equal direct value", shortPathCombinedValue, shortPathValue);
+    }
+
+    @Test
     public void isReference() throws DataException {
         TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, "DataBlocks");
         assertTrue("Value is not reference",

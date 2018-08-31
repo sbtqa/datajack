@@ -61,6 +61,21 @@ public class ExcelDataTest {
     }
 
     @Test
+    public void getByPathTest() throws DataException {
+        TestDataProvider testDataProvider = new ExcelDataProvider(this.excelDataPath, collectionName);
+        testDataProvider.applyGenerator(SampleDataGensCallback.class);
+
+        String fullPathValue = testDataProvider.getByPath("$Tests{Common.ref object data.refToAnother}").getValue();
+        String fullPathReferenceValue = testDataProvider.getByPath("$DataBlocks{NewObject.refToAnother}").getValue();
+        String shortPathValue = testDataProvider.getByPath("$DataBlocks").getByPath("${AnotherObject.anotherValue}").getValue();
+        String shortPathCombinedValue = testDataProvider.getByPath("$DataBlocks").getByPath("${AnotherObject}").getByPath("${anotherValue}").getValue();
+
+        assertEquals("Deep reference isn't equal direct value", shortPathCombinedValue, fullPathValue);
+        assertEquals("Short reference isn't equal direct value", shortPathCombinedValue, fullPathReferenceValue);
+        assertEquals("Short complex value isn't equal direct value", shortPathCombinedValue, shortPathValue);
+    }
+
+    @Test
     public void valuePathTest() throws DataException {
         TestDataProvider testDataProvider = new ExcelDataProvider(this.excelDataPath, collectionName);
         assertEquals("justSomeTestId",

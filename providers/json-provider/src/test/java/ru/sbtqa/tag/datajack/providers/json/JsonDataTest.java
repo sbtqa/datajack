@@ -113,6 +113,36 @@ public class JsonDataTest {
     }
 
     @Test
+    public void getByPathTest() throws DataException {
+        String collectionName = "Tests";
+        TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);
+        testDataProvider.applyGenerator(SampleDataGensCallback.class);
+
+        String fullPathValue = testDataProvider.getByPath("$Tests{Common.ref object data.gendata reference}").getValue();
+        String fullPathReferenceValue = testDataProvider.getByPath("$DataBlocks{Common.gendata reference}").getValue();
+        String shortPathValue = testDataProvider.getByPath("$DataBlocks").getByPath("${Common.gen gen.gendata}").getValue();
+        String shortPathCombinedValue = testDataProvider.getByPath("$DataBlocks").getByPath("${Common}").getByPath("${gen gen}").get("gendata").getValue();
+
+        assertEquals("Deep reference isn't equal direct value", shortPathCombinedValue, fullPathValue);
+        assertEquals("Short reference isn't equal direct value", shortPathCombinedValue, fullPathReferenceValue);
+        assertEquals("Short complex value isn't equal direct value", shortPathCombinedValue, shortPathValue);
+    }
+
+    @Test
+    public void getByPathArrayTest() throws DataException {
+        String collectionName = "Tests";
+        TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);
+        testDataProvider.applyGenerator(SampleDataGensCallback.class);
+
+        String value = testDataProvider.getByPath("$Tests{array[0]}").getValue();
+        String valueArrayObject = testDataProvider.getByPath("${array[1].b}").getValue();
+
+        assertEquals(value, "a");
+        assertEquals(valueArrayObject, "1");
+        assertEquals(testDataProvider.get("array").toString(), testDataProvider.getByPath("$Tests{array}").toString());
+    }
+
+    @Test
     public void isReferenceTest() throws DataException {
         String collectionName = "DataBlocks";
         TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);

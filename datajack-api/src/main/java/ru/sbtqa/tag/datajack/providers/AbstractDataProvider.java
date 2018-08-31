@@ -25,8 +25,8 @@ public abstract class AbstractDataProvider implements TestDataProvider {
 
     private static final String NOT_INITIALIZED_EXCEPTION = "BasicDBObject is not initialized yet. Try to get some path first.";
     private static final String ARRAY_MATCHER_REGEX = "(.+\\[\\d+\\])";
-    private static final String COLLECTION_PARSE_REGEX = "\\$([^\\{]+)";
-    private static final String PATH_PARSE_REGEX = "(?:\\$([^\\{]+)?(\\{([^\\}]+)\\}))";
+    public static final String COLLECTION_PARSE_REGEX = "\\$([^\\{]+)";
+    public static final String PATH_PARSE_REGEX = "(?:\\$([^\\{]+)?(\\{([^\\}]+)\\}))";
 
     protected BasicDBObject basicObject;
     protected String collectionName;

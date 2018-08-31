@@ -380,11 +380,11 @@ public abstract class AbstractDataProvider implements TestDataProvider {
             return fromCollection(collectionToParse);
         } else if (pathMatcher.matches()) {
             String collectionToParse = pathMatcher.group(1);
-            String value = pathMatcher.group(3);
+            String pathValueToParse = pathMatcher.group(3);
             TestDataProvider testDataProvider = parseCollection(collectionToParse);
 
-            if (value != null) {
-                return testDataProvider.get(value);
+            if (pathValueToParse != null) {
+                return testDataProvider.get(pathValueToParse);
             }
         }
         throw new DataException(format("Could not parse path %s", path));

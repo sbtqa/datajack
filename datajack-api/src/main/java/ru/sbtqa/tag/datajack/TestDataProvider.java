@@ -31,9 +31,9 @@ public interface TestDataProvider {
     /**
      * Get sub-object from test data object by path
      *
-     * @param key path to get like $Collection[path.to.smth] or ${path.to.smth} relative to current collection
+     * @param key path to get like $Collection{path.to.smth} or ${path.to.smth} relative to current collection
      * @return test data provider instance
-     * @throws DataException f no value
+     * @throws DataException if no value
      */
     TestDataProvider getByPath(String key) throws DataException;
 

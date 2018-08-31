@@ -134,6 +134,20 @@ public class PropertiesDataTest {
     }
 
     @Test
+    public void getByPathArrayTest() throws DataException {
+        String collectionName = "Tests";
+        TestDataProvider testDataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName);
+        testDataProvider.applyGenerator(SampleDataGensCallback.class);
+
+        String value = testDataProvider.getByPath("$Tests{array[0]}").getValue();
+        String valueArrayObject = testDataProvider.getByPath("${array[1].b}").getValue();
+
+        assertEquals(value, "a");
+        assertEquals(valueArrayObject, "1");
+        assertEquals(testDataProvider.get("array").toString(), testDataProvider.getByPath("$Tests{array}").toString());
+    }
+
+    @Test
     public void isReferenceTest() throws DataException {
         String collectionName = "DataBlocks";
         TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName);

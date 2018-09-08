@@ -1,9 +1,10 @@
-package ru.sbtqa.tag.datajack.providers;
+package ru.sbtqa.tag.datajack.mongo;
 
 import com.mongodb.*;
 import org.bson.BSONObject;
 import org.bson.types.ObjectId;
 import ru.sbtqa.tag.datajack.exceptions.*;
+import ru.sbtqa.tag.datajack.providers.AbstractDataProvider;
 
 public class MongoDataProvider extends AbstractDataProvider {
 

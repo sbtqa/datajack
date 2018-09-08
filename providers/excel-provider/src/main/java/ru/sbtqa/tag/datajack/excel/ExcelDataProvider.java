@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.datajack.providers;
+package ru.sbtqa.tag.datajack.excel;
 
 import com.mongodb.BasicDBObject;
 import org.apache.commons.io.FileUtils;
@@ -15,6 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.datajack.exceptions.*;
+import ru.sbtqa.tag.datajack.providers.AbstractDataProvider;
 
 import java.io.File;
 import java.io.IOException;

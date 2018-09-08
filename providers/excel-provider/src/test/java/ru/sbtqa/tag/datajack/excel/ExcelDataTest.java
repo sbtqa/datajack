@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.datajack.providers;
+package ru.sbtqa.tag.datajack.excel;
 
 import com.mongodb.BasicDBObject;
 import org.junit.Before;
@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.callback.SampleDataGensCallback;
+import ru.sbtqa.tag.datajack.excel.ExcelDataProvider;
 import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesException;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;

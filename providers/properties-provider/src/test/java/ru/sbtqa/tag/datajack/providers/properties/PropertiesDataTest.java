@@ -142,8 +142,8 @@ public class PropertiesDataTest {
         String value = testDataProvider.getByPath("$Tests{array[0]}").getValue();
         String valueArrayObject = testDataProvider.getByPath("${array[1].b}").getValue();
 
-        assertEquals(value, "a");
-        assertEquals(valueArrayObject, "1");
+        assertEquals("a", value);
+        assertEquals("1", valueArrayObject);
         assertEquals(testDataProvider.get("array").toString(), testDataProvider.getByPath("$Tests{array}").toString());
     }
 

@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.datajack.mongo;
+package ru.sbtqa.tag.datajack.providers.mongo;
 
 import com.mongodb.*;
 import org.bson.BSONObject;

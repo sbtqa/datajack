@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.datajack.mongo;
+package ru.sbtqa.tag.datajack.providers.mongo;
 
 import com.github.fakemongo.junit.FongoRule;
 import com.mongodb.DB;
@@ -11,7 +11,7 @@ import org.junit.rules.TestRule;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.callback.SampleDataGensCallback;
 import ru.sbtqa.tag.datajack.exceptions.*;
-import ru.sbtqa.tag.datajack.mongo.MongoDataProvider;
+import ru.sbtqa.tag.datajack.providers.mongo.MongoDataProvider;
 
 import java.io.IOException;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.datajack.excel;
+package ru.sbtqa.tag.datajack.providers.excel;
 
 import com.mongodb.BasicDBObject;
 import org.apache.commons.io.FileUtils;

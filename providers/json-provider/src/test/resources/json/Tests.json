@@ -37,7 +37,13 @@
       "b": [
         {
           "b": {
-            "c": 1
+            "c": 1,
+            "d": {
+              "value": {
+                "collection": "DataBlocks",
+                "path": "Params Group 1.password"
+              }
+            }
           }
         }
       ]

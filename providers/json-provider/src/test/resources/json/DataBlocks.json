@@ -63,5 +63,11 @@
     "nestedObjectValue": {
       "innerValue": "This is string from nested object"
     }
+  },
+  "ref array": {
+    "value": {
+      "collection": "Tests",
+      "path": "array"
+    }
   }
 }

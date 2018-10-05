@@ -207,8 +207,19 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         if (!isArray(key)) {
             throw new DataException(String.format("%s.%s is not an array!", this.collectionName, key));
         }
+
         String arrayKey = key.split("\\[")[0];
         String arrayIndex = key.split("\\[")[1].split("\\]")[0];
+
+        // If object passed by key is a reference to array, extract reference and replace current context by it
+        if (basicO.get(arrayKey) instanceof BasicDBObject && isReference((BasicDBObject) basicO.get(arrayKey))) {
+            basicO = ((AbstractDataProvider) get(arrayKey)).basicObject;
+            arrayKey = basicO.keySet().iterator().next();
+            way = key;
+        } else {
+            way += "." + key;
+        }
+
         Object listCandidate = basicO.get(arrayKey);
 
         if (!(listCandidate instanceof BasicDBList)) {
@@ -230,6 +241,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
 
             if (isArray(partialKey)) {
                 currentBasicObject = (BasicDBObject) parseArray(currentBasicObject, partialKey);
+                partialBuiltPath.append(".");
                 continue;
             }
 
@@ -241,6 +253,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
             }
 
             Object currentValue = currentBasicObject.get(partialKey);
+            this.way += "." + partialKey;
             if (!(currentValue instanceof BasicDBObject)) {
                 if (null == currentValue || i < keys.length - 1) {
                     String lastKey = keys[keys.length - 1];
@@ -352,11 +365,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
      */
     @Override
     public boolean isReference() {
-        Object value = this.basicObject.get(VALUE_TPL);
-        if (!(value instanceof BasicDBObject)) {
-            return false;
-        }
-        return ((BasicDBObject) value).containsField(COLLECTION_TPL) && ((BasicDBObject) value).containsField("path");
+        return isReference(this.basicObject);
     }
 
     private boolean isReference(BasicDBObject basicDBObject) {

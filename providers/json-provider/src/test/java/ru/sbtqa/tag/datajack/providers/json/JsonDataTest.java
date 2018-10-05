@@ -76,6 +76,34 @@ public class JsonDataTest {
     }
 
     @Test
+    public void arrayReferencedTest() throws DataException {
+        String collectionName = "DataBlocks";
+        TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);
+
+        assertEquals("a",
+                testDataProvider.get("ref array[0]").getValue());
+    }
+
+    @Test
+    public void arrayDeepReferencedTest() throws DataException {
+        String collectionName = "DataBlocks";
+        TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);
+
+        assertEquals("1",
+                testDataProvider.get("ref array[2].b[0].b.c").getValue());
+    }
+
+    @Test
+    public void arrayDeepReferencedToReferenceTest() throws DataException {
+        String collectionName = "DataBlocks";
+        TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);
+
+        assertEquals("123qwe",
+                testDataProvider.get("ref array[2].b[0].b.d").getValue());
+    }
+
+
+    @Test
     public void arrayGeneratorTest() throws DataException {
         String collectionName = "Tests";
         TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);

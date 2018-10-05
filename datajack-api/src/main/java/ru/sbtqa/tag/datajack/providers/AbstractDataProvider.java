@@ -211,6 +211,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         String arrayKey = key.split("\\[")[0];
         String arrayIndex = key.split("\\[")[1].split("\\]")[0];
 
+        // If object passed by key is a reference to array, extract reference and replace current context by it
         if (basicO.get(arrayKey) instanceof BasicDBObject && isReference((BasicDBObject) basicO.get(arrayKey))) {
             basicO = ((AbstractDataProvider) get(arrayKey)).basicObject;
             arrayKey = basicO.keySet().iterator().next();

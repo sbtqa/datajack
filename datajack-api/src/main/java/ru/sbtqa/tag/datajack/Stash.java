@@ -1,6 +1,5 @@
 package ru.sbtqa.tag.datajack;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -9,7 +8,7 @@ import java.util.Map;
  */
 public class Stash {
 
-    private static final ThreadLocal<Map<String, Object>> THREAD_VAULT = new ThreadLocal<>();
+    private static final ThreadLocal<Map<Object, Object>> THREAD_VAULT = new ThreadLocal<>();
 
     private Stash() {
         throw new IllegalAccessError("Utility class");
@@ -20,8 +19,8 @@ public class Stash {
      *
      * @return stash of current thread as a {@link java.util.Map} object
      */
-    private static Map<String, Object> getThreadVault() {
-        Map<String, Object> vault = THREAD_VAULT.get();
+    private static Map<Object, Object> getThreadVault() {
+        Map<Object, Object> vault = THREAD_VAULT.get();
         if (vault == null) {
             vault = new HashMap<>();
             THREAD_VAULT.set(vault);
@@ -32,19 +31,19 @@ public class Stash {
     /**
      * Gets stash as map
      *
-     * @return stash as a {@link java.util.Map} object
+     * @return stash as a object
      */
-    public static Map<String, Object> asMap() {
+    public static Map<Object, Object> asMap() {
         return getThreadVault();
     }
 
     /**
      * Puts value in stash
      *
-     * @param key the key as a {@link java.lang.String} object
+     * @param key the key as a object
      * @param value Any object
      */
-    public static void put(String key, Object value) {
+    public static void put(Object key, Object value) {
         getThreadVault().put(key, value);
     }
 
@@ -52,10 +51,10 @@ public class Stash {
      * Gets a stash value by key
      *
      * @param <T> the type to return
-     * @param key the key as a {@link java.lang.String} object
+     * @param key the key as a object
      * @return an object found by specified key
      */
-    public static <T> T getValue(String key) {
+    public static <T> T getValue(Object key) {
         return (T) getThreadVault().get(key);
     }
 
@@ -63,10 +62,10 @@ public class Stash {
      * Removes value from stash
      *
      * @param <T> the type to return
-     * @param key the key as a {@link java.lang.String} object
+     * @param key the key as a object
      * @return an object removed by specified key
      */
-    public static <T> T remove(String key) {
+    public static <T> T remove(Object key) {
         return (T) getThreadVault().remove(key);
     }
 

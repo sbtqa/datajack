@@ -1,5 +1,6 @@
 package ru.sbtqa.tag.datajack;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**

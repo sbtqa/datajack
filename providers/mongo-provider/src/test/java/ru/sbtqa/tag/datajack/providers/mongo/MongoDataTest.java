@@ -2,16 +2,13 @@ package ru.sbtqa.tag.datajack.providers.mongo;
 
 import com.github.fakemongo.junit.FongoRule;
 import com.mongodb.DB;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.callback.SampleDataGensCallback;
 import ru.sbtqa.tag.datajack.exceptions.*;
-import ru.sbtqa.tag.datajack.providers.mongo.MongoDataProvider;
 
 import java.io.IOException;
 import java.util.Map;
@@ -24,7 +21,7 @@ import static ru.sbtqa.tag.datajack.callback.SampleDataCache.getCache;
 
 public class MongoDataTest {
 
-    private final FongoRule fongoRule = new FongoRule(false);
+    private static FongoRule fongoRule;
 
     private final ExpectedException exception = ExpectedException.none();
 
@@ -33,6 +30,11 @@ public class MongoDataTest {
     @Rule
     public ExpectedException expectDataExceptions = none();
     private DB mongoDb;
+
+    @BeforeClass
+    public  static void beforeClass() {
+       fongoRule  = new FongoRule(false);
+    }
 
     /**
      * @throws IOException if no json found
@@ -304,5 +306,13 @@ public class MongoDataTest {
         TestDataProvider self = origin.get("");
 
         assertEquals("Objects are not same", origin, self);
+    }
+
+    @Test
+    public void getJsonTest() throws DataException {
+        TestDataProvider testDataProvider = new MongoDataProvider(mongoDb, "DataBlocks");
+        String stringJson = testDataProvider.get("Params Group 1").getValue();
+        String expectedJson = "{ \"login\" : 123 , \"password\" : 123}";
+        Assert.assertEquals(expectedJson, stringJson);
     }
 }

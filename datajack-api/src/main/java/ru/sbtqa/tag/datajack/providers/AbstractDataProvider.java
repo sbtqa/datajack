@@ -2,15 +2,12 @@ package ru.sbtqa.tag.datajack.providers;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.mongodb.util.JSON;
 import org.bson.BasicBSONObject;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.callback.CallbackData;
 import ru.sbtqa.tag.datajack.callback.GeneratorCallback;
-import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesException;
-import ru.sbtqa.tag.datajack.exceptions.DataException;
-import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;
-import ru.sbtqa.tag.datajack.exceptions.GeneratorException;
-import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
+import ru.sbtqa.tag.datajack.exceptions.*;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -23,8 +20,8 @@ public abstract class AbstractDataProvider implements TestDataProvider {
     protected static final String VALUE_TPL = "value";
     protected static final String COLLECTION_TPL = "collection";
 
-    private static final String NOT_INITIALIZED_EXCEPTION = "BasicDBObject is not initialized yet. Try to get some path first.";
     private static final String ARRAY_MATCHER_REGEX = "(.+\\[\\d+\\])";
+    public static final String NOT_INITIALIZED_EXCEPTION = "BasicDBObject is not initialized yet. Try to get some path first.";
     public static final String COLLECTION_PARSE_REGEX = "\\$([^\\{]+)";
     public static final String PATH_PARSE_REGEX = "(?:\\$([^\\{]+)?(\\{([^\\}]+)\\}))";
 
@@ -33,7 +30,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
     protected String way;
     protected String path;
     protected Class<? extends GeneratorCallback> callback;
-    private BasicDBObject rootObject;
+    protected BasicDBObject rootObject;
 
     private static boolean isArray(String key) {
         return key.matches(ARRAY_MATCHER_REGEX);
@@ -109,13 +106,14 @@ public abstract class AbstractDataProvider implements TestDataProvider {
      */
     @Override
     public Set<String> getKeySet() throws DataException {
+        String wayTail = way== null ? null :(way.split("[.]"))[way.split("[.]").length-1];
         if (basicObject == null) {
             throw new DataException(NOT_INITIALIZED_EXCEPTION);
-        } else if (getValue() != null) {
+        } else if (way !=null && basicObject.toMap().containsKey(wayTail) && !(basicObject.get(way) instanceof BasicDBObject)) {
             return new HashSet<>();
         }
         if (isReference()) {
-            this.rootObject = null;
+            rootObject = null;
             return getReference().toMap().keySet();
         } else {
             return basicObject.keySet();
@@ -151,7 +149,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
                     || value instanceof Double
                     || value instanceof Boolean) {
                 strings.add(value.toString());
-            } else {
+            } else if(value == null){
+                strings.add("null");
+            }else{
                 strings.add("");
             }
         }
@@ -307,17 +307,28 @@ public abstract class AbstractDataProvider implements TestDataProvider {
 
                 BasicDBObject dbObject = new BasicDBObject();
 
-                for (String s : basicObject.keySet()){
+                for (String s : basicObject.keySet()) {
 
-                    BasicDBObject target = (basicObject.get(s) instanceof BasicDBObject) ?
+                    BasicDBObject target = basicObject.get(s) instanceof BasicDBObject ?
                             (BasicDBObject) basicObject.get(s) :
                             basicObject;
+                    AbstractDataProvider instance = createInstance(target, collectionName, way + "." + s);
+                    instance.applyGenerator(callback);
 
-                        AbstractDataProvider instance = createInstance(target, collectionName, way + "." + s);
-                        instance.applyGenerator(callback);
-                        dbObject.put(s, instance.getValue());
-
-
+                    if (basicObject.get(s) instanceof BasicDBObject) {
+                        try {
+                            dbObject.put(s, JSON.parse(instance.getValue()));
+                        } catch (Exception e) {
+                            dbObject.put(s, instance.getValue());
+                        }
+                    } else {
+                        if (instance.basicObject.keySet().contains(s) && instance
+                                .basicObject.get(s) == null) {
+                            dbObject.put(s, null);
+                        } else {
+                            dbObject.put(s, instance.getValue());
+                        }
+                    }
 
                 }
                 result = dbObject.toString();

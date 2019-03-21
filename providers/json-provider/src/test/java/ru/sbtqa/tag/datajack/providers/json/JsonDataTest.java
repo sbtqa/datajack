@@ -163,9 +163,12 @@ public class JsonDataTest {
         TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);
         testDataProvider.applyGenerator(SampleDataGensCallback.class);
 
-        String value = testDataProvider.getByPath("$Tests{Common}").getValue();
-        Assert.assertNotNull(value);
-        System.out.println(value);
+        String value = testDataProvider.getByPath("$Tests{array[0]}").getValue();
+        String valueArrayObject = testDataProvider.getByPath("${array[1].b}").getValue();
+
+        assertEquals("a", value);
+        assertEquals("1", valueArrayObject);
+        assertEquals(testDataProvider.get("array").toString(), testDataProvider.getByPath("$Tests{array}").toString());
     }
 
     @Test
@@ -382,10 +385,21 @@ public class JsonDataTest {
         while (resultIterator.hasNext()) {
             Object currentResValue = resultIterator.next();
             Object currentOrigValue = originalIterator.next();
+            if (currentOrigValue == null) {
+                currentOrigValue = "null";
+            }
 
             if (!(currentOrigValue instanceof BasicDBObject)) {
                 assertEquals("Unexpected value transformation", currentOrigValue.toString(), currentResValue.toString());
             }
         }
+    }
+
+    @Test
+    public void getJsonTest() throws DataException {
+        TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, "DataBlocks");
+        String stringJson = testDataProvider.get("Params Group 1").getValue();
+        String expectedJson = "{ \"login\" : 123 , \"password\" : 123}";
+        Assert.assertEquals(expectedJson, stringJson);
     }
 }

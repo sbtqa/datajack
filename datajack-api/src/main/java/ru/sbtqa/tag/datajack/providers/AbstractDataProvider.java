@@ -42,10 +42,10 @@ public abstract class AbstractDataProvider implements TestDataProvider {
     /**
      * Internal use only for provider overriding purposes
      *
-     * @param basicObject Current object
+     * @param basicObject    Current object
      * @param collectionName Name of collection
-     * @param way Passed way
-     * @param <T> Adaptor type
+     * @param way            Passed way
+     * @param <T>            Adaptor type
      * @return return Adaptor instance
      * @throws DataException In case provider  could not be initialized
      */
@@ -54,9 +54,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
     /**
      * Internal use only for provider overriding purposes
      *
-     * @param basicObject Current object
+     * @param basicObject    Current object
      * @param collectionName Name of collection
-     * @param <T> Adaptor type
+     * @param <T>            Adaptor type
      * @return return Adaptor instance
      * @throws DataException In case provider c
      */
@@ -66,7 +66,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
      * Internal use only for provider overriding purposes
      *
      * @param collectionName Name of collection
-     * @param <T> Adaptor type
+     * @param <T>            Adaptor type
      * @return Adaptor instance
      * @throws DataException In case provider could not be initialized
      */
@@ -296,23 +296,38 @@ public abstract class AbstractDataProvider implements TestDataProvider {
 
         if (result == null) {
             if (this.way != null && this.way.contains(".")) {
-                this.way = this.way.split("[.]")[this.way.split("[.]").length - 1];
+                this.way = this.way.substring(way.lastIndexOf(".") + 1);
             }
 
-            result = this.basicObject.getString(this.way);
-        }
-        if (result == null) {
-            this.basicObject.keySet().stream().forEach(s -> {
-                try {
-                    AbstractDataProvider instance = createInstance(basicObject, collectionName, way + "." + s);
-                    instance.applyGenerator(callback);
-                    this.basicObject.put(s, instance.getValue());
-                } catch (DataException e) {
-                    e.printStackTrace();
-                }
+            if (!(basicObject.get(way) instanceof BasicDBObject)) {
+                result = basicObject.getString(way);
+            }
 
-            });
-            result = basicObject.toString();
+            if (result == null) {
+
+                BasicDBObject dbObject = new BasicDBObject();
+
+                basicObject.keySet().stream().forEach(s -> {
+                    try {
+                        AbstractDataProvider instance = createInstance((BasicDBObject) basicObject.get(s), collectionName, way + "." + s);
+                        instance.applyGenerator(callback);
+                        dbObject.put(s, instance.getValue());
+                    } catch (ClassCastException e) {
+                        AbstractDataProvider instance = null;
+                        try {
+                            instance = createInstance((BasicDBObject) basicObject, collectionName, way + "." + s);
+                            instance.applyGenerator(callback);
+                            dbObject.put(s, instance.getValue());
+                        } catch (DataException e1) {
+                            e1.printStackTrace();
+                        }
+                    } catch (DataException e) {
+                        e.printStackTrace();
+                    }
+
+                });
+                result = dbObject.toString();
+            }
         }
         return applyCallBackData(result);
     }

@@ -165,6 +165,7 @@ public class JsonDataTest {
 
         String value = testDataProvider.getByPath("$Tests{Common}").getValue();
         Assert.assertNotNull(value);
+        System.out.println(value);
     }
 
     @Test

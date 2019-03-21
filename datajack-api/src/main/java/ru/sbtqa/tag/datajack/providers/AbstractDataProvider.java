@@ -307,25 +307,19 @@ public abstract class AbstractDataProvider implements TestDataProvider {
 
                 BasicDBObject dbObject = new BasicDBObject();
 
-                basicObject.keySet().stream().forEach(s -> {
-                    try {
-                        AbstractDataProvider instance = createInstance((BasicDBObject) basicObject.get(s), collectionName, way + "." + s);
+                for (String s : basicObject.keySet()){
+
+                    BasicDBObject target = (basicObject.get(s) instanceof BasicDBObject) ?
+                            (BasicDBObject) basicObject.get(s) :
+                            basicObject;
+
+                        AbstractDataProvider instance = createInstance(target, collectionName, way + "." + s);
                         instance.applyGenerator(callback);
                         dbObject.put(s, instance.getValue());
-                    } catch (ClassCastException e) {
-                        AbstractDataProvider instance = null;
-                        try {
-                            instance = createInstance((BasicDBObject) basicObject, collectionName, way + "." + s);
-                            instance.applyGenerator(callback);
-                            dbObject.put(s, instance.getValue());
-                        } catch (DataException e1) {
-                            e1.printStackTrace();
-                        }
-                    } catch (DataException e) {
-                        e.printStackTrace();
-                    }
 
-                });
+
+
+                }
                 result = dbObject.toString();
             }
         }

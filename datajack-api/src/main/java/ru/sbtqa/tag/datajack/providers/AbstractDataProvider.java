@@ -301,6 +301,19 @@ public abstract class AbstractDataProvider implements TestDataProvider {
 
             result = this.basicObject.getString(this.way);
         }
+        if (result == null) {
+            this.basicObject.keySet().stream().forEach(s -> {
+                try {
+                    AbstractDataProvider instance = createInstance(basicObject, collectionName, way + "." + s);
+                    instance.applyGenerator(callback);
+                    this.basicObject.put(s, instance.getValue());
+                } catch (DataException e) {
+                    e.printStackTrace();
+                }
+
+            });
+            result = basicObject.toString();
+        }
         return applyCallBackData(result);
     }
 

@@ -1,6 +1,7 @@
 package ru.sbtqa.tag.datajack.providers.json;
 
 import com.mongodb.BasicDBObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -162,12 +163,8 @@ public class JsonDataTest {
         TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);
         testDataProvider.applyGenerator(SampleDataGensCallback.class);
 
-        String value = testDataProvider.getByPath("$Tests{array[0]}").getValue();
-        String valueArrayObject = testDataProvider.getByPath("${array[1].b}").getValue();
-
-        assertEquals("a", value);
-        assertEquals("1", valueArrayObject);
-        assertEquals(testDataProvider.get("array").toString(), testDataProvider.getByPath("$Tests{array}").toString());
+        String value = testDataProvider.getByPath("$Tests{Common}").getValue();
+        Assert.assertNotNull(value);
     }
 
     @Test

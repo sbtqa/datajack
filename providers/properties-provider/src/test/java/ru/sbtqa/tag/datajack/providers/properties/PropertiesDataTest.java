@@ -1,6 +1,7 @@
 package ru.sbtqa.tag.datajack.providers.properties;
 
 import com.mongodb.BasicDBObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -388,5 +389,13 @@ public class PropertiesDataTest {
                 assertEquals("Unexpected value transformation", currentOrigValue.toString(), currentResValue.toString());
             }
         }
+    }
+
+    @Test
+    public void getJsonTest() throws DataException {
+        TestDataProvider testDataProvider = new PropertiesDataProvider(propertiesDataPath, "DataBlocks");
+        String stringJson = testDataProvider.get("Params Group 1").getValue();
+        String expectedJson = "{ \"password\" : 123 , \"login\" : 123}";
+        Assert.assertEquals(expectedJson, stringJson);
     }
 }

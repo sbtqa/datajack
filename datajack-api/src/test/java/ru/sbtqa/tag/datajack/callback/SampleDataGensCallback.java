@@ -23,7 +23,7 @@ public class SampleDataGensCallback implements GeneratorCallback {
         String cacheKey = callbackData.getPath();
         String result = callbackData.getResult();
 
-        if (result.startsWith("generate:")) {
+        if (result != null && result.startsWith("generate:")) {
             if (!cache.containsKey("testDataCache")) {
                 cache.put("testDataCache", new HashMap<>());
             } else if (((Map) cache.get("testDataCache")).containsKey(cacheKey)) {

@@ -2,6 +2,8 @@ package ru.sbtqa.tag.datajack.providers;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 import org.bson.BasicBSONObject;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.callback.CallbackData;
@@ -12,7 +14,12 @@ import ru.sbtqa.tag.datajack.exceptions.FieldNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.GeneratorException;
 import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,8 +30,8 @@ public abstract class AbstractDataProvider implements TestDataProvider {
     protected static final String VALUE_TPL = "value";
     protected static final String COLLECTION_TPL = "collection";
 
-    private static final String NOT_INITIALIZED_EXCEPTION = "BasicDBObject is not initialized yet. Try to get some path first.";
     private static final String ARRAY_MATCHER_REGEX = "(.+\\[\\d+\\])";
+    private static final String NOT_INITIALIZED_EXCEPTION = "BasicDBObject is not initialized yet. Try to get some path first.";
     public static final String COLLECTION_PARSE_REGEX = "\\$([^\\{]+)";
     public static final String PATH_PARSE_REGEX = "(?:\\$([^\\{]+)?(\\{([^\\}]+)\\}))";
 
@@ -109,13 +116,15 @@ public abstract class AbstractDataProvider implements TestDataProvider {
      */
     @Override
     public Set<String> getKeySet() throws DataException {
+
         if (basicObject == null) {
             throw new DataException(NOT_INITIALIZED_EXCEPTION);
-        } else if (getValue() != null) {
+        } else if (way != null && basicObject.toMap().containsKey(getWayTail()) &&
+                !(basicObject.get(way) instanceof BasicDBObject)) {
             return new HashSet<>();
         }
         if (isReference()) {
-            this.rootObject = null;
+            rootObject = null;
             return getReference().toMap().keySet();
         } else {
             return basicObject.keySet();
@@ -151,6 +160,8 @@ public abstract class AbstractDataProvider implements TestDataProvider {
                     || value instanceof Double
                     || value instanceof Boolean) {
                 strings.add(value.toString());
+            } else if (value == null) {
+                strings.add("null");
             } else {
                 strings.add("");
             }
@@ -295,11 +306,15 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         String result = this.basicObject.getString(VALUE_TPL);
 
         if (result == null) {
-            if (this.way != null && this.way.contains(".")) {
-                this.way = this.way.split("[.]")[this.way.split("[.]").length - 1];
+            way = getWayTail();
+
+            if (!(basicObject.get(way) instanceof BasicDBObject)) {
+                result = basicObject.getString(way);
             }
 
-            result = this.basicObject.getString(this.way);
+            if (result == null) {
+                result = resolveDbObject().toString();
+            }
         }
         return applyCallBackData(result);
     }
@@ -407,5 +422,55 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         } else {
             return this;
         }
+    }
+
+
+    /**
+     * Get after last dot string value
+     *
+     * @return tail or null
+     */
+    private String getWayTail() {
+        if (way == null) {
+            return null;
+        } else {
+            String[] wayArray = way.split("[.]");
+            return wayArray[wayArray.length - 1];
+        }
+    }
+
+    /**
+     * Walk into current {@link DBObject} and resolve all generators and references
+     *
+     * @return resolved {@link DBObject}
+     * @throws DataException =
+     */
+    private DBObject resolveDbObject() throws DataException {
+        BasicDBObject resolvedDbObject = new BasicDBObject();
+
+        for (String key : basicObject.keySet()) {
+            BasicDBObject target = basicObject.get(key) instanceof BasicDBObject ?
+                    (BasicDBObject) basicObject.get(key) :
+                    basicObject;
+            AbstractDataProvider instance = createInstance(target, collectionName, way + "." + key);
+            instance.applyGenerator(callback);
+
+            if (basicObject.get(key) instanceof BasicDBObject) {
+                try {
+                    resolvedDbObject.put(key, JSON.parse(instance.getValue()));
+                } catch (Exception e) {
+                    resolvedDbObject.put(key, instance.getValue());
+                }
+            } else {
+                if (instance.basicObject.keySet().contains(key) && instance
+                        .basicObject.get(key) == null) {
+                    resolvedDbObject.put(key, null);
+                } else {
+                    resolvedDbObject.put(key, instance.getValue());
+                }
+            }
+
+        }
+        return resolvedDbObject;
     }
 }

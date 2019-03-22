@@ -1,6 +1,7 @@
 package ru.sbtqa.tag.datajack.providers.json;
 
 import com.mongodb.BasicDBObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -384,10 +385,21 @@ public class JsonDataTest {
         while (resultIterator.hasNext()) {
             Object currentResValue = resultIterator.next();
             Object currentOrigValue = originalIterator.next();
+            if (currentOrigValue == null) {
+                currentOrigValue = "null";
+            }
 
             if (!(currentOrigValue instanceof BasicDBObject)) {
                 assertEquals("Unexpected value transformation", currentOrigValue.toString(), currentResValue.toString());
             }
         }
+    }
+
+    @Test
+    public void getJsonTest() throws DataException {
+        TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, "DataBlocks");
+        String stringJson = testDataProvider.get("Params Group 1").getValue();
+        String expectedJson = "{ \"login\" : 123 , \"password\" : 123}";
+        Assert.assertEquals(expectedJson, stringJson);
     }
 }

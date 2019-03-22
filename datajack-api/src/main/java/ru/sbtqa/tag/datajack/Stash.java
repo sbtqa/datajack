@@ -2,6 +2,7 @@ package ru.sbtqa.tag.datajack;
 
 import java.util.HashMap;
 import java.util.Map;
+import ru.sbtqa.tag.datajack.exceptions.StashKeyNotFoundException;
 
 /**
  * Temporary data storage. Put data to this storage as key-value pair to use it
@@ -56,6 +57,10 @@ public class Stash {
      * @return an object found by specified key
      */
     public static <T> T getValue(String key) {
+        Map vault = getThreadVault();
+        if (!vault.containsKey(key)) {
+            throw new StashKeyNotFoundException(String.format("Key '%s' not found in stash", key));
+        }
         return (T) getThreadVault().get(key);
     }
 

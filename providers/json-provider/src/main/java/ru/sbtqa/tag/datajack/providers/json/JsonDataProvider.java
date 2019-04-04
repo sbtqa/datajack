@@ -124,7 +124,11 @@ public class JsonDataProvider extends AbstractDataProvider {
 
     private String readFile(String testDataFolder, String collectionName) throws CollectionNotFoundException {
         try {
-            return readFileToString(new File(testDataFolder + separator + collectionName + "." + this.extension), "UTF-8");
+            File targetFile = new File(testDataFolder + separator + collectionName + "." + this.extension);
+            this.testDataFolder = targetFile.getPath()
+                    .substring(0, targetFile.getPath().lastIndexOf(File.separator) + 1);
+
+            return readFileToString(targetFile,"UTF-8");
         } catch (IOException ex) {
             throw new CollectionNotFoundException(String.format("File %s.json not found in %s",
                     collectionName, testDataFolder), ex);

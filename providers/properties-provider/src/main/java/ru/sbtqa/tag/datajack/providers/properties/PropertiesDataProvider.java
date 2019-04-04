@@ -112,7 +112,11 @@ public class PropertiesDataProvider extends AbstractDataProvider {
     private String readFile(String testDataFolder, String collectionName) throws CollectionNotFoundException {
         String json;
         try {
-            Properties properties = getProperties(testDataFolder + separator + collectionName + "." + extension);
+            File targetFile = new File(testDataFolder + separator + collectionName + "." + this.extension);
+            this.testDataFolder = targetFile.getPath()
+                    .substring(0, targetFile.getPath().lastIndexOf(File.separator) + 1);
+
+            Properties properties = getProperties(targetFile);
             json = new PropertiesToJsonConverter().parseToJson(properties);
 
         } catch (DataException ex) {
@@ -122,11 +126,10 @@ public class PropertiesDataProvider extends AbstractDataProvider {
         return json;
     }
 
-    private Properties getProperties(String path) throws DataException {
+    private Properties getProperties(File file) throws DataException {
         Properties properties;
         properties = new Properties();
-        LOG.debug("Loading properties from {}", path);
-        File file = new File(path);
+        LOG.debug("Loading properties from {}", file.getPath());
         try (FileInputStream streamFromResources = new FileInputStream(file)) {
             InputStreamReader isr = new InputStreamReader(streamFromResources, "UTF-8");
             properties.load(isr);

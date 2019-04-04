@@ -8,10 +8,7 @@
       "gendata": "generate:Numeric:16"
     },
     "gendata reference": {
-      "value": {
-        "collection": "DataBlocks",
-        "path": "Common.gen gen.gendata"
-      },
+      "$ref": "DataBlocks:Common.gen gen.gendata",
       "comment": "Ссылается на генерированные данные"
     },
     "login": {
@@ -23,33 +20,21 @@
       "comment": "Пароль пользователя"
     },
     "password2": {
-      "value": {
-        "collection": "DataBlocks",
-        "path": "Params Group 1.password"
-      },
+      "$ref": "DataBlocks:Params Group 1.password",
       "comment": "Пароль пользователя"
     },
     "cyclic": {
-      "value": {
-        "collection": "DataBlocks",
-        "path": "Common.cyclic"
-      },
+      "$ref": "DataBlocks:Common.cyclic",
       "comment": "Cyclic"
     }
   },
   "Params Group 1": {
     "login": {
-      "value": {
-        "collection": "DataBlocks",
-        "path": "Common.password"
-      },
+      "$ref": "Common.password",
       "comment": "Логин пользователя"
     },
     "password": {
-      "value": {
-        "collection": "DataBlocks",
-        "path": "Common.password"
-      },
+      "$ref": "DataBlocks:Common.password",
       "comment": "Another cool password"
     }
   },
@@ -65,9 +50,6 @@
     }
   },
   "ref array": {
-    "value": {
-      "collection": "Tests",
-      "path": "array"
-    }
+    "$ref": "Tests:array"
   }
 }

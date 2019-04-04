@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.exceptions.CollectionNotFoundException;
+import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesException;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
+import ru.sbtqa.tag.datajack.exceptions.ReferenceException;
 import ru.sbtqa.tag.datajack.providers.AbstractDataProvider;
 
 import java.io.File;
@@ -22,6 +24,7 @@ public class PropertiesDataProvider extends AbstractDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesDataProvider.class);
     private static final String DEFAULT_EXTENSION = "properties";
+    private static final String REF_TPL = "$ref";
     private final String extension;
     private String testDataFolder;
 
@@ -99,6 +102,43 @@ public class PropertiesDataProvider extends AbstractDataProvider {
     protected PropertiesDataProvider createInstance(BasicDBObject obj, String collectionName) {
         return new PropertiesDataProvider(testDataFolder, obj, collectionName, extension);
     }
+
+    /**
+     * {@inheritDoc}*
+     */
+    @Override
+    public boolean isReference(BasicDBObject basicDBObject) {
+        Object value = basicDBObject.get(REF_TPL);
+        return value instanceof String;
+    }
+
+    /**
+     * {@inheritDoc}*
+     */
+    @Override
+    public TestDataProvider getReference() throws DataException {
+        if (isReference(this.basicObject)) {
+            if (this.rootObject == null) {
+                this.rootObject = this.basicObject;
+            } else {
+                String rootJson = this.rootObject.toJson();
+                String baseJson = this.basicObject.toJson();
+                if (rootJson.equals(baseJson)) {
+                    throw new CyclicReferencesException("Cyclic references in database:\n" + rootJson);
+                }
+            }
+            String refValue = this.basicObject.getString(REF_TPL);
+            String referencedCollection = refValue.contains(":") ? refValue.split(":")[0] : this.collectionName;
+            this.path = refValue.contains(":") ? refValue.split(":")[1] : refValue;
+            AbstractDataProvider reference = (AbstractDataProvider) this.fromCollection(referencedCollection);
+            reference.setRootObject(this.rootObject, referencedCollection + "." + this.path);
+            return reference.get(this.path);
+        } else {
+            throw new ReferenceException(String.format("There is no reference in \"%s\". Collection \"%s\"",
+                    this.path, this.collectionName));
+        }
+    }
+
 
     @Override
     public TestDataProvider fromCollection(String collName) throws DataException {

@@ -1,6 +1,7 @@
 package ru.sbtqa.tag.datajack.providers.json;
 
 import com.mongodb.BasicDBObject;
+import org.bson.BasicBSONObject;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.providers.AbstractDataProvider;
 import ru.sbtqa.tag.datajack.exceptions.*;
@@ -15,6 +16,7 @@ import static org.apache.commons.io.FileUtils.readFileToString;
 public class JsonDataProvider extends AbstractDataProvider {
 
     private static final String DEFAULT_EXTENSION = "json";
+    private static final String REF_TPL = "$ref";
     private final String extension;
     private String testDataFolder;
 
@@ -111,6 +113,39 @@ public class JsonDataProvider extends AbstractDataProvider {
     }
 
     /**
+     * {@inheritDoc}*
+     */
+    @Override
+    public boolean isReference(BasicDBObject basicDBObject) {
+        Object value = basicDBObject.get(REF_TPL);
+        return value instanceof String;
+    }
+
+    public TestDataProvider getReference() throws DataException {
+        if (isReference(this.basicObject)) {
+            if (this.rootObject == null) {
+                this.rootObject = this.basicObject;
+            } else {
+                String rootJson = this.rootObject.toJson();
+                String baseJson = this.basicObject.toJson();
+                if (rootJson.equals(baseJson)) {
+                    throw new CyclicReferencesException("Cyclic references in database:\n" + rootJson);
+                }
+            }
+            String refValue = this.basicObject.getString(REF_TPL);
+            String referencedCollection = refValue.contains(":") ? refValue.split(":")[0] : this.collectionName;
+            this.path = refValue.contains(":") ? refValue.split(":")[1] : refValue;
+            AbstractDataProvider reference = (AbstractDataProvider) this.fromCollection(referencedCollection);
+            reference.setRootObject(this.rootObject, referencedCollection + "." + this.path);
+            return reference.get(this.path);
+        } else {
+            throw new ReferenceException(String.format("There is no reference in \"%s\". Collection \"%s\"",
+                    this.path, this.collectionName));
+        }
+    }
+
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -128,7 +163,7 @@ public class JsonDataProvider extends AbstractDataProvider {
             this.testDataFolder = targetFile.getPath()
                     .substring(0, targetFile.getPath().lastIndexOf(File.separator) + 1);
 
-            return readFileToString(targetFile,"UTF-8");
+            return readFileToString(targetFile, "UTF-8");
         } catch (IOException ex) {
             throw new CollectionNotFoundException(String.format("File %s.json not found in %s",
                     collectionName, testDataFolder), ex);

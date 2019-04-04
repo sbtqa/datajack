@@ -237,8 +237,7 @@ public class PropertiesDataTest {
         String collectionName = "DataBlocks";
         String cyclicPath = "Common.cyclic";
         TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName);
-        String cyclicObject = format("{ \"comment\" : \"Cyclic\", \"value\" : { \"path\" : \"Common.cyclic\", \"collection\" : \"%s\" } }", collectionName);
-
+        String cyclicObject = format("{ \"comment\" : \"Cyclic\", \"$ref\" : \"%s:Common.cyclic\" }", collectionName);
         expectDataExceptions
                 .expect(CyclicReferencesException.class);
         expectDataExceptions.expectMessage(format("Cyclic references in database:\n%s", cyclicObject));

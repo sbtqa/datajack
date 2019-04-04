@@ -234,8 +234,7 @@ public class JsonDataTest {
 
         TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);
 
-        String cyclicObject = format("{ \"value\" : { \"collection\" : \"%s\", "
-                + "\"path\" : \"Common.cyclic\" }, \"comment\" : \"Cyclic\"", collectionName);
+        String cyclicObject = format("{ \"$ref\" : \"%s:Common.cyclic\", \"comment\" : \"Cyclic\"", collectionName);
 
         expectDataExceptions
                 .expect(CyclicReferencesException.class);

@@ -1,0 +1,11 @@
+{
+  "relates to relative2": {
+    "$ref": "relative2:price"
+  },
+  "relates to root": {
+    "$ref": "/DataBlocks:Common.price"
+  },
+  "relates to parent": {
+    "$ref": "../DataBlocks:Common.price"
+  }
+}

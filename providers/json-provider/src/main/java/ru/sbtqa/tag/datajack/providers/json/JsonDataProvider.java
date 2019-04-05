@@ -1,7 +1,6 @@
 package ru.sbtqa.tag.datajack.providers.json;
 
 import com.mongodb.BasicDBObject;
-import org.bson.BasicBSONObject;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.providers.AbstractDataProvider;
 import ru.sbtqa.tag.datajack.exceptions.*;
@@ -134,9 +133,10 @@ public class JsonDataProvider extends AbstractDataProvider {
             }
             String refValue = this.basicObject.getString(REF_TPL);
             String referencedCollection = refValue.contains(":") ? refValue.split(":")[0] : this.collectionName;
+            String collectionPrefix = refValue.startsWith("/") ? "" :this.collectionName.substring(0, this.collectionName.lastIndexOf("/") + 1);
             this.path = refValue.contains(":") ? refValue.split(":")[1] : refValue;
-            AbstractDataProvider reference = (AbstractDataProvider) this.fromCollection(referencedCollection);
-            reference.setRootObject(this.rootObject, referencedCollection + "." + this.path);
+            AbstractDataProvider reference = (AbstractDataProvider) this.fromCollection(collectionPrefix + referencedCollection);
+            reference.setRootObject(this.rootObject, collectionPrefix + referencedCollection + "." + this.path);
             return reference.get(this.path);
         } else {
             throw new ReferenceException(String.format("There is no reference in \"%s\". Collection \"%s\"",
@@ -160,9 +160,6 @@ public class JsonDataProvider extends AbstractDataProvider {
     private String readFile(String testDataFolder, String collectionName) throws CollectionNotFoundException {
         try {
             File targetFile = new File(testDataFolder + separator + collectionName + "." + this.extension);
-            this.testDataFolder = targetFile.getPath()
-                    .substring(0, targetFile.getPath().lastIndexOf(File.separator) + 1);
-
             return readFileToString(targetFile, "UTF-8");
         } catch (IOException ex) {
             throw new CollectionNotFoundException(String.format("File %s.json not found in %s",

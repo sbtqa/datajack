@@ -129,9 +129,10 @@ public class PropertiesDataProvider extends AbstractDataProvider {
             }
             String refValue = this.basicObject.getString(REF_TPL);
             String referencedCollection = refValue.contains(":") ? refValue.split(":")[0] : this.collectionName;
+            String collectionPrefix = refValue.startsWith("/") ? "" :this.collectionName.substring(0, this.collectionName.lastIndexOf("/") + 1);
             this.path = refValue.contains(":") ? refValue.split(":")[1] : refValue;
-            AbstractDataProvider reference = (AbstractDataProvider) this.fromCollection(referencedCollection);
-            reference.setRootObject(this.rootObject, referencedCollection + "." + this.path);
+            AbstractDataProvider reference = (AbstractDataProvider) this.fromCollection(collectionPrefix + referencedCollection);
+            reference.setRootObject(this.rootObject, collectionPrefix + referencedCollection + "." + this.path);
             return reference.get(this.path);
         } else {
             throw new ReferenceException(String.format("There is no reference in \"%s\". Collection \"%s\"",
@@ -153,9 +154,6 @@ public class PropertiesDataProvider extends AbstractDataProvider {
         String json;
         try {
             File targetFile = new File(testDataFolder + separator + collectionName + "." + this.extension);
-            this.testDataFolder = targetFile.getPath()
-                    .substring(0, targetFile.getPath().lastIndexOf(File.separator) + 1);
-
             Properties properties = getProperties(targetFile);
             json = new PropertiesToJsonConverter().parseToJson(properties);
 

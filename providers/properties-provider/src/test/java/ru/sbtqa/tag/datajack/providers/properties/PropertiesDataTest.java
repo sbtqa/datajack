@@ -397,4 +397,28 @@ public class PropertiesDataTest {
         String expectedJson = "{ \"password\" : 123 , \"login\" : 123}";
         Assert.assertEquals(expectedJson, stringJson);
     }
+
+    @Test
+    public void relativeTest() throws DataException {
+        TestDataProvider testDataProvider = new PropertiesDataProvider(propertiesDataPath, "relative/relative1");
+        String relativeValue = testDataProvider.get("relates to relative2").getValue();
+        String expected = "123";
+        Assert.assertEquals(expected, relativeValue);
+    }
+
+    @Test
+    public void relativeRootTest() throws DataException {
+        TestDataProvider testDataProvider = new PropertiesDataProvider(propertiesDataPath, "relative/relative1");
+        String relativeValue = testDataProvider.get("relates to root").getValue();
+        String expected = "20.91";
+        Assert.assertEquals(expected, relativeValue);
+    }
+
+    @Test
+    public void relativeParentTest() throws DataException {
+        TestDataProvider testDataProvider = new PropertiesDataProvider(propertiesDataPath, "relative/relative1");
+        String relativeValue = testDataProvider.get("relates to parent").getValue();
+        String expected = "20.91";
+        Assert.assertEquals(expected, relativeValue);
+    }
 }

@@ -26,11 +26,11 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
-@SuppressWarnings("deprecation")
 public class ExcelDataProvider extends AbstractDataProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExcelDataProvider.class);
     private static final String DEFAULT_EXTENSION = "xlsx";
+    private static final String REF_TPL = "$ref:";
     private final XSSFWorkbook workBook;
     private final String dataFileName;
     private XSSFFormulaEvaluator evaluator;
@@ -212,13 +212,13 @@ public class ExcelDataProvider extends AbstractDataProvider {
     }
 
     private boolean isLink(XSSFRow row) {
-        return getCellValue(row.getCell(2)).contains("link:");
+        return getCellValue(row.getCell(2)).startsWith(REF_TPL);
     }
 
     private BasicDBObject getLink(XSSFRow row) {
-        String linkPath = getCellValue(row.getCell(2)).replace("link:", "");
+        String linkPath = getCellValue(row.getCell(2)).replace(REF_TPL, "");
         BasicDBObject link = new BasicDBObject();
-        String[] fullPathDelimited = linkPath.split("[.]", 2);
+        String[] fullPathDelimited = linkPath.split("[:]", 2);
         // Link to another sheetName (sheet)
         link.append(COLLECTION_TPL, fullPathDelimited[0]);
         link.append("path", fullPathDelimited[1]);

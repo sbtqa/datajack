@@ -3,17 +3,11 @@
     "gendata": "generate:Numeric:16",
     "gen gen": {
       "gendata": {
-        "value": {
-          "collection": "DataBlocks",
-          "path": "Common.gen gen.gendata"
-        }
+        "$ref": "DataBlocks:Common.gen gen.gendata"
       }
     },
     "ref object data": {
-      "value": {
-        "collection": "DataBlocks",
-        "path": "Common"
-      }
+      "$ref": "DataBlocks:Common"
     }
   },
   "id": 123123,
@@ -39,10 +33,7 @@
           "b": {
             "c": 1,
             "d": {
-              "value": {
-                "collection": "DataBlocks",
-                "path": "Params Group 1.password"
-              }
+              "$ref": "DataBlocks:Params Group 1.password"
             }
           }
         }
@@ -50,16 +41,10 @@
     },
     {
       "ref": {
-        "value": {
-          "collection": "DataBlocks",
-          "path": "Params Group 1.password"
-        }
+        "$ref": "DataBlocks:Params Group 1.password"
       },
       "genRef": {
-        "value": {
-          "collection": "DataBlocks",
-          "path": "Common.gen gen.gendata"
-        }
+        "$ref": "DataBlocks:Common.gen gen.gendata"
       }
     }
   ]

@@ -40,7 +40,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
     protected String way;
     protected String path;
     protected Class<? extends GeneratorCallback> callback;
-    private BasicDBObject rootObject;
+    protected BasicDBObject rootObject;
 
     private static boolean isArray(String key) {
         return key.matches(ARRAY_MATCHER_REGEX);
@@ -257,10 +257,8 @@ public abstract class AbstractDataProvider implements TestDataProvider {
             }
 
             if (isReference(currentBasicObject)) {
-                String referenceCollection = ((BasicDBObject) currentBasicObject.get(VALUE_TPL)).getString(COLLECTION_TPL);
-                String referencePath = ((BasicDBObject) currentBasicObject.get(VALUE_TPL)).getString("path");
-                AbstractDataProvider dataProvider = (AbstractDataProvider) createInstance(referenceCollection).get(referencePath);
-                currentBasicObject = dataProvider.basicObject;
+                AbstractDataProvider dataProvider = (AbstractDataProvider) createInstance(currentBasicObject, collectionName);
+                currentBasicObject = ((AbstractDataProvider)dataProvider.getReference()).basicObject;
             }
 
             Object currentValue = currentBasicObject.get(partialKey);
@@ -289,7 +287,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return this.basicObject == null ? "" : this.basicObject.toString();
     }
 
-    private void setRootObject(BasicDBObject rootObject, String path) {
+    public void setRootObject(BasicDBObject rootObject, String path) {
         this.rootObject = rootObject;
         this.path = path;
     }
@@ -383,7 +381,7 @@ public abstract class AbstractDataProvider implements TestDataProvider {
         return isReference(this.basicObject);
     }
 
-    private boolean isReference(BasicDBObject basicDBObject) {
+    protected boolean isReference(BasicDBObject basicDBObject) {
         Object value = basicDBObject.get(VALUE_TPL);
         if (!(value instanceof BasicDBObject)) {
             return false;

@@ -7,3 +7,5 @@
 .classpath
 .vscode/
 .settings/
+.DS_Store
+**/.factorypath

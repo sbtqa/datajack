@@ -234,8 +234,7 @@ public class JsonDataTest {
 
         TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);
 
-        String cyclicObject = format("{ \"value\" : { \"collection\" : \"%s\", "
-                + "\"path\" : \"Common.cyclic\" }, \"comment\" : \"Cyclic\"", collectionName);
+        String cyclicObject = format("{ \"$ref\" : \"%s:Common.cyclic\", \"comment\" : \"Cyclic\"", collectionName);
 
         expectDataExceptions
                 .expect(CyclicReferencesException.class);
@@ -401,5 +400,29 @@ public class JsonDataTest {
         String stringJson = testDataProvider.get("Params Group 1").getValue();
         String expectedJson = "{ \"login\" : 123 , \"password\" : 123}";
         Assert.assertEquals(expectedJson, stringJson);
+    }
+
+    @Test
+    public void relativeTest() throws DataException {
+        TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, "relative/relative1");
+        String relativeValue = testDataProvider.get("relates to relative2").getValue();
+        String expected = "123";
+        Assert.assertEquals(expected, relativeValue);
+    }
+
+    @Test
+    public void relativeRootTest() throws DataException {
+        TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, "relative/relative1");
+        String relativeValue = testDataProvider.get("relates to root").getValue();
+        String expected = "20.91";
+        Assert.assertEquals(expected, relativeValue);
+    }
+
+    @Test
+    public void relativeParentTest() throws DataException {
+        TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, "relative/relative1");
+        String relativeValue = testDataProvider.get("relates to parent").getValue();
+        String expected = "20.91";
+        Assert.assertEquals(expected, relativeValue);
     }
 }

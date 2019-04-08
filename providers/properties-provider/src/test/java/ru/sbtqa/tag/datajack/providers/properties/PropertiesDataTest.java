@@ -237,8 +237,7 @@ public class PropertiesDataTest {
         String collectionName = "DataBlocks";
         String cyclicPath = "Common.cyclic";
         TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName);
-        String cyclicObject = format("{ \"comment\" : \"Cyclic\", \"value\" : { \"path\" : \"Common.cyclic\", \"collection\" : \"%s\" } }", collectionName);
-
+        String cyclicObject = format("{ \"comment\" : \"Cyclic\", \"$ref\" : \"%s:Common.cyclic\" }", collectionName);
         expectDataExceptions
                 .expect(CyclicReferencesException.class);
         expectDataExceptions.expectMessage(format("Cyclic references in database:\n%s", cyclicObject));
@@ -397,5 +396,29 @@ public class PropertiesDataTest {
         String stringJson = testDataProvider.get("Params Group 1").getValue();
         String expectedJson = "{ \"password\" : 123 , \"login\" : 123}";
         Assert.assertEquals(expectedJson, stringJson);
+    }
+
+    @Test
+    public void relativeTest() throws DataException {
+        TestDataProvider testDataProvider = new PropertiesDataProvider(propertiesDataPath, "relative/relative1");
+        String relativeValue = testDataProvider.get("relates to relative2").getValue();
+        String expected = "123";
+        Assert.assertEquals(expected, relativeValue);
+    }
+
+    @Test
+    public void relativeRootTest() throws DataException {
+        TestDataProvider testDataProvider = new PropertiesDataProvider(propertiesDataPath, "relative/relative1");
+        String relativeValue = testDataProvider.get("relates to root").getValue();
+        String expected = "20.91";
+        Assert.assertEquals(expected, relativeValue);
+    }
+
+    @Test
+    public void relativeParentTest() throws DataException {
+        TestDataProvider testDataProvider = new PropertiesDataProvider(propertiesDataPath, "relative/relative1");
+        String relativeValue = testDataProvider.get("relates to parent").getValue();
+        String expected = "20.91";
+        Assert.assertEquals(expected, relativeValue);
     }
 }

@@ -3,6 +3,10 @@ package ru.sbtqa.tag.datajack.providers.properties;
 import com.mongodb.BasicDBObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveArrayJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.exceptions.CollectionNotFoundException;
@@ -26,6 +30,7 @@ public class PropertiesDataProvider extends AbstractDataProvider {
     private static final String DEFAULT_EXTENSION = "properties";
     private static final String REF_TPL = "$ref";
     private final String extension;
+    private String arrayDelimiter = ",";
     private String testDataFolder;
 
     /**
@@ -50,12 +55,13 @@ public class PropertiesDataProvider extends AbstractDataProvider {
      *
      * @param testDataFolder path to data folder
      * @param collectionName properties file name
-     * @param extension custom file extension
+     * @param extension      custom file extension
+     * @param arrayDelimiter custom value array delimiter
      * @throws DataException if file not found in testDataFolder
      */
-    public PropertiesDataProvider(String testDataFolder, String collectionName, String extension) throws DataException {
+    public PropertiesDataProvider(String testDataFolder, String collectionName, String extension, String arrayDelimiter) throws DataException {
         this.extension = extension;
-
+        this.arrayDelimiter = arrayDelimiter;
         String json = readFile(testDataFolder, collectionName);
 
         BasicDBObject parsed = parse(json);
@@ -64,19 +70,21 @@ public class PropertiesDataProvider extends AbstractDataProvider {
         this.collectionName = collectionName;
     }
 
-    private PropertiesDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String extension) {
+    private PropertiesDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String extension, String arrayDelimiter) {
         this.extension = extension;
         this.testDataFolder = testDataFolder;
         this.basicObject = obj;
         this.collectionName = collectionName;
+        this.arrayDelimiter=arrayDelimiter;
     }
 
-    private PropertiesDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String way, String extension) {
+    private PropertiesDataProvider(String testDataFolder, BasicDBObject obj, String collectionName, String way, String extension, String arrayDelimiter) {
         this.extension = extension;
         this.testDataFolder = testDataFolder;
         this.basicObject = obj;
         this.way = way;
         this.collectionName = collectionName;
+        this.arrayDelimiter=arrayDelimiter;
     }
 
     /**
@@ -84,7 +92,7 @@ public class PropertiesDataProvider extends AbstractDataProvider {
      */
     @Override
     protected PropertiesDataProvider createInstance(String collectionName) throws DataException {
-        return new PropertiesDataProvider(testDataFolder, collectionName, extension);
+        return new PropertiesDataProvider(testDataFolder, collectionName, extension, arrayDelimiter);
     }
 
     /**
@@ -92,7 +100,7 @@ public class PropertiesDataProvider extends AbstractDataProvider {
      */
     @Override
     protected PropertiesDataProvider createInstance(BasicDBObject obj, String collectionName, String way) {
-        return new PropertiesDataProvider(testDataFolder, obj, collectionName, way, extension);
+        return new PropertiesDataProvider(testDataFolder, obj, collectionName, way, extension, arrayDelimiter);
     }
 
     /**
@@ -100,7 +108,7 @@ public class PropertiesDataProvider extends AbstractDataProvider {
      */
     @Override
     protected PropertiesDataProvider createInstance(BasicDBObject obj, String collectionName) {
-        return new PropertiesDataProvider(testDataFolder, obj, collectionName, extension);
+        return new PropertiesDataProvider(testDataFolder, obj, collectionName, extension, arrayDelimiter);
     }
 
     /**
@@ -129,7 +137,7 @@ public class PropertiesDataProvider extends AbstractDataProvider {
             }
             String refValue = this.basicObject.getString(REF_TPL);
             String referencedCollection = refValue.contains(":") ? refValue.split(":")[0] : this.collectionName;
-            String collectionPrefix = refValue.startsWith("/") ? "" :this.collectionName.substring(0, this.collectionName.lastIndexOf("/") + 1);
+            String collectionPrefix = refValue.startsWith("/") ? "" : this.collectionName.substring(0, this.collectionName.lastIndexOf("/") + 1);
             this.path = refValue.contains(":") ? refValue.split(":")[1] : refValue;
             AbstractDataProvider reference = (AbstractDataProvider) this.fromCollection(collectionPrefix + referencedCollection);
             reference.setRootObject(this.rootObject, collectionPrefix + referencedCollection + "." + this.path);
@@ -155,7 +163,12 @@ public class PropertiesDataProvider extends AbstractDataProvider {
         try {
             File targetFile = new File(testDataFolder + separator + collectionName + "." + this.extension);
             Properties properties = getProperties(targetFile);
-            json = new PropertiesToJsonConverter().parseToJson(properties);
+            json = new PropertiesToJsonConverter(
+                    new PrimitiveArrayJsonTypeResolver(arrayDelimiter),
+                    new ObjectFromTextJsonTypeResolver(),
+                    new BooleanJsonTypeResolver(),
+                    new StringJsonTypeResolver()
+            ).parseToJson(properties);
 
         } catch (DataException ex) {
             throw new CollectionNotFoundException(String.format("File %s.%s not found in %s",

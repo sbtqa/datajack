@@ -38,7 +38,7 @@ public class PropertiesDataTest {
     @Test
     public void differentExtensionTest() throws DataException {
         String collectionName = "Config";
-        TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName, "conf");
+        TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName, "conf", ",");
 
         assertEquals("123qwe",
                 dataProvider.get("Common.password2").getValue());
@@ -60,6 +60,15 @@ public class PropertiesDataTest {
 
         assertEquals("1",
                 dataProvider.get("array[1].b").getValue());
+    }
+
+    @Test
+    public void notArrayTest() throws DataException {
+        String collectionName = "DataBlocks";
+        TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName, "properties", "~");
+
+        assertEquals("a,b,c,2",
+                dataProvider.get("Common.notArray").getValue());
     }
 
     @Test

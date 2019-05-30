@@ -97,6 +97,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
      */
     @Override
     public TestDataProvider getByPath(String path) throws DataException {
+        if (path == null) {
+            throw new DataException("The path is null. Check your configuration");
+        }
         return parseTestDataProvider(path);
     }
 

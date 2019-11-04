@@ -11,7 +11,7 @@ DataJack - opensource java framework which help you work with you test data.
 DataJack have two important think:
 * **Stash** - use this class, if you want store something when tests execute.
 * **TestDataProvider** - interface, which using to work with different test data storage systems.   
-We have the following implementation:
+We have the following implementations:
   * [JSON-Provider](https://github.com/sbtqa/datajack/tree/master/providers/json-provider)
   * [Properties-Provider](https://github.com/sbtqa/datajack/tree/master/providers/properties-provider)
   * [Mongo-Provider](https://github.com/sbtqa/datajack/tree/master/providers/mongo-provider)

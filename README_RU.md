@@ -14,7 +14,7 @@ DataJack имеет две фичи:
   * [Excel-Provider](https://github.com/sbtqa/datajack/tree/master/providers/excel-provider)
 
 ### Документация
-Проект с примером использования можно посмотреть [здесь](https://github.com/sbtqa/datajack-example).Вся документация по использованию [здесь](https://github.com/sbtqa/docs/wiki/DataJack)
+Проект с примером использования можно посмотреть [здесь](https://github.com/sbtqa/datajack-example) и [здесь](https://github.com/sbtqa/datajack/tree/master/providers/json-provider/src/test).
 
 ### Контакты
 Нашли ошибки или появились вопросы? [Проверьте](https://github.com/sbtqa/datajack/issues), нет ли уже созданных задач. Если нет, то создайте [новую](https://github.com/sbtqa/datajack/issues/new)!

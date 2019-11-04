@@ -430,4 +430,16 @@ public class PropertiesDataTest {
         String expected = "20.91";
         Assert.assertEquals(expected, relativeValue);
     }
+
+    @Test
+    public void issue290Test() throws Exception {
+        TestDataProvider testDataProvider = new PropertiesDataProvider(propertiesDataPath,
+                "issue-290", "properties", ";");
+
+        final List<String> stringValues = testDataProvider.get("afd.db.save.hosts").getStringValues();
+        final String[] expectedValues = new String[]{"server1", "server2", "server3"};
+
+        Assert.assertArrayEquals(expectedValues, stringValues.toArray(new String[0]));
+
+    }
 }

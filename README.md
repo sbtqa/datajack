@@ -19,7 +19,7 @@ We have the following implementation:
 
 
 ### Documentation
-Example how to use [here](https://github.com/sbtqa/datajack-example). All of the documentation [here](https://github.com/sbtqa/docs/wiki/DataJack)
+Example how to use [here](https://github.com/sbtqa/datajack-example) and [here](https://github.com/sbtqa/datajack/tree/master/providers/json-provider/src/test).
 
 ### Contact
 If you found error or you have a question? [Check](https://github.com/sbtqa/datajack/issues), maybe someone asked before, not found? Just [create a new issue](https://github.com/sbtqa/datajack/issues/new)!

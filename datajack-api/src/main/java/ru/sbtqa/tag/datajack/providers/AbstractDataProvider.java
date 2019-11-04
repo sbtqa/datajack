@@ -165,6 +165,8 @@ public abstract class AbstractDataProvider implements TestDataProvider {
                 strings.add(value.toString());
             } else if (value == null) {
                 strings.add("null");
+            } else if (value instanceof BasicDBList) {
+                ((BasicDBList) value).forEach(val -> strings.add(val.toString()));
             } else {
                 strings.add("");
             }

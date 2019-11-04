@@ -1,5 +1,5 @@
 # Datajack
-[![Build Status](https://travis-ci.org/sbtqa/datajack.svg?branch=master)](https://travis-ci.org/sbtqa/datajack) [![GitHub release](https://img.shields.io/github/release/sbtqa/datajack.svg?style=flat-square)](https://github.com/sbtqa/datajack/releases)
+[![Build Status](https://travis-ci.org/sbtqa/datajack.svg?branch=master)](https://travis-ci.org/sbtqa/datajack) [![GitHub release](https://img.shields.io/github/release/sbtqa/datajack.svg?style=flat-square)](https://github.com/sbtqa/datajack/releases) [![Maven Central](https://img.shields.io/maven-central/v/ru.sbtqa.tag.datajack/datajack-parent.svg)](https://mvnrepository.com/artifact/ru.sbtqa.tag.datajack/datajack-parent)
 
 DataJack - opensource java framework, который позволяет вам комфортно работать с вашими тестовыми данными.
 

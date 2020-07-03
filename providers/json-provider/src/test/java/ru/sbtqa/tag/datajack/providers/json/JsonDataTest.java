@@ -425,4 +425,15 @@ public class JsonDataTest {
         String expected = "20.91";
         Assert.assertEquals(expected, relativeValue);
     }
+
+    @Test
+    public void containsArrayTest() throws DataException {
+        String collectionName = "Tests";
+        TestDataProvider tdo = new JsonDataProvider(JSON_DATA_PATH, collectionName);
+
+        assertEquals("a",
+                tdo.get("containsArray.array[0]").getValue());
+        assertEquals("1",
+                tdo.get("containsArray.array[1]").getValue());
+    }
 }

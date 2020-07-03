@@ -325,4 +325,15 @@ public class MongoDataTest {
         String expectedJson = "{ \"login\" : 123 , \"password\" : 123}";
         assertEquals(expectedJson, stringJson);
     }
+
+    @Test
+    public void containsArrayTest() throws DataException {
+        String collectionName = "Tests";
+        TestDataProvider tdo = new MongoDataProvider(mongoDb, collectionName);
+
+        assertEquals("a",
+                tdo.get("containsArray.array[0]").getValue());
+        assertEquals("1",
+                tdo.get("containsArray.array[1]").getValue());
+    }
 }

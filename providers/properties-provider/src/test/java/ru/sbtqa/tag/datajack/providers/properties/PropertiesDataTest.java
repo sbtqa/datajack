@@ -442,4 +442,15 @@ public class PropertiesDataTest {
         Assert.assertArrayEquals(expectedValues, stringValues.toArray(new String[0]));
 
     }
+
+    @Test
+    public void containsArrayTest() throws DataException {
+        String collectionName = "Tests";
+        TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName);
+
+        assertEquals("a",
+                dataProvider.get("containsArray.array[0]").getValue());
+        assertEquals("1",
+                dataProvider.get("containsArray.array[1]").getValue());
+    }
 }

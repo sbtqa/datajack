@@ -47,5 +47,11 @@
         "$ref": "DataBlocks:Common.gen gen.gendata"
       }
     }
-  ]
+  ],
+  "containsArray": {
+    "array": [
+      "a",
+      1
+    ]
+  }
 }

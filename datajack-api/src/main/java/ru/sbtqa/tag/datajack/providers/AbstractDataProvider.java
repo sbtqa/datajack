@@ -256,14 +256,17 @@ public abstract class AbstractDataProvider implements TestDataProvider {
             partialBuiltPath.append(partialKey);
 
             if (isArray(partialKey)) {
-                currentBasicObject = (BasicDBObject) parseArray(currentBasicObject, partialKey);
+                Object basicObject = parseArray(currentBasicObject, partialKey);
+                currentBasicObject = !(basicObject instanceof BasicDBObject)
+                        ? new BasicDBObject(partialKey, basicObject)
+                        : (BasicDBObject) basicObject;
                 partialBuiltPath.append(".");
                 continue;
             }
 
             if (isReference(currentBasicObject)) {
                 AbstractDataProvider dataProvider = (AbstractDataProvider) createInstance(currentBasicObject, collectionName);
-                currentBasicObject = ((AbstractDataProvider)dataProvider.getReference()).basicObject;
+                currentBasicObject = ((AbstractDataProvider) dataProvider.getReference()).basicObject;
             }
 
             Object currentValue = currentBasicObject.get(partialKey);

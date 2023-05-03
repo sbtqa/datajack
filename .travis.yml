@@ -13,7 +13,8 @@ before_install:
 install:
   - mvn clean --settings .travis/settings.xml install -Dmaven.javadoc.skip=true -Dgpg.skip -B -V
 script:
-  - mvn org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar -Dmaven.javadoc.skip=true -Dgpg.skip -DskipTests=true
+  - mvn org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.javadoc.skip=true -Dgpg.skip -DskipTests=true
+#  - mvn org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar -Dmaven.javadoc.skip=true -Dgpg.skip -DskipTests=true
 deploy:
 - provider: script
   script: ".travis/deploy.sh"

@@ -7,7 +7,16 @@ import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveArrayJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.adapter.PrimitiveJsonTypeResolverToNewApiAdapter;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.BooleanToJsonTypeConverter;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.ElementsToJsonTypeConverter;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.StringToJsonTypeConverter;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.SuperObjectToJsonTypeConverter;
+import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToElementsResolver;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
+import pl.jalokim.propertiestojson.util.PropertiesToJsonConverterBuilder;
+import pl.jalokim.propertiestojson.util.exception.ReadInputException;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.exceptions.CollectionNotFoundException;
 import ru.sbtqa.tag.datajack.exceptions.CyclicReferencesException;
@@ -162,15 +171,12 @@ public class PropertiesDataProvider extends AbstractDataProvider {
         String json;
         try {
             File targetFile = new File(testDataFolder + separator + collectionName + "." + this.extension);
-            Properties properties = getProperties(targetFile);
-            json = new PropertiesToJsonConverter(
-                    new PrimitiveArrayJsonTypeResolver(arrayDelimiter),
-                    new ObjectFromTextJsonTypeResolver(),
-                    new BooleanJsonTypeResolver(),
-                    new StringJsonTypeResolver()
-            ).parseToJson(properties);
+            json = new PropertiesToJsonConverterBuilder()
+                    .onlyCustomTextToObjectResolvers(new TextToElementsResolver(true, arrayDelimiter))
+                    .build()
+                    .convertPropertiesFromFileToJson(targetFile);
 
-        } catch (DataException ex) {
+        } catch (ReadInputException ex) {
             throw new CollectionNotFoundException(String.format("File %s.%s not found in %s",
                     collectionName, extension, testDataFolder), ex);
         }

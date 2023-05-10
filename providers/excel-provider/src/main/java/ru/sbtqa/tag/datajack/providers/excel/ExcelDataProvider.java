@@ -273,13 +273,13 @@ public class ExcelDataProvider extends AbstractDataProvider {
      */
     private String getCellValue(Cell cell) {
         //noinspection deprecation
-        if (cell.getCellTypeEnum() == CellType.FORMULA) {
+        if (cell.getCellType() == CellType.FORMULA) {
             String value = "";
             try {
                 value = cell.getRichStringCellValue().getString();
             } catch (Exception e) {
                 LOG.debug("Failed to get raw cell value, now trying to get typified", e);
-                switch (evaluator.evaluateFormulaCellEnum(cell)) {
+                switch (evaluator.evaluateFormulaCell(cell)) {
                     case BOOLEAN:
                         value = String.valueOf(cell.getBooleanCellValue());
                         break;

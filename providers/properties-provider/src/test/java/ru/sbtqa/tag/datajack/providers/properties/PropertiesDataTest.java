@@ -246,7 +246,7 @@ public class PropertiesDataTest {
         String collectionName = "DataBlocks";
         String cyclicPath = "Common.cyclic";
         TestDataProvider dataProvider = new PropertiesDataProvider(this.propertiesDataPath, collectionName);
-        String cyclicObject = format("{ \"comment\" : \"Cyclic\", \"$ref\" : \"%s:Common.cyclic\" }", collectionName);
+        String cyclicObject = format("{ \"$ref\" : \"%s:Common.cyclic\", \"comment\" : \"Cyclic\" }", collectionName);
         expectDataExceptions
                 .expect(CyclicReferencesException.class);
         expectDataExceptions.expectMessage(format("Cyclic references in database:\n%s", cyclicObject));
@@ -403,7 +403,7 @@ public class PropertiesDataTest {
     public void getJsonTest() throws DataException {
         TestDataProvider testDataProvider = new PropertiesDataProvider(propertiesDataPath, "DataBlocks");
         String stringJson = testDataProvider.get("Params Group 1").getValue();
-        String expectedJson = "{ \"password\" : 123 , \"login\" : 123}";
+        String expectedJson = "{ \"login\" : 123 , \"password\" : 123}";
         Assert.assertEquals(expectedJson, stringJson);
     }
 

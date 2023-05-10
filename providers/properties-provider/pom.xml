@@ -34,11 +34,21 @@
       <groupId>pl.jalokim.propertiestojson</groupId>
       <artifactId>java-properties-to-json</artifactId>
       <version>${java.properties.to.json.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>lombok</artifactId>
+          <groupId>org.projectlombok</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-io</artifactId>
+          <groupId>commons-io</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.2</version>
+      <version>1.18.26</version>
     </dependency>
   </dependencies>
 

@@ -41,6 +41,14 @@ public class JsonDataTest {
     }
 
     @Test
+    public void issue42() throws DataException {
+        String collectionName = "issue";
+        TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName, "json");
+        assertEquals("{ \"systemId\" : \"QJ160\" , \"customerIds\" : [ { \"id\" : \"93V\" , \"branch\" : \"Cu19\"}]}",
+                testDataProvider.get("X-User").getValue());
+    }
+
+    @Test
     public void simpleArrayTest() throws DataException {
         String collectionName = "Tests";
         TestDataProvider testDataProvider = new JsonDataProvider(JSON_DATA_PATH, collectionName);

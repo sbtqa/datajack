@@ -471,6 +471,9 @@ public abstract class AbstractDataProvider implements TestDataProvider {
                 if (instance.basicObject.keySet().contains(key) && instance
                         .basicObject.get(key) == null) {
                     resolvedDbObject.put(key, null);
+                }else if(basicObject.get(key) instanceof BasicDBList){
+                    BasicDBList array = (BasicDBList) basicObject.get(key);
+                    resolvedDbObject.put(key, array);
                 } else {
                     resolvedDbObject.put(key, instance.getValue());
                 }
